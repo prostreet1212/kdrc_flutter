@@ -7,14 +7,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
 import 'dart:ui';
 
-class WebPage extends StatefulWidget {
-  WebPage({Key? key}) : super(key: key);
+class WebPage3 extends StatefulWidget {
+  WebPage3({Key? key}) : super(key: key);
 
   @override
-  State<WebPage> createState() => _NestedWebviewDemoState();
+  State<WebPage3> createState() => _NestedWebviewDemoState();
 }
 
-class _NestedWebviewDemoState extends State<WebPage> {
+class _NestedWebviewDemoState extends State<WebPage3> {
   //final ScrollController scrollController = ScrollController();
   //ValueNotifier<double> scrollHeightNotifier = ValueNotifier<double>(1);
   late WebViewController webViewController;
@@ -84,29 +84,25 @@ class _NestedWebviewDemoState extends State<WebPage> {
       },
       child: SafeArea(
         child: Scaffold(
-          body: Column(
-            children: [
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300), // Плавная анимация
-                height: _appBarHeight,
-                child: AppBar(
-                  flexibleSpace: _appBarHeight > _minAppBarHeight
-                      ? Container(
-                    color: Colors.red,
-                    //height: 100,
-                        child: Image.asset(
-                                            'assets/images/titleimage.png',
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                      )
-                      : null,
-                  title:_appBarHeight <= 56? Text('WebView with Collapsible AppBar'):null,
-                  centerTitle: true,
-                ),
-              ),
-              Expanded(
-                child: WebViewWidget(controller: webViewController),
-              ),
+          body: CustomScrollView(
+            slivers: [
+         SliverAppBar(
+           pinned: true,
+         ),
+
+          SliverToNestedScrollBoxAdapter(
+          childExtent: 1000,
+          onScrollOffsetChanged: (double scrollOffset) {
+            double y = scrollOffset;
+            if (Platform.isAndroid) {
+              // https://github.com/flutter/flutter/issues/75841
+              y *= window.devicePixelRatio;
+            }
+            webViewController.scrollTo(0, y.ceil());
+          },
+          child: WebViewWidget(controller: webViewController),
+        )
+
             ],
           ),
           floatingActionButton: FloatingActionButton(
