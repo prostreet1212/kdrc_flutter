@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kdrc_flutter/web_page.dart';
-import 'package:kdrc_flutter/web_page2.dart';
-import 'package:kdrc_flutter/web_page3.dart';
-import 'package:kdrc_flutter/web_page_test.dart';
+import 'package:kdrc_flutter/web_page_copy.dart';
+
+import 'cubits/scroll_height_cubit.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: WebPage3(),
+      home:   BlocProvider<ScrollHeightCubit>(
+        create: (context) => ScrollHeightCubit(),
+        child: WebPage(),
+      ),
     );
   }
 }

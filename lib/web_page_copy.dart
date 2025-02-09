@@ -13,21 +13,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
 import 'dart:ui';
 
-class WebPage extends StatefulWidget {
-  WebPage({Key? key}) : super(key: key);
+class WebPageCopy extends StatelessWidget {
+   WebPageCopy({super.key});
 
-  @override
-  State<WebPage> createState() => _WebPageState();
-}
-
-class _WebPageState extends State<WebPage> {
-  final ScrollController scrollController = ScrollController();
-  ValueNotifier<double> scrollHeightNotifier = ValueNotifier<double>(1);
+   final ScrollController scrollController = ScrollController();
   late WebViewController webViewController;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     webViewController = WebViewController()
       ..setNavigationDelegate(NavigationDelegate(
           onPageStarted: (url) {},
@@ -48,15 +41,11 @@ class _WebPageState extends State<WebPage> {
               //scrollHeightNotifier.value = height;
               context.read<ScrollHeightCubit>().updateScrollHeight(height);
             }
-            //webViewController.scrollTo(0, 0);
+            webViewController.scrollTo(0, 0);
             //scrollController.jumpTo(0);
           })
       ..loadRequest(Uri.parse(
           'https://yandex.ru/support/yandex-360/customers/purchase/ru/'));
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         if (await webViewController.canGoBack()) {
@@ -138,9 +127,10 @@ class _WebPageState extends State<WebPage> {
       ),
       // )
     );
-
-
   }
 }
+
+
+
 
 
