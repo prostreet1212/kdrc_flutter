@@ -14,7 +14,9 @@ class CustomAppBar extends StatelessWidget {
             expandedHeight: 200,
             collapsedHeight: 56,
             pinned: true,
+
             flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
               background: Image.asset(
                 'assets/images/titleimage.png',
                 fit: BoxFit.cover,

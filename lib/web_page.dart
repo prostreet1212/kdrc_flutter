@@ -5,9 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
@@ -133,6 +135,7 @@ class _WebPageState extends State<WebPage> {
                 // webViewController.scrollTo(0, 0);
                 // scrollController.jumpTo(0);
                 Utils.showCallDialog(context);
+
               }),
         ),
       ),

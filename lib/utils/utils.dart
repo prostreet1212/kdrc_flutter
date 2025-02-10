@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Utils {
   static const String scrollHeightJs = '''(function() {
@@ -34,30 +35,58 @@ class Utils {
         context: context,
         builder: (context) {
           return AlertDialog(
+            contentPadding: EdgeInsets.only(left: 24, top: 8, bottom: 30),
+            insetPadding: EdgeInsets.zero,
+            actionsPadding: EdgeInsets.only(bottom: 0),
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(),
             title: Text(
-              'Приемная',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              'Приёмная',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            content: Text('Позвонить в приёмную?'),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Text(
+                'Позвонить в приёмную?',
+                style: TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+            ),
             actions: [
               TextButton(
-                child: Text('Да'),
+                child: Text(
+                  'Да'.toUpperCase(),
+                  style: TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
+                ),
                 onPressed: () async {
-                  final Uri _url = Uri.parse('tel:+7-81837-300-50');
-                  await launchUrl(
-                    _url,
-                    mode: LaunchMode.platformDefault,
-                  );
+                  PermissionStatus status = await Permission.phone.status;
+                  if (status.isGranted) {
+                    FlutterDirectCall.makeDirectCall("+79210779641");
+                  } else if (status.isPermanentlyDenied) {
+                    await Permission.phone.request();
+                    //await Permission.phone.call;
+                    openAppSettings();
+                  } else if (status.isDenied) {
+                    await Permission.phone.request();
+                    //await Permission.phone.call;
+                  } else {
+                    print("Permission denied");
+                  }
+                  /* final Uri _url = Uri.parse('tel:+7-81837-300-50');
+                      await launchUrl(
+                        _url,
+                        mode: LaunchMode.platformDefault,
+                      );*/
                 },
               ),
               TextButton(
-                child: Text('Нет'),
+                child: Text('Нет'.toUpperCase(),
+                    style: TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               )
             ],
+
           );
         });
   }

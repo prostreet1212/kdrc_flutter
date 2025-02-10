@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: ScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        useMaterial3: false,
       ),
       home:   BlocProvider<ScrollHeightCubit>(
         create: (context) => ScrollHeightCubit(),
