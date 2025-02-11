@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
+import 'package:kdrc_flutter/widgets/permission_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Utils {
@@ -62,12 +63,16 @@ class Utils {
                   if (status.isGranted) {
                     FlutterDirectCall.makeDirectCall("+79210779641");
                   } else if (status.isPermanentlyDenied) {
-                    await Permission.phone.request();
-                    //await Permission.phone.call;
+                    //await Permission.phone.request();
+                    showDialog(context: context, builder: (context){
+                      Navigator.pop(context);
+                      return PermissionDialog();
+                    });
                     openAppSettings();
                   } else if (status.isDenied) {
                     await Permission.phone.request();
-                    //await Permission.phone.call;
+
+
                   } else {
                     print("Permission denied");
                   }
