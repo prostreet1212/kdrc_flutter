@@ -64,12 +64,16 @@ class Utils {
                     FlutterDirectCall.makeDirectCall("+79210779641");
                   } else if (status.isPermanentlyDenied) {
                     //await Permission.phone.request();
-                    showDialog(context: context, builder: (context){
-                      Navigator.pop(context);
+                    Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (context){
+                      //Navigator.pop(context);
                       return PermissionDialog();
                     });
-                    openAppSettings();
+                    //openAppSettings();
                   } else if (status.isDenied) {
+                    Navigator.pop(context);
                     await Permission.phone.request();
 
 

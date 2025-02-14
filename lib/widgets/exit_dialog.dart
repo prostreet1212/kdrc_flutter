@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class ExitDialog extends StatelessWidget {
+  const ExitDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.only(left: 24, top: 8, bottom: 30),
+      insetPadding: EdgeInsets.zero,
+      actionsPadding: EdgeInsets.only(bottom: 0),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(),
+      title: Text(
+        'Выход',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Text(
+          'Выйти из приложения?',
+          style: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: Text(
+            'Да'.toUpperCase(),
+            style: TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
+          ),
+          onPressed: () async {
+            await FlutterExitApp.exitApp();
+          },
+        ),
+        TextButton(
+          child: Text('Нет'.toUpperCase(),
+              style: TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+
+    );
+
+  }
+}

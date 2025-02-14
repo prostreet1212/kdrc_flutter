@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kdrc_flutter/web_page.dart';
-import 'package:kdrc_flutter/web_page_copy.dart';
+import 'package:kdrc_flutter/pages/web_page.dart';
+import 'package:kdrc_flutter/pages/web_page_copy.dart';
+import 'package:kdrc_flutter/pages/welcome_page.dart';
 
 import 'cubits/scroll_height_cubit.dart';
 
@@ -16,16 +17,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Котласский реабилитационный центр',
       scrollBehavior: ScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: false,
+        useMaterial3: true,
       ),
-      home:   BlocProvider<ScrollHeightCubit>(
+      home:WelcomePage()
+      /*BlocProvider<ScrollHeightCubit>(
         create: (context) => ScrollHeightCubit(),
         child: WebPage(),
-      ),
+      ),*/
     );
   }
 }

@@ -24,8 +24,8 @@ class WebPage extends StatefulWidget {
 
 class _WebPageState extends State<WebPage> {
   final ScrollController scrollController = ScrollController();
-  ValueNotifier<double> scrollHeightNotifier = ValueNotifier<double>(1);
   late WebViewController webViewController;
+  bool _isCollapsed  = false;
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _WebPageState extends State<WebPage> {
           onPageFinished: (a) {
             print('Позиция scrollController ${scrollController.position}');
             webViewController.runJavaScript(Utils.scrollHeightJs);
+            //scrollController.jumpTo(0);
           },
           onWebResourceError: (e) {
             //print('ERROR: ${e.errorCode}');
@@ -54,26 +55,36 @@ class _WebPageState extends State<WebPage> {
             //scrollController.jumpTo(0);
           })
       ..loadRequest(Uri.parse(
-          'https://yandex.ru/support/yandex-360/customers/purchase/ru/'));
+          'https://kdrc.ru'));
+    scrollController.addListener((){
+      setState(() {
+        _isCollapsed = scrollController.offset > 112;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    print('страница');
     return WillPopScope(
       onWillPop: () async {
         if (await webViewController.canGoBack()) {
           webViewController.goBack();
+          return false;
+        }else{
+          return true;
         }
-        return false;
+
       },
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: Colors.white,
           body: Stack(
             children: <Widget>[
               CustomScrollView(
                 controller: scrollController,
                 slivers: <Widget>[
-                  CustomAppBar(),
+                  CustomAppBar(isCollapsed: _isCollapsed,),
                   BlocBuilder<ScrollHeightCubit, double>(
                       builder: (context,state){
                         print('state: $state');
@@ -92,33 +103,6 @@ class _WebPageState extends State<WebPage> {
                           child: WebViewWidget(controller: webViewController),
                         );
                       }),
-                  // ValueListenableBuilder<double>(
-                  //     valueListenable: scrollHeightNotifier,
-                  //     builder: (BuildContext context,
-                  //         double scrollHeight,
-                  //         Widget? child,) {
-                  //       return SliverToNestedScrollBoxAdapter(
-                  //         childExtent: scrollHeight,
-                  //         onScrollOffsetChanged: (double scrollOffset) {
-                  //           double y = scrollOffset;
-                  //           print('scroll: $y');
-                  //           if (Platform.isAndroid) {
-                  //             y *= View
-                  //                 .of(context)
-                  //                 .devicePixelRatio;
-                  //           }
-                  //           webViewController.scrollTo(0, y.ceil());
-                  //         },
-                  //         child: child,
-                  //       );
-                  //     },
-                  //     child: WebViewWidget(
-                  //       /* gestureRecognizers: Set()
-                  //         ..add(
-                  //           Factory<VerticalDragGestureRecognizer>(
-                  //               () => VerticalDragGestureRecognizer()),
-                  //         ),*/
-                  //         controller: webViewController)),
                 ],
               ),
             ],

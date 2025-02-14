@@ -7,9 +7,9 @@ class PermissionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Разрешение отклонено навсегда"),
+      title: Text("Разрешение отклонено"),
       content: Text(
-        "Чтобы включить разрешение на использование телефона, перейдите в настройки приложения и включите его вручную.",
+        "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",
       ),
       actions: [
         TextButton(
@@ -17,7 +17,7 @@ class PermissionDialog extends StatelessWidget {
             Navigator.pop(context);
             openAppSettings();
           },
-          child: Text("Открыть настройки"),
+          child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
         ),
       ],
     );
