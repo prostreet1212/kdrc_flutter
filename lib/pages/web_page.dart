@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
@@ -14,6 +15,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
 import 'dart:ui';
+
+enum ScrollStatus { prev, forward }
 
 class WebPage extends StatefulWidget {
   WebPage({Key? key}) : super(key: key);
@@ -26,17 +29,44 @@ class _WebPageState extends State<WebPage> {
   final ScrollController scrollController = ScrollController();
   late WebViewController webViewController;
   bool _isCollapsed  = false;
+  bool isforward=true;
+  ScrollStatus scrollStatus=ScrollStatus.forward;
+  double oldScroll=0.0;
+
+
+
 
   @override
   void initState() {
     super.initState();
+
     webViewController = WebViewController()
       ..setNavigationDelegate(NavigationDelegate(
-          onPageStarted: (url) {},
-          onPageFinished: (a) {
+onNavigationRequest: (r){
+  scrollStatus=ScrollStatus.forward;
+  print('Навигация вперед');
+  oldScroll=scrollController.offset;
+            return NavigationDecision.navigate;
+},
+
+          onPageStarted: (url) {
+int a=0;
+          },
+          onPageFinished: (url) async {
+
             print('Позиция scrollController ${scrollController.position}');
             webViewController.runJavaScript(Utils.scrollHeightJs);
-            //scrollController.jumpTo(0);
+            if(scrollStatus==ScrollStatus.forward){
+              if(scrollController.offset>220){
+                scrollController.jumpTo(220);
+              }
+
+            }else{
+              if(scrollController.offset>220){
+                scrollController.jumpTo(oldScroll);
+              }
+            }
+
           },
           onWebResourceError: (e) {
             //print('ERROR: ${e.errorCode}');
@@ -69,7 +99,9 @@ class _WebPageState extends State<WebPage> {
     return WillPopScope(
       onWillPop: () async {
         if (await webViewController.canGoBack()) {
+          scrollStatus=ScrollStatus.prev;
           webViewController.goBack();
+          print('Навигация назад');
           return false;
         }else{
           return true;
