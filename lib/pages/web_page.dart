@@ -29,7 +29,6 @@ class _WebPageState extends State<WebPage> {
   final ScrollController scrollController = ScrollController();
   late WebViewController webViewController;
   bool _isCollapsed  = false;
-  bool isforward=true;
   ScrollStatus scrollStatus=ScrollStatus.forward;
   double oldScroll=0.0;
 
@@ -50,10 +49,9 @@ onNavigationRequest: (r){
 },
 
           onPageStarted: (url) {
-int a=0;
+
           },
           onPageFinished: (url) async {
-
             print('Позиция scrollController ${scrollController.position}');
             webViewController.runJavaScript(Utils.scrollHeightJs);
             if(scrollStatus==ScrollStatus.forward){
@@ -61,11 +59,11 @@ int a=0;
                 scrollController.jumpTo(220);
               }
 
-            }else{
-              if(scrollController.offset>220){
+            }/*else{
+              if(scrollController.offset>=220){
                 scrollController.jumpTo(oldScroll);
               }
-            }
+            }*/
 
           },
           onWebResourceError: (e) {
@@ -81,8 +79,7 @@ int a=0;
               //scrollHeightNotifier.value = height;
               context.read<ScrollHeightCubit>().updateScrollHeight(height);
             }
-            //webViewController.scrollTo(0, 0);
-            //scrollController.jumpTo(0);
+
           })
       ..loadRequest(Uri.parse(
           'https://kdrc.ru'));
@@ -148,10 +145,7 @@ int a=0;
                 size: 36,
               ),
               onPressed: () {
-                // webViewController.scrollTo(0, 0);
-                // scrollController.jumpTo(0);
-                Utils.showCallDialog(context);
-
+                //Utils.showCallDialog(context);
               }),
         ),
       ),
@@ -159,6 +153,44 @@ int a=0;
     );
 
 
+  }
+}
+
+class MySliverPinnedPersistentHeaderDelegate
+    extends SliverPinnedPersistentHeaderDelegate {
+  MySliverPinnedPersistentHeaderDelegate({
+    required Widget minExtentProtoType,
+    required Widget maxExtentProtoType,
+  }) : super(
+    minExtentProtoType: minExtentProtoType,
+    maxExtentProtoType: maxExtentProtoType,
+  );
+  @override
+  Widget build(BuildContext context, double shrinkOffset, double? minExtent,
+      double maxExtent, bool overlapsContent) {
+    print(shrinkOffset);
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          child: maxExtentProtoType,
+          top: -shrinkOffset,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        ),
+        Positioned(
+          child: minExtentProtoType,
+          top: 0,
+          left: 0,
+          right: 0,
+        ),
+      ],
+    );
+  }
+
+  @override
+  bool shouldRebuild(SliverPinnedPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 }
 
