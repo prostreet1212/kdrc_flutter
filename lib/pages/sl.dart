@@ -28,18 +28,37 @@ class _SlWebState extends State<SlWeb> {
   double oldScroll = 0.0;
   //double prevPixel=0;
   List<double> prevPixels=[];
+  String prevUrl='';
+
 
   @override
   void initState() {
     super.initState();
     webViewController = WebViewController()
-      ..setNavigationDelegate(NavigationDelegate(onNavigationRequest: (r) {
+      ..setNavigationDelegate(
+          NavigationDelegate(
+          onNavigationRequest: (r) {
+            print('onPageSRequest');
         scrollStatus = ScrollStatus.forward;
         prevPixels.add(myKey.currentState!.innerController.position.pixels);
-        print('Навигация вперед');
+        //print('Навигация вперед');
         //oldScroll = nestedController.offset;
         return NavigationDecision.navigate;
-      }, onPageFinished: (url) async {
+      },
+              onPageStarted: (url){
+                print('onPageStarted');
+          },
+          onPageFinished: (url) async {
+            print('onPageFinished');
+            if(prevUrl!=url){
+              print('финиш: ${url}');
+              prevUrl=url;
+            }else{
+              print('финиш повтор: ${url}');
+              prevUrl=url;
+            }
+
+
         await webViewController.runJavaScript(Utils.scrollHeightJs);
         if (scrollStatus == ScrollStatus.forward) {
           if (myKey.currentState!.innerController.offset > 0) {
@@ -47,12 +66,18 @@ class _SlWebState extends State<SlWeb> {
           }
         }else{
           print('Последний пиксель: ${prevPixels[prevPixels.length-1]}');
-           //Timer(Duration(milliseconds: 5), () => myKey.currentState!.innerController.position.setPixels(prevPixels[prevPixels.length-1]));
-          myKey.currentState!.innerController.position.setPixels(prevPixels[prevPixels.length-1]);
-          prevPixels.removeAt(prevPixels.length-1);
+           Timer(Duration(milliseconds: 5), () {
+             myKey.currentState!.innerController.position.setPixels(prevPixels[prevPixels.length-1]);
+             prevPixels.removeAt(prevPixels.length-1);
+           });
+         // myKey.currentState!.innerController.position.setPixels(prevPixels[prevPixels.length-1]);
+          //prevPixels.removeAt(prevPixels.length-1);
         }
 
-      }))
+      },
+          onProgress: (progress){
+            print('$progress');
+          }),)
       ..addJavaScriptChannel('ScrollHeightNotifier',
           onMessageReceived: (message) {
         final String msg = message.message;
@@ -60,11 +85,11 @@ class _SlWebState extends State<SlWeb> {
         if (height != null) {
           scrollHeightNotifier.value = height;
         }
-        //webViewController.scrollTo(0, 0);
         //scrollController.jumpTo(0);
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
+        //Uri.parse('https://kdrc.ru/novosti'),
         Uri.parse('https://kdrc.ru'),
       );
 
@@ -100,6 +125,11 @@ class _SlWebState extends State<SlWeb> {
       },
       child: SafeArea(
         child: Scaffold(
+         /* body:  WebViewWidget(
+            /* gestureRecognizers: Set()
+                        ..add(Factory<VerticalDragGestureRecognizer>(
+                            () => VerticalDragGestureRecognizer())),*/
+              controller: webViewController),*/
           body: NestedScrollView(
             //controller: nestedController,
             key: myKey,
