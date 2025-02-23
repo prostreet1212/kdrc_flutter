@@ -50,7 +50,7 @@ class _WebPageCopyState extends State<WebPageCopy> {
               CustomScrollView(
                 controller: scrollController,
                 slivers: <Widget>[
-                  CustomAppBar(isCollapsed: true,),
+                  //CustomAppBar(isCollapsed: true,),
                   ValueListenableBuilder<double>(
                       valueListenable: scrollHeightNotifier,
                       builder: (BuildContext context,

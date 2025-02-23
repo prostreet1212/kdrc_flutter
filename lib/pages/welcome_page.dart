@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kdrc_flutter/main.dart';
+import 'package:kdrc_flutter/pages/sl_copy.dart';
 import 'package:kdrc_flutter/pages/test/web_page.dart';
 import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 
@@ -20,9 +22,8 @@ class _WelcomePageState extends State<WelcomePage> {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
           BlocProvider<ScrollHeightCubit>(
-        create: (context) => ScrollHeightCubit(),
-        //child: WebPageCopy(),
-        child: WebPage(),
+        create: (context) => scrollHeightCubit,
+        child: SlWebCopy(),
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево

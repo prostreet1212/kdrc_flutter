@@ -9,7 +9,7 @@ import 'package:kdrc_flutter/pages/welcome_page.dart';
 
 import 'cubits/scroll_height_cubit.dart';
 
-
+ScrollHeightCubit scrollHeightCubit=ScrollHeightCubit();
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -28,10 +28,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home:OnlyInWeb()
-      home:SlWebCopy()
-      /*BlocProvider<ScrollHeightCubit>(
-        create: (context) => ScrollHeightCubit(),
-        child: WebPage(),
+      home: WelcomePage(),
+     /* BlocProvider<ScrollHeightCubit>(
+        create: (context) => scrollHeightCubit,
+        child: SlWebCopy(),
       ),*/
     );
   }

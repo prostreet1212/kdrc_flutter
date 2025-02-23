@@ -113,7 +113,7 @@ onNavigationRequest: (r){
               CustomScrollView(
                 controller: scrollController,
                 slivers: <Widget>[
-                  CustomAppBar(isCollapsed: _isCollapsed,),
+                  //CustomAppBar(isCollapsed: _isCollapsed,),
                   BlocBuilder<ScrollHeightCubit, double>(
                       builder: (context,state){
                         print('state: $state');
@@ -145,7 +145,7 @@ onNavigationRequest: (r){
                 size: 36,
               ),
               onPressed: () {
-                //Utils.showCallDialog(context);
+                Utils.showCallDialog(context);
               }),
         ),
       ),
