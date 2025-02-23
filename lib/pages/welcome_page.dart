@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kdrc_flutter/pages/web_page.dart';
-import 'package:kdrc_flutter/pages/web_page_copy.dart';
+import 'package:kdrc_flutter/pages/test/web_page.dart';
+import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 
 import '../cubits/scroll_height_cubit.dart';
 

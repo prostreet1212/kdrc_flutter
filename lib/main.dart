@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kdrc_flutter/pages/only_web.dart';
-import 'package:kdrc_flutter/pages/sl.dart';
+
+import 'package:kdrc_flutter/pages/test/sl.dart';
 import 'package:kdrc_flutter/pages/sl_copy.dart';
-import 'package:kdrc_flutter/pages/web_page.dart';
-import 'package:kdrc_flutter/pages/web_page_copy.dart';
+import 'package:kdrc_flutter/pages/test/web_page.dart';
+import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 import 'package:kdrc_flutter/pages/welcome_page.dart';
 
 import 'cubits/scroll_height_cubit.dart';

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../utils/utils.dart';
+import '../../utils/utils.dart';
 
 enum ScrollStatus { prev, forward }
 
