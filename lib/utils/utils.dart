@@ -99,4 +99,27 @@ class Utils {
           );
         });
   }
+
+  static Route createRoute(Widget widget) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+      widget,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Анимация перехода SecondScreen справа налево
+        var slideAnimation = Tween<Offset>(
+          begin: Offset(1.0, 0.0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        ));
+
+        return SlideTransition(
+          position: slideAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: Duration(milliseconds: 500),
+    );
+  }
 }

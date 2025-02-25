@@ -16,6 +16,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
 import 'dart:ui';
 
+import '../../main.dart';
+
 enum ScrollStatus { prev, forward }
 
 class WebPage extends StatefulWidget {
@@ -136,7 +138,8 @@ onNavigationRequest: (r){
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton:
+          FloatingActionButton(
               backgroundColor: Colors.grey[50],
               shape: const CircleBorder(),
               child: Icon(

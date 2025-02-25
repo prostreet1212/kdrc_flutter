@@ -9,6 +9,8 @@ import 'package:kdrc_flutter/pages/test/web_page.dart';
 import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 
 import '../cubits/scroll_height_cubit.dart';
+import '../locator_service.dart';
+import '../utils/utils.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -18,13 +20,9 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  Route createRoute() {
+  Route createRoute(Widget widget) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          BlocProvider<ScrollHeightCubit>(
-        create: (context) => scrollHeightCubit,
-        child: SlWebCopy(),
-      ),
+      pageBuilder: (context, animation, secondaryAnimation) => widget,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево
         var slideAnimation = Tween<Offset>(
@@ -48,7 +46,12 @@ class _WelcomePageState extends State<WelcomePage> {
     await Future.delayed(const Duration(milliseconds: 700), () {
       Navigator.pushReplacement(
         context,
-        createRoute(),
+        Utils.createRoute(
+          BlocProvider<ScrollHeightCubit>(
+            create: (context) => sl<ScrollHeightCubit>(),
+            child: SlWebCopy(),
+          ),
+        ),
       );
     });
   }
