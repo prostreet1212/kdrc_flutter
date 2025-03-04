@@ -22,6 +22,44 @@ class SliverWebview extends StatelessWidget {
       nestedWebviewController.nestedScrollController.enableScroll(context);
       return Stack(
         children: [
+
+//тестовый задник
+         /* CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 719,
+                collapsedHeight: 719,
+                flexibleSpace: FlexibleSpaceBar(
+                    titlePadding: EdgeInsets.only(right: 0),
+                    collapseMode: CollapseMode.pin,
+                    background: Container(
+                      color: Colors.white,
+                      child: Image.asset(
+                        'assets/images/asdf3.png',
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  /*Image.asset(
+                      'assets/images/titleimage.png',
+                      fit: BoxFit.cover,
+                    ),*/
+                ) ,
+              )
+             /* SliverToNestedScrollBoxAdapter(
+                  childExtent: 800,
+                  onScrollOffsetChanged: (s){},
+              //
+                child:
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: AssetImage('assets/images/asdf3.png'),
+                    fit: BoxFit.cover)
+                  ),
+
+                  ),
+              )*/
+            ],
+          ),*/
           CustomScrollView(
             physics: BouncingScrollPhysics(),
             slivers: [

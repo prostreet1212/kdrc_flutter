@@ -19,16 +19,18 @@ class SlWebCopy extends StatefulWidget {
 }
 
 class _SlWebCopyState extends State<SlWebCopy> {
+  late NestedWebviewController nestedWebviewController;
   @override
   void initState() {
     super.initState();
+     nestedWebviewController = NestedWebviewController(
+        initialUrl: 'https://kdrc.ru/novosti', context: context);
+    nestedWebviewController.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    NestedWebviewController nestedWebviewController = NestedWebviewController(
-        initialUrl: 'https://kdrc.ru/novosti', context: context);
-    nestedWebviewController.init();
+
     return WillPopScope(
       onWillPop: () async {
         if (await nestedWebviewController.webViewController!.canGoBack()) {
