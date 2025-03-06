@@ -14,7 +14,9 @@ import 'package:kdrc_flutter/locator_service.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await di.init();
   runApp(const MyApp());
 }

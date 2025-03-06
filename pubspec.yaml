@@ -46,6 +46,7 @@ dependencies:
   gif_view: ^1.0.0
   open_filex: ^4.6.0
   internet_connection_checker_plus: ^2.7.0
+  sliver_tools: ^0.2.12
 
   flutter_inappwebview: ^6.1.5
   nested_scroll_view_plus: ^3.0.0

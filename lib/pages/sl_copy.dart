@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kdrc_flutter/cubits/internet_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
@@ -69,7 +70,8 @@ class _SlWebCopyState extends State<SlWebCopy> {
                         size: 36,
                       ),
                       onPressed: () {
-                        Utils.showCallDialog(context);
+                        //Utils.showCallDialog(context);
+                        sl<InternetCubit>().changeValue(!(sl<InternetCubit>().state));
                       });
                 }else{
                   return SizedBox();
