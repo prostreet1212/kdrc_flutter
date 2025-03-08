@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
@@ -23,8 +24,9 @@ import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/custom_toast.dart';
 
-enum ScrollStatus { prev, forward,reload }
+enum ScrollStatus { prev, forward, reload }
 
 class NestedWebviewController {
   NestedWebviewController({required this.initialUrl, required this.context});
@@ -41,16 +43,19 @@ class NestedWebviewController {
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
- late StreamSubscription<InternetStatus> internetListener;
+  //late StreamSubscription<InternetStatus> internetListener;
+  bool internetStatus = true;
+  bool isFirstRun=true;
 
   //double prevPixel=0;
   List<double> prevPixels = [];
   String prevUrl = '';
 
+  FToast fToast = FToast();
+
   static var httpClient = new HttpClient();
 
   Future<File> _downloadFile(String url, String filename) async {
-
     var request = await httpClient.getUrl(Uri.parse('${url}'));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
@@ -60,62 +65,96 @@ class NestedWebviewController {
     return file;
   }
 
+  void checkInternet() {
+    StreamSubscription<InternetStatus> internetListener = InternetConnection()
+        .onStatusChange
+        .listen((InternetStatus status) async {
+      switch (status) {
+        case InternetStatus.connected:
+          print('интернет подключен');
+
+          if(isFirstRun&&internetStatus==false){
+            scrollStatus = ScrollStatus.reload;
+            webViewController!.reload();
+            isFirstRun=false;
+          }
+          internetStatus = true;
+          break;
+        case InternetStatus.disconnected:
+          print('интернет отключен');
+          internetStatus = false;
+          break;
+      }
+    });
+  }
+
   void init() {
+    fToast.init(context);
     _webViewController = WebViewController()
       ..setNavigationDelegate(
         NavigationDelegate(onNavigationRequest: (request) async {
           print('onPageSRequest');
-         if(!request.url.contains('kdrc.ru')||request.url.contains('mailto:')){
-            launchUrl(Uri.parse(request.url));
+          //bool internetEnabled = await InternetConnection().hasInternetAccess;
+          if (internetStatus) {
+            if (!request.url.contains('kdrc.ru') ||
+                request.url.contains('mailto:')) {
+              launchUrl(Uri.parse(request.url));
+              return NavigationDecision.prevent;
+            } else {
+              if (request.url.contains('.doc') ||
+                  request.url.contains('.xls')) {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return FileLoadingDialog();
+                    });
+                File pdfFile = await _downloadFile(
+                    request.url, 'file.${Utils.getTypeFile(request.url)}');
+                Navigator.pop(context);
+                OpenFilex.open(pdfFile.path);
+                return NavigationDecision.prevent;
+              } else if (request.url.contains('.pdf')) {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return FileLoadingDialog();
+                    });
+                File pdfFile = await _downloadFile(
+                    request.url, 'file.${Utils.getTypeFile(request.url)}');
+                Navigator.pop(context);
+                Navigator.push(
+                    context, Utils.createRoute(PdfPage(path: pdfFile.path)));
+
+                return NavigationDecision.prevent;
+              } else {
+                if (Platform.isAndroid) {
+                  scrollStatus = ScrollStatus.forward;
+                }
+                return NavigationDecision.navigate;
+              }
+            }
+          } else {
+           /* Fluttertoast.showToast(msg: 'aaa',
+            toastLength: Toast.values[2500]);*/
+            fToast.showToast(
+                child: CustomToast(),
+                toastDuration: Duration(seconds: 2),
+                gravity: ToastGravity.BOTTOM);
+
             return NavigationDecision.prevent;
           }
-          else {
-            if(request.url.contains('.doc')||request.url.contains('.xls')){
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return FileLoadingDialog();
-                  });
-              File pdfFile = await _downloadFile(request.url, 'file.${Utils.getTypeFile(request.url)}');
-              Navigator.pop(context);
-              OpenFilex.open(pdfFile.path);
-              return NavigationDecision.prevent;
-            }
-            else if (request.url.contains('.pdf')) {
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return FileLoadingDialog();
-                  });
-              File pdfFile = await _downloadFile(request.url, 'file.${Utils.getTypeFile(request.url)}');
-              Navigator.pop(context);
-              Navigator.push(context,
-                  Utils.createRoute(PdfPage(path: pdfFile.path)));
-
-              return NavigationDecision.prevent;
-            }
-            else {
-              if (Platform.isAndroid) {
-                scrollStatus = ScrollStatus.forward;
-              }
-              return NavigationDecision.navigate;
-            }
-          }
-
         }, onPageStarted: (url) {
           print('onPageStarted');
           sl<BoolCubit>().changeValue(true);
           if (scrollStatus == ScrollStatus.forward) {
             prevPixels.add(
                 nestedScrollController.innerScrollController!.position.pixels);
-          } else if(scrollStatus == ScrollStatus.prev){
+          } else if (scrollStatus == ScrollStatus.prev) {
             oldScroll = prevPixels.last;
             prevPixels.removeLast();
-          }else{
-
-          }
+          } else {}
         }, onPageFinished: (url) async {
           print('onPageFinished');
           await _webViewController!.runJavaScript(Utils.scrollHeightJs);
@@ -124,13 +163,14 @@ class NestedWebviewController {
               nestedScrollController.innerScrollController!.position
                   .setPixels(0);
             }
-          } else if (scrollStatus == ScrollStatus.prev){
+          } else if (scrollStatus == ScrollStatus.prev) {
+            if (sl<InternetCubit>().state == false) {}
             //Timer(Duration(milliseconds: 100), () {
             nestedScrollController.innerScrollController!.position
                 .setPixels(oldScroll);
 
             //});
-          }else{
+          } else {
             sl<InternetCubit>().changeValue(true);
           }
           if (Platform.isIOS) {
@@ -138,27 +178,28 @@ class NestedWebviewController {
           }
 
           sl<BoolCubit>().changeValue(false);
-
         }, onProgress: (progress) {
           print('$progress');
         }, onWebResourceError: (error) {
-
-          if(error.errorType==WebResourceErrorType.hostLookup){
+          if (error.errorType == WebResourceErrorType.hostLookup) {
             print('ошибка интернета нетю: ${error.description}');
-            sl<InternetCubit>().changeValue(false);
-             internetListener = InternetConnection().onStatusChange.listen((InternetStatus status) {
+
+            /*  internetListener = InternetConnection()
+                .onStatusChange
+                .listen((InternetStatus status) async {
               switch (status) {
                 case InternetStatus.connected:
                   print('интернет подключен');
-                  scrollStatus=ScrollStatus.reload;
+                  scrollStatus = ScrollStatus.reload;
                   webViewController!.reload();
-                  internetListener.cancel();
+                  await internetListener.cancel();
                   break;
                 case InternetStatus.disconnected:
+                  sl<InternetCubit>().changeValue(false);
                   print('интернет отключен');
                   break;
               }
-            });
+            });*/
           }
         }),
       )
@@ -167,7 +208,11 @@ class NestedWebviewController {
         final String msg = message.message;
         final double? height = double.tryParse(msg);
         if (height != null) {
-          sl<ScrollHeightCubit>().updateScrollHeight(height);
+          if(isFirstRun&&internetStatus==false){
+            sl<ScrollHeightCubit>().updateScrollHeight(0);
+          }else{
+            sl<ScrollHeightCubit>().updateScrollHeight(height);
+          }
 
         }
       })
