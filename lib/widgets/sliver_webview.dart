@@ -25,10 +25,9 @@ class SliverWebview extends StatelessWidget {
       return Stack(
         children: [
           CustomScrollView(
-            physics: BouncingScrollPhysics(),
+            //physics: BouncingScrollPhysics(),
             slivers: [
-              SliverStack(
-                  children: [
+              SliverStack(children: [
                 SliverAppBar(
                   expandedHeight: 719,
                   collapsedHeight: 719,
@@ -38,24 +37,56 @@ class SliverWebview extends StatelessWidget {
                     child: Stack(
                       children: [
                         Image.asset(
-                          'assets/images/asdf3.png',
+                          'assets/images/fon1.png',
                           fit: BoxFit.cover,
                         ),
-                        Center(
-                          child:  Text(
-                                  'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          )
+                        BlocProvider(
+                          create: (context) => sl<InternetCubit>(),
+                          child: BlocBuilder<InternetCubit, bool>(
+                            builder: (context, internetStatetate) {
+                              if(internetStatetate){
+                                return SizedBox();
+                              }else{
+                                return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
 
+                                        'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ));
+                              }
+
+                            },
+                          ),
                         )
                       ],
                     ),
                   )),
                 ),
                 BlocProvider<InternetCubit>(
-                  create: (c) => sl<InternetCubit>(),
-                  child: BlocBuilder<InternetCubit, bool>(
+                    create: (c) => sl<InternetCubit>(),
+                    child: BlocBuilder<ScrollHeightCubit, double>(
+                        builder: (context, state) {
+                      return SliverToNestedScrollBoxAdapter(
+                        childExtent: state,
+                        onScrollOffsetChanged: (scrollOffset) {
+                          double y = scrollOffset;
+                          print('scroll: $y');
+                          if (Platform.isAndroid) {
+                            y *= View.of(context).devicePixelRatio;
+                          }
+                          nestedWebviewController.webViewController!
+                              .scrollTo(0, y.ceil());
+                        },
+                        child: WebViewWidget(
+                            controller:
+                                nestedWebviewController.webViewController!),
+                      );
+                    })
+                    /*BlocBuilder<InternetCubit, bool>(
                       builder: (context, internetState) {
                           if(internetState){
                             return  BlocBuilder<ScrollHeightCubit, double>(
@@ -81,8 +112,8 @@ class SliverWebview extends StatelessWidget {
                           }
 
 
-                  }),
-                )
+                  }),*/
+                    )
               ]),
 
               /* ValueListenableBuilder(

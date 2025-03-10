@@ -38,12 +38,12 @@ class NestedWebviewController {
 
   WebViewController? get webViewController => _webViewController;
 
-  //ValueNotifier<double> scrollHeightNotifier = ValueNotifier<double>(1);
+
   late NestedScrollController nestedScrollController = NestedScrollController();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
-  //late StreamSubscription<InternetStatus> internetListener;
+
   bool internetStatus = true;
   bool isFirstRun=true;
 
@@ -52,6 +52,7 @@ class NestedWebviewController {
   String prevUrl = '';
 
   FToast fToast = FToast();
+  late StreamSubscription<InternetStatus> internetListener;
 
   static var httpClient = new HttpClient();
 
@@ -66,7 +67,7 @@ class NestedWebviewController {
   }
 
   void checkInternet() {
-    StreamSubscription<InternetStatus> internetListener = InternetConnection()
+    internetListener = InternetConnection()
         .onStatusChange
         .listen((InternetStatus status) async {
       switch (status) {
@@ -74,8 +75,11 @@ class NestedWebviewController {
           print('интернет подключен');
 
           if(isFirstRun&&internetStatus==false){
+            sl<InternetCubit>().changeValue(true);
             scrollStatus = ScrollStatus.reload;
             webViewController!.reload();
+            isFirstRun=false;
+          }else{
             isFirstRun=false;
           }
           internetStatus = true;
@@ -83,6 +87,10 @@ class NestedWebviewController {
         case InternetStatus.disconnected:
           print('интернет отключен');
           internetStatus = false;
+          if(isFirstRun&&internetStatus==false){
+            sl<ScrollHeightCubit>().updateScrollHeight(0);
+            sl<InternetCubit>().changeValue(false);
+          }
           break;
       }
     });
@@ -164,14 +172,14 @@ class NestedWebviewController {
                   .setPixels(0);
             }
           } else if (scrollStatus == ScrollStatus.prev) {
-            if (sl<InternetCubit>().state == false) {}
             //Timer(Duration(milliseconds: 100), () {
             nestedScrollController.innerScrollController!.position
                 .setPixels(oldScroll);
 
             //});
+            //если обновить страницу
           } else {
-            sl<InternetCubit>().changeValue(true);
+
           }
           if (Platform.isIOS) {
             scrollStatus = ScrollStatus.forward;
@@ -183,23 +191,6 @@ class NestedWebviewController {
         }, onWebResourceError: (error) {
           if (error.errorType == WebResourceErrorType.hostLookup) {
             print('ошибка интернета нетю: ${error.description}');
-
-            /*  internetListener = InternetConnection()
-                .onStatusChange
-                .listen((InternetStatus status) async {
-              switch (status) {
-                case InternetStatus.connected:
-                  print('интернет подключен');
-                  scrollStatus = ScrollStatus.reload;
-                  webViewController!.reload();
-                  await internetListener.cancel();
-                  break;
-                case InternetStatus.disconnected:
-                  sl<InternetCubit>().changeValue(false);
-                  print('интернет отключен');
-                  break;
-              }
-            });*/
           }
         }),
       )
@@ -209,7 +200,8 @@ class NestedWebviewController {
         final double? height = double.tryParse(msg);
         if (height != null) {
           if(isFirstRun&&internetStatus==false){
-            sl<ScrollHeightCubit>().updateScrollHeight(0);
+            //sl<ScrollHeightCubit>().updateScrollHeight(0);
+            //sl<InternetCubit>().changeValue(false);
           }else{
             sl<ScrollHeightCubit>().updateScrollHeight(height);
           }

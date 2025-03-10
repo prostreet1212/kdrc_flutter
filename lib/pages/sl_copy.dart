@@ -30,6 +30,13 @@ class _SlWebCopyState extends State<SlWebCopy> {
         initialUrl: 'https://kdrc.ru/novosti', context: context);
     nestedWebviewController.init();
     nestedWebviewController.checkInternet();
+
+  }
+
+  @override
+  void dispose() {
+    nestedWebviewController.internetListener.cancel();
+    super.dispose();
   }
 
   @override
