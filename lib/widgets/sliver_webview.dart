@@ -23,21 +23,29 @@ class SliverWebview extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       nestedWebviewController.nestedScrollController.enableScroll(context);
       return Stack(
+
         children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.green,),
           CustomScrollView(
-            //physics: BouncingScrollPhysics(),
+            physics: BouncingScrollPhysics(),
             slivers: [
-              SliverStack(children: [
+              SliverStack(
+                  children: [
                 SliverAppBar(
                   expandedHeight: 719,
                   collapsedHeight: 719,
+                  pinned: true,
                   flexibleSpace: FlexibleSpaceBar(
                       background: Container(
                     color: Colors.white,
                     child: Stack(
                       children: [
                         Image.asset(
-                          'assets/images/fon1.png',
+                          'assets/images/333.png',
+                         opacity: const AlwaysStoppedAnimation(0.7),
                           fit: BoxFit.cover,
                         ),
                         BlocProvider(
@@ -47,14 +55,14 @@ class SliverWebview extends StatelessWidget {
                               if(internetStatetate){
                                 return SizedBox();
                               }else{
-                                return Center(
+                                return Align(
+                                  alignment: Alignment(0.5, 0.15),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      padding: const EdgeInsets.symmetric(horizontal: 40),
                                       child: Text(
-
                                         'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 16),
+                                        style: TextStyle(fontSize: 16,fontStyle: FontStyle.italic,color: Colors.grey[700]),
                                       ),
                                     ));
                               }
@@ -144,56 +152,4 @@ class SliverWebview extends StatelessWidget {
   }
 }
 
-class Background extends StatefulWidget {
-  const Background({
-    super.key,
-    required this.controller,
-  });
 
-  final ScrollController controller;
-
-  @override
-  State<Background> createState() => _BackgroundState();
-}
-
-class _BackgroundState extends State<Background> {
-  bool isReady = false;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        isReady = true;
-      });
-    });
-    widget.controller.addListener(_listener);
-    super.initState();
-  }
-
-  void _listener() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_listener);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Image(
-      image: const NetworkImage(
-          'https://background-tiles.com/overview/mixed-colors/patterns/large/1148.png'),
-      repeat: ImageRepeat.repeatY,
-      alignment: Alignment(
-        0,
-        !isReady
-            ? 0
-            : -widget.controller.offset /
-                MediaQuery.of(context).size.height *
-                3,
-      ),
-    );
-  }
-}
