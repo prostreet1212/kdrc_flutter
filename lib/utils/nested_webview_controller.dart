@@ -19,6 +19,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../cubits/background_cubit.dart';
 import '../cubits/internet_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
@@ -38,14 +39,13 @@ class NestedWebviewController {
 
   WebViewController? get webViewController => _webViewController;
 
-
   late NestedScrollController nestedScrollController = NestedScrollController();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
-
   bool internetStatus = true;
-  bool isFirstRun=true;
+  bool isFirstRun = true;
+  bool isBackground = true;
 
   //double prevPixel=0;
   List<double> prevPixels = [];
@@ -73,21 +73,20 @@ class NestedWebviewController {
       switch (status) {
         case InternetStatus.connected:
           print('интернет подключен');
-
-          if(isFirstRun&&internetStatus==false){
+          if (isFirstRun && internetStatus == false) {
             sl<InternetCubit>().changeValue(true);
             scrollStatus = ScrollStatus.reload;
             webViewController!.reload();
-            isFirstRun=false;
-          }else{
-            isFirstRun=false;
+            isFirstRun = false;
+          } else {
+            isFirstRun = false;
           }
           internetStatus = true;
           break;
         case InternetStatus.disconnected:
           print('интернет отключен');
           internetStatus = false;
-          if(isFirstRun&&internetStatus==false){
+          if (isFirstRun && internetStatus == false) {
             sl<ScrollHeightCubit>().updateScrollHeight(0);
             sl<InternetCubit>().changeValue(false);
           }
@@ -144,7 +143,7 @@ class NestedWebviewController {
               }
             }
           } else {
-           /* Fluttertoast.showToast(msg: 'aaa',
+            /* Fluttertoast.showToast(msg: 'aaa',
             toastLength: Toast.values[2500]);*/
             fToast.showToast(
                 child: CustomToast(),
@@ -164,7 +163,7 @@ class NestedWebviewController {
             prevPixels.removeLast();
           } else {}
         }, onPageFinished: (url) async {
-          print('onPageFinished');
+          print('onPageFinished + $isFirstRun');
           await _webViewController!.runJavaScript(Utils.scrollHeightJs);
           if (scrollStatus == ScrollStatus.forward) {
             if (nestedScrollController.innerScrollController!.offset > 0) {
@@ -178,9 +177,7 @@ class NestedWebviewController {
 
             //});
             //если обновить страницу
-          } else {
-
-          }
+          } else {}
           if (Platform.isIOS) {
             scrollStatus = ScrollStatus.forward;
           }
@@ -199,13 +196,23 @@ class NestedWebviewController {
         final String msg = message.message;
         final double? height = double.tryParse(msg);
         if (height != null) {
-          if(isFirstRun&&internetStatus==false){
+          if (isFirstRun && internetStatus == false) {
             //sl<ScrollHeightCubit>().updateScrollHeight(0);
             //sl<InternetCubit>().changeValue(false);
-          }else{
+          } else {
             sl<ScrollHeightCubit>().updateScrollHeight(height);
-          }
+//скрыть фон при первой загрузке
+            if (isBackground) {
+              isBackground = false;
+            } else {
+              if (isFirstRun) {
+                sl<BackgroundCubit>().changeValue(false);
+                print('aaa');
+              }
+            }
 
+            print('onMessageReceived+ $isFirstRun');
+          }
         }
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

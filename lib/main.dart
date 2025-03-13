@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
+import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:kdrc_flutter/pages/test/pdf_page.dart';
 import 'package:kdrc_flutter/pages/test/sl.dart';
@@ -19,6 +20,7 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   await di.init();
+
   runApp(const MyApp());
 }
 

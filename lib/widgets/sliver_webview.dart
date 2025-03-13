@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/internet_cubit.dart';
 import 'package:kdrc_flutter/main.dart';
@@ -23,57 +25,72 @@ class SliverWebview extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       nestedWebviewController.nestedScrollController.enableScroll(context);
       return Stack(
-
         children: [
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.green,),
+            color: Colors.green,
+          ),
           CustomScrollView(
             physics: BouncingScrollPhysics(),
             slivers: [
-              SliverStack(
-                  children: [
-                SliverAppBar(
-                  expandedHeight: 719,
-                  collapsedHeight: 719,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                    color: Colors.white,
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          'assets/images/333.png',
-                         opacity: const AlwaysStoppedAnimation(0.7),
-                          fit: BoxFit.cover,
-                        ),
-                        BlocProvider(
-                          create: (context) => sl<InternetCubit>(),
-                          child: BlocBuilder<InternetCubit, bool>(
-                            builder: (context, internetStatetate) {
-                              if(internetStatetate){
-                                return SizedBox();
-                              }else{
-                                return Align(
-                                  alignment: Alignment(0.5, 0.15),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                                      child: Text(
-                                        'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 16,fontStyle: FontStyle.italic,color: Colors.grey[700]),
+              SliverStack(children: [
+                BlocProvider(
+                  create: (context) => sl<BackgroundCubit>(),
+                  child: BlocBuilder<BackgroundCubit, bool>(
+                      builder: (context, state) {
+                        if(state){
+                          return SliverAppBar(
+                            expandedHeight: 719,
+                            collapsedHeight: 719,
+                            pinned: true,
+                            flexibleSpace: FlexibleSpaceBar(
+                                background: Container(
+                                  color: Colors.white,
+                                  child: Stack(
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/333.png',
+                                        opacity: const AlwaysStoppedAnimation(0.7),
+                                        fit: BoxFit.cover,
                                       ),
-                                    ));
-                              }
+                                      BlocProvider(
+                                        create: (context) => sl<InternetCubit>(),
+                                        child: BlocBuilder<InternetCubit, bool>(
+                                          builder: (context, internetStatetate) {
+                                            if (internetStatetate) {
+                                              return SizedBox();
+                                            } else {
+                                              return Align(
+                                                  alignment: Alignment(0.5, 0.15),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 40),
+                                                    child: Text(
+                                                      'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontStyle: FontStyle.italic,
+                                                          color: Colors.grey[700]),
+                                                    ),
+                                                  ));
+                                            }
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )),
+                          );
+                        }else{
 
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
+                          return SliverFillRemaining();
+                        }
+
+                  }),
                 ),
+
                 BlocProvider<InternetCubit>(
                     create: (c) => sl<InternetCubit>(),
                     child: BlocBuilder<ScrollHeightCubit, double>(
@@ -151,5 +168,3 @@ class SliverWebview extends StatelessWidget {
     ;
   }
 }
-
-

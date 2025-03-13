@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/internet_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
@@ -9,6 +10,7 @@ import 'package:kdrc_flutter/widgets/custom_toast.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
 import '../utils/utils.dart';
@@ -30,6 +32,8 @@ class _SlWebCopyState extends State<SlWebCopy> {
         initialUrl: 'https://kdrc.ru/novosti', context: context);
     nestedWebviewController.init();
     nestedWebviewController.checkInternet();
+    bool a=sl<PhoneCubit>().state;
+    print('звонок $a');
 
   }
 
@@ -82,6 +86,8 @@ class _SlWebCopyState extends State<SlWebCopy> {
                       onPressed: () async {
                         //Utils.showCallDialog(context);
                         //sl<InternetCubit>().changeValue(!(sl<InternetCubit>().state));
+                       // sl<BackgroundCubit>().changeValue(!(sl<BackgroundCubit>().state));
+
                         if (await canLaunchUrl(Uri.parse('tel:+79210779641'))) {
                           launchUrl(Uri.parse('tel:+79210779641'));
                           print('звонок возможен');

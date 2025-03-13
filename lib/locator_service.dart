@@ -1,9 +1,11 @@
 
 
 import 'package:get_it/get_it.dart';
+import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/internet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
+import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +19,8 @@ Future<void> init()async{
   sl.registerLazySingleton(()=>SettingsCubit());
   sl.registerLazySingleton(()=>BoolCubit());
   sl.registerLazySingleton(()=>InternetCubit());
+  sl.registerLazySingleton(()=>BackgroundCubit());
+  sl.registerLazySingleton(()=>PhoneCubit());
 
   //external
   SharedPreferences settingPrefs = await SharedPreferences.getInstance();
