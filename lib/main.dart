@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,8 +13,11 @@ import 'package:kdrc_flutter/pages/sl_copy.dart';
 import 'package:kdrc_flutter/pages/test/web_page.dart';
 import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 import 'package:kdrc_flutter/pages/welcome_page.dart';
+import 'package:kdrc_flutter/utils/notification_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kdrc_flutter/locator_service.dart' as di;
+
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +25,13 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   await di.init();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await NotificationService.instance.initialize();
+  NotificationService.instance.getDeviceToken();
+
 
   runApp(const MyApp());
 }
@@ -29,21 +41,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      builder: FToastBuilder(),
-      debugShowCheckedModeBanner: false,
-      title: 'Котласский реабилитационный центр',
-      scrollBehavior: ScrollBehavior(),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider<PhoneCubit>(
+      create: (context)=> di.sl<PhoneCubit>()..checkPhone(),
+      child: MaterialApp(
+        builder: FToastBuilder(),
+        debugShowCheckedModeBanner: false,
+        title: 'Котласский реабилитационный центр',
+        scrollBehavior: ScrollBehavior(),
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        //home:PdfPage()
+        home: WelcomePage(),
+        /* BlocProvider<ScrollHeightCubit>(
+          create: (context) => scrollHeightCubit,
+          child: SlWebCopy(),
+        ),*/
       ),
-      //home:PdfPage()
-      home: WelcomePage(),
-      /* BlocProvider<ScrollHeightCubit>(
-        create: (context) => scrollHeightCubit,
-        child: SlWebCopy(),
-      ),*/
     );
   }
 }
+
+
+
+

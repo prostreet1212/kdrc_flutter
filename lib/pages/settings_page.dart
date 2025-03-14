@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 
 import '../locator_service.dart';
@@ -38,29 +40,42 @@ class _SettingsPageState extends State<SettingsPage> {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ListTile(
-                contentPadding:
-                    EdgeInsets.only( left: 16, right: 6),
-                //leading: SizedBox(width: 50,),
-                title: Text('Кнопка "Звонок"'),
-                subtitle: Text(
-                  'Отображать кнопку звонка на экране',
-                  style: TextStyle(color: Colors.grey[500]),
-                ),
-                trailing: Checkbox(
-                    activeColor: Colors.teal,
-                    //value: settingPrefs.getBool('isCalling')??true,
-                    value: sl<SettingsCubit>().state,
-                    onChanged: (value) {
-                      setState(() {
-                        sl<SettingsCubit>().changeCalling(value!);
-                      });
-                    }),
-              ),
-              Container(
-                height: 1,
-                color: Colors.grey[400],
-              ),
+              BlocBuilder<PhoneCubit,bool>(
+                  builder: (context,phoneState){
+                    if(phoneState){
+                    return  Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            contentPadding:
+                            EdgeInsets.only( left: 16, right: 6),
+                            //leading: SizedBox(width: 50,),
+                            title: Text('Кнопка "Звонок"'),
+                            subtitle: Text(
+                              'Отображать кнопку звонка на экране',
+                              style: TextStyle(color: Colors.grey[500]),
+                            ),
+                            trailing: Checkbox(
+                                activeColor: Colors.teal,
+                                //value: settingPrefs.getBool('isCalling')??true,
+                                value: sl<SettingsCubit>().state,
+                                onChanged: (value) {
+                                  setState(() {
+                                    sl<SettingsCubit>().changeCalling(value!);
+                                  });
+                                }),
+                          ),
+                          Container(
+                            height: 1,
+                            color: Colors.grey[400],
+                          ),
+                        ],
+                      );
+                    }else{
+                      return SizedBox();
+                    }
+                  }),
+
               ListTile(
                 contentPadding:
                 EdgeInsets.only( left: 16, right: 6),

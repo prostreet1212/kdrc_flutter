@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080285075405",
+    "project_id": "kdrc-flutter",
+    "storage_bucket": "kdrc-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080285075405:android:4a0e305c6e0bd6410e9684",
+        "android_client_info": {
+          "package_name": "com.prostreet1212.kdrc_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHGpFCoq-Jm33Ykv0yNcJ25GJkzL3G8Fw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

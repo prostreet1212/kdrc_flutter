@@ -8,6 +8,7 @@ import 'package:kdrc_flutter/pages/sl_copy.dart';
 import 'package:kdrc_flutter/pages/test/web_page.dart';
 import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 
+import '../cubits/phone_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../utils/utils.dart';
@@ -61,6 +62,7 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
     runRoutePage();
   }
+
 
   @override
   Widget build(BuildContext context) {

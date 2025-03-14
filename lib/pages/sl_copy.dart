@@ -32,8 +32,7 @@ class _SlWebCopyState extends State<SlWebCopy> {
         initialUrl: 'https://kdrc.ru/novosti', context: context);
     nestedWebviewController.init();
     nestedWebviewController.checkInternet();
-    bool a=sl<PhoneCubit>().state;
-    print('звонок $a');
+
 
   }
 
@@ -67,38 +66,41 @@ class _SlWebCopyState extends State<SlWebCopy> {
                 ),
               ];
             },
-            body:
-                SliverWebview(nestedWebviewController: nestedWebviewController),
+            body: SliverWebview(nestedWebviewController: nestedWebviewController),
           ),
-          floatingActionButton: BlocProvider<SettingsCubit>(
-              create: (c) => sl<SettingsCubit>()..getCalling(),
-              child:
-                  BlocBuilder<SettingsCubit, bool>(builder: (context, state) {
-                if (state) {
-                  return FloatingActionButton(
-                      backgroundColor: Colors.grey[50],
-                      shape: const CircleBorder(),
-                      child: Icon(
-                        Icons.call,
-                        color: Color.fromARGB(255, 247, 176, 116),
-                        size: 36,
-                      ),
-                      onPressed: () async {
-                        //Utils.showCallDialog(context);
-                        //sl<InternetCubit>().changeValue(!(sl<InternetCubit>().state));
-                       // sl<BackgroundCubit>().changeValue(!(sl<BackgroundCubit>().state));
+          floatingActionButton: BlocBuilder<PhoneCubit,bool>(
+            builder: (context, phoneState) {
+              if(phoneState){
+                return   BlocProvider<SettingsCubit>(
+                    create: (c) => sl<SettingsCubit>()..getCalling(),
+                    child: BlocBuilder<SettingsCubit, bool>(builder: (context, state) {
+                      if (state) {
+                        return FloatingActionButton(
+                            backgroundColor: Colors.grey[50],
+                            shape: const CircleBorder(),
+                            child: Icon(
+                              Icons.call,
+                              color: Color.fromARGB(255, 247, 176, 116),
+                              size: 36,
+                            ),
+                            onPressed: () async {
+                              //Utils.showCallDialog(context);
+                              //sl<InternetCubit>().changeValue(!(sl<InternetCubit>().state));
+                              // sl<BackgroundCubit>().changeValue(!(sl<BackgroundCubit>().state));
+                            });
+                      } else {
+                        return SizedBox();
+                      }
+                    }));
+              }else{
+                return SizedBox();
+              }
+            },
 
-                        if (await canLaunchUrl(Uri.parse('tel:+79210779641'))) {
-                          launchUrl(Uri.parse('tel:+79210779641'));
-                          print('звонок возможен');
-                        }else{
-                          print('звонок невозможен');
-                        }
-                      });
-                } else {
-                  return SizedBox();
-                }
-              })),
+          ),
+
+
+
         ),
       ),
     );

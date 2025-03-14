@@ -1,9 +1,14 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
+
+
 
 android {
     namespace = "com.prostreet1212.kdrc_flutter"
@@ -11,6 +16,9 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        //test
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -38,6 +46,9 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
+    }
+    dependencies{
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     }
 }
 

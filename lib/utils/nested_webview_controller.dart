@@ -46,6 +46,7 @@ class NestedWebviewController {
   bool internetStatus = true;
   bool isFirstRun = true;
   bool isBackground = true;
+  bool isBackgroundNoInternet = true;
 
   //double prevPixel=0;
   List<double> prevPixels = [];
@@ -205,8 +206,9 @@ class NestedWebviewController {
             if (isBackground) {
               isBackground = false;
             } else {
-              if (isFirstRun) {
+              if (isFirstRun||isBackgroundNoInternet) {
                 sl<BackgroundCubit>().changeValue(false);
+                isBackgroundNoInternet=false;
                 print('aaa');
               }
             }
