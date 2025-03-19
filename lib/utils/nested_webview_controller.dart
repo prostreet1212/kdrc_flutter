@@ -20,7 +20,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../cubits/background_cubit.dart';
-import '../cubits/internet_cubit.dart';
+import '../cubits/error_text_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
@@ -52,7 +52,7 @@ class NestedWebviewController {
   List<double> prevPixels = [];
   String prevUrl = '';
 
-  FToast fToast = FToast();
+
   late StreamSubscription<InternetStatus> internetListener;
 
   static var httpClient = new HttpClient();
@@ -67,34 +67,34 @@ class NestedWebviewController {
     return file;
   }
 
-  void checkInternet() {
-    internetListener = InternetConnection()
-        .onStatusChange
-        .listen((InternetStatus status) async {
-      switch (status) {
-        case InternetStatus.connected:
-          print('интернет подключен');
-          if (isFirstRun && internetStatus == false) {
-            sl<InternetCubit>().changeValue(true);
-            scrollStatus = ScrollStatus.reload;
-            webViewController!.reload();
-            isFirstRun = false;
-          } else {
-            isFirstRun = false;
-          }
-          internetStatus = true;
-          break;
-        case InternetStatus.disconnected:
-          print('интернет отключен');
-          internetStatus = false;
-          if (isFirstRun && internetStatus == false) {
-            sl<ScrollHeightCubit>().updateScrollHeight(0);
-            sl<InternetCubit>().changeValue(false);
-          }
-          break;
-      }
-    });
-  }
+  // void checkInternet() {
+  //   internetListener = InternetConnection()
+  //       .onStatusChange
+  //       .listen((InternetStatus status) async {
+  //     switch (status) {
+  //       case InternetStatus.connected:
+  //         //print('интернет подключен');
+  //         if (isFirstRun && internetStatus == false) {
+  //           sl<InternetCubit>().changeValue(true);
+  //           scrollStatus = ScrollStatus.reload;
+  //           webViewController!.reload();
+  //           isFirstRun = false;
+  //         } else {
+  //           isFirstRun = false;
+  //         }
+  //         internetStatus = true;
+  //         break;
+  //       case InternetStatus.disconnected:
+  //         //print('интернет отключен');
+  //         internetStatus = false;
+  //         if (isFirstRun && internetStatus == false) {
+  //           sl<ScrollHeightCubit>().updateScrollHeight(0);
+  //           sl<InternetCubit>().changeValue(false);
+  //         }
+  //         break;
+  //     }
+  //   });
+  // }
 
   void init() {
     fToast.init(context);
@@ -102,7 +102,6 @@ class NestedWebviewController {
       ..setNavigationDelegate(
         NavigationDelegate(onNavigationRequest: (request) async {
           print('onPageSRequest');
-          //bool internetEnabled = await InternetConnection().hasInternetAccess;
           if (internetStatus) {
             if (!request.url.contains('kdrc.ru') ||
                 request.url.contains('mailto:')) {
@@ -144,8 +143,6 @@ class NestedWebviewController {
               }
             }
           } else {
-            /* Fluttertoast.showToast(msg: 'aaa',
-            toastLength: Toast.values[2500]);*/
             fToast.showToast(
                 child: CustomToast(),
                 toastDuration: Duration(seconds: 2),

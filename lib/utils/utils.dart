@@ -3,7 +3,16 @@ import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
 import 'package:kdrc_flutter/widgets/permission_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
+
 class Utils {
+
+  // Загрузка изображения из assets
+ static Future<Uint8List> loadImageFromAssets(String path) async {
+    ByteData data = await rootBundle.load(path);
+    return data.buffer.asUint8List();
+  }
 
 
   static void showCallDialog(BuildContext context) {

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
-import 'package:kdrc_flutter/cubits/internet_cubit.dart';
+import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
+import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/custom_toast.dart';
@@ -14,7 +15,7 @@ import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
 import '../utils/utils.dart';
-
+late NestedWebviewController nestedWebviewController;
 class SlWebCopy extends StatefulWidget {
   const SlWebCopy({super.key});
 
@@ -23,17 +24,16 @@ class SlWebCopy extends StatefulWidget {
 }
 
 class _SlWebCopyState extends State<SlWebCopy> {
-  late NestedWebviewController nestedWebviewController;
+
 
   @override
   void initState() {
     super.initState();
+    ;
     nestedWebviewController = NestedWebviewController(
-        initialUrl: 'https://kdrc.ru/novosti', context: context);
+        initialUrl: sl<StartCubit>().state.url, context: context);
     nestedWebviewController.init();
-    nestedWebviewController.checkInternet();
-
-
+    //nestedWebviewController.checkInternet();
   }
 
   @override

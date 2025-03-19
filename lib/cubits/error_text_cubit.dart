@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class InternetCubit extends Cubit<bool> {
-  InternetCubit() : super(true);
+class ErrorTextCubit extends Cubit<bool> {
+  ErrorTextCubit() : super(true);
 
   void changeValue(bool value) {
     emit(value);

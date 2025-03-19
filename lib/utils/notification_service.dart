@@ -1,25 +1,36 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
+import 'package:kdrc_flutter/pages/settings_page.dart';
+import 'package:kdrc_flutter/pages/sl_copy.dart';
+import 'package:kdrc_flutter/utils/utils.dart';
+
+import '../locator_service.dart';
+import '../main.dart';
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   NotificationService._privateConstructor();
 
   static final NotificationService _instance =
-  NotificationService._privateConstructor();
+      NotificationService._privateConstructor();
 
   static NotificationService get instance => _instance;
 
   // Callback for handling foreground message updates (optional)
   Function(RemoteMessage)? onForegroundMessage;
+
+  late RemoteMessage m;
 
   Future<void> initialize() async {
     // Request permissions for iOS
@@ -33,31 +44,35 @@ class NotificationService {
 
     // Configure Local Notification settings
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('bell');
 
     const DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
+        DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
     const InitializationSettings initializationSettings =
-    InitializationSettings(
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
-
-
 
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
     );
 
+
+    /* _flutterLocalNotificationsPlugin.initialize(
+        initializationSettings,
+        onDidReceiveBackgroundNotificationResponse: (n){});*/
+
     // Listen for foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       log('firebase :: Received a foreground message: ${message.messageId}');
+      m = message;
       _showNotification(message);
 
       // If there's a foreground message handler, call it
@@ -67,9 +82,25 @@ class NotificationService {
     });
 
     // Handle when the app is opened from a notification
+    //Когда приложение свернуто
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log('firebase :: Notification clicked! Message: ${message.notification?.title}');
-      _handleNotificationClick(message);
+      //_handleNotificationClick(message);
+      //open(message);
+      nestedWebviewController.webViewController
+          ?.loadRequest(Uri.parse(message.data['url']));
+    });
+
+//Когда приложение закрыто
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      log('firebase :: Notification2 clicked! Message: ${message?.notification?.title}');
+      if (message != null) {
+        // Обработка уведомления, когда приложение запущено из закрытого состояния
+     /*   Future.delayed(Duration(seconds: 3),(){
+          nestedWebviewController.webViewController
+              ?.loadRequest(Uri.parse(message.data['url']));
+        });*/
+      }
     });
 
     // Handle background messages
@@ -77,14 +108,19 @@ class NotificationService {
 
     subscribeToTopic();
 
+    RemoteMessage? initialMessage = await _firebaseMessaging.getInitialMessage();
+    if (initialMessage != null) {
+      sl<StartCubit>().changeValue(initialMessage.data['url']);
+    } /*else {
+      sl<StartCubit>().changeValue(false);
+    }*/
 
   }
 
-  Future<void> subscribeToTopic() async{
+  Future<void> subscribeToTopic() async {
     await _firebaseMessaging.subscribeToTopic('all');
     print('subscribeToTopic');
   }
-
 
   // Show local notification
   Future<void> _showNotification(RemoteMessage message) async {
@@ -92,37 +128,27 @@ class NotificationService {
     ByteArrayAndroidBitmap? largeIcon;
 // converting image into base65 to show in notification bar
     BigPictureStyleInformation? bigPictureStyleInformation;
-    if (imgUrl != null) {
       try {
-        Dio dio = Dio();
-        // Fetch image bytes using Dio
-        Response<List<int>> response = await dio.get<List<int>>(
-          imgUrl,
-          options: Options(responseType: ResponseType.bytes),
-        );
-        // Convert image bytes to base64 string
-        Uint8List imageBytes = Uint8List.fromList(response.data!);
-        String base64Image = base64Encode(imageBytes);
-        largeIcon = ByteArrayAndroidBitmap.fromBase64String(base64Image);
         // Create BigPictureStyleInformation for displaying the image
         bigPictureStyleInformation = BigPictureStyleInformation(
-          ByteArrayAndroidBitmap.fromBase64String(base64Image),
-          contentTitle: message.notification?.title,
-          summaryText: message.notification?.body,
+          ByteArrayAndroidBitmap.fromBase64String('base64Image'),
+         // contentTitle: message.notification?.title,
+         // summaryText: message.notification?.body,
         );
       } catch (e) {
         print('Error fetching image: $e');
       }
-    }
+    //}
 
     AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
+        AndroidNotificationDetails(
       'high_importance_channel',
       'High Importance Notifications',
       importance: Importance.high,
       priority: Priority.high,
+       //icon: 'bell',
       // largeIcon: largeIcon, // This sets the small image on the right side ofnotification title
-      styleInformation: bigPictureStyleInformation,
+      styleInformation: null,
     );
 
     NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -135,7 +161,11 @@ class NotificationService {
       message.notification?.title ?? 'No Title',
       message.notification?.body ?? 'No Body',
       platformChannelSpecifics,
+      payload: message.data['url'],
     );
+
+    print(
+        'push-уведомление: ${message.notification!.title}, ${message.notification!.body}/${message.data}');
   }
 
   // Handle notification click action
@@ -145,11 +175,14 @@ class NotificationService {
   }
 
   // Called when a notification is tapped (foreground or background)
+  //Когда приложение открыто
   Future<void> _onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
     final String? payload = notificationResponse.payload;
     if (payload != null) {
       log('firebase :: Notification payload: $payload');
+      nestedWebviewController.webViewController
+          ?.loadRequest(Uri.parse(payload));
       // Navigate or perform an action based on the payload
     }
   }
@@ -166,7 +199,4 @@ class NotificationService {
     print("Device Token: $token");
     return token;
   }
-
-  
-
 }

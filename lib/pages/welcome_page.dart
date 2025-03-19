@@ -48,10 +48,7 @@ class _WelcomePageState extends State<WelcomePage> {
       Navigator.pushReplacement(
         context,
         Utils.createRoute(
-          BlocProvider<ScrollHeightCubit>(
-            create: (context) => sl<ScrollHeightCubit>(),
-            child: SlWebCopy(),
-          ),
+        SlWebCopy(),
         ),
       );
     });
