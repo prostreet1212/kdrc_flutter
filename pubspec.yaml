@@ -52,6 +52,7 @@ dependencies:
   equatable: ^2.0.7
   flutter_sticky_header: ^0.7.0
   intrinsic_dimension: ^0.3.1
+  intrinsic_size_builder: ^2.0.2
 
   flutter_inappwebview: ^6.1.5
   nested_scroll_view_plus: ^3.0.0

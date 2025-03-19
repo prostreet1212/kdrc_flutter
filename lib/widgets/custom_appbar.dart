@@ -1,9 +1,8 @@
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intrinsic_dimension/intrinsic_dimension.dart';
+import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
@@ -19,6 +18,7 @@ class CustomAppBar extends StatefulWidget {
   CustomAppBar({super.key, required this.nestedWebviewController});
 
   NestedWebviewController nestedWebviewController;
+
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -50,14 +50,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
             handle: SliverOverlapAbsorberHandle(),
             //handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             sliver: SliverSafeArea(
-              sliver: ExtendedSliverAppbar(
-                toolbarHeight: 60,
-                background: Image.asset('assets/images/titleimage.png',
-                fit: BoxFit.fitHeight,
-                height: 220,
-                ),
-              )
-              /*SliverAppBar(
+              sliver:
+              SliverAppBar(
                   actions: [
                     state
                         ? Visibility(
@@ -100,7 +94,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   backgroundColor: Color.fromARGB(255, 247, 172, 119),
                   foregroundColor: Colors.red,
                   surfaceTintColor: Colors.yellow,
-                  expandedHeight: expHeight,
+                  //expandedHeight: 216.7,
+                  //expandedHeight: MediaQuery.of(context).size.width*0.551820728,
+                  expandedHeight: MediaQuery.of(context).size.width*0.552125,
+                  //expandedHeight: 441.7,
+                  floating: true,
                   collapsedHeight: 56,
                   pinned: true,
                   flexibleSpace: Stack(
@@ -108,33 +106,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       FlexibleSpaceBar(
                         titlePadding: EdgeInsets.only(right: 0),
                         collapseMode: CollapseMode.pin,
-                        background: Container(
-                          width: double.infinity,
-                          height: double.infinity,
+                        background:
+                         Container(
                           color: Colors.white,
                           child: Image.asset('assets/images/titleimage.png',
-                              frameBuilder: (context, child, frame,
-                                  wasSynchronouslyLoaded) {
-                            if (frame == null) {
-                              // Изображение еще загружается
-                              return Center(
-                                child:
-                                    CircularProgressIndicator(), // Индикатор загрузки
-                              );
-                            } else {
-                              // Изображение загружено, узнаем его размеры
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                final imageSize =
-                                    (context.findRenderObject() as RenderBox)
-                                        .size;
-                                setState(() {
-                                  expHeight =
-                                      imageSize.height; // Обновляем высоту
-                                });
-                              });
-                              return child;
-                            }
-                          }
                               //fit: BoxFit.cover,
                               ),
                         ),
@@ -202,7 +177,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                               ),
                             ),
                     ],
-                  )),*/
+                  )),
             ),
           );
         }));

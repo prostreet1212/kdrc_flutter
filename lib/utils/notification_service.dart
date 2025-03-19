@@ -194,9 +194,9 @@ class NotificationService {
   }
 
   // Get device token (you can send this to your server for targeted notifications)
-  Future<String?> getDeviceToken() async {
+ /* Future<String?> getDeviceToken() async {
     String? token = await _firebaseMessaging.getToken();
     print("Device Token: $token");
     return token;
-  }
+  }*/
 }

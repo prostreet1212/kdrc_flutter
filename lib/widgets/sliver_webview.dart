@@ -58,25 +58,36 @@ class SliverWebview extends StatelessWidget {
               CustomScrollView(
                 physics: BouncingScrollPhysics(),
                 slivers: [
-                  SliverStack(children: [
+
+                  SliverStack(
+                    positionedAlignment: Alignment.topLeft,
+                      children: [
                     BlocProvider(
                       create: (context) => sl<BackgroundCubit>(),
                       child: BlocBuilder<BackgroundCubit, bool>(
                           builder: (context, state) {
                             if (state) {
                               return SliverAppBar(
-                                expandedHeight: 719,
-                                collapsedHeight: 719,
+                                expandedHeight: MediaQuery.of(context).size.width*1.83091418385536,
+                                collapsedHeight: MediaQuery.of(context).size.width*1.83091418385536,
+                                //expandedHeight: 719,
+                                //collapsedHeight: 719,
                                 pinned: true,
+                                floating: true,
                                 flexibleSpace: FlexibleSpaceBar(
+                                    collapseMode: CollapseMode.pin,
                                     background: Container(
-                                      color: Colors.white,
+                                      width: MediaQuery.of(context).size.width,
+                                      color: Colors.green,
                                       child: Stack(
+                                        //fit: StackFit.expand,
                                         children: [
                                           Image.asset(
                                             'assets/images/333.png',
+                                            //fit: BoxFit.cover,
                                             opacity: const AlwaysStoppedAnimation(0.7),
-                                            fit: BoxFit.cover,
+                                            width: 300,
+                                            //fit: BoxFit.cover,
                                           ),
                                           BlocProvider(
                                             create: (context) => sl<ErrorTextCubit>(),

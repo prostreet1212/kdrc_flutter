@@ -38,7 +38,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService.instance.initialize();
-  NotificationService.instance.getDeviceToken();
+ // NotificationService.instance.getDeviceToken();
 
   runApp(const MyApp());
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
@@ -63,6 +64,7 @@ class _SlWebCopyState extends State<SlWebCopy> {
               return [
                 CustomAppBar(
                   nestedWebviewController: nestedWebviewController,
+
                 ),
               ];
             },
