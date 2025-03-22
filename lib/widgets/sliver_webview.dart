@@ -67,7 +67,14 @@ class SliverWebview extends StatelessWidget {
                       child: BlocBuilder<BackgroundCubit, bool>(
                           builder: (context, state) {
                             if (state) {
-                              return SliverAppBar(
+                              return SliverToBoxAdapter(
+                                child: Image.asset(
+                                  'assets/images/555.png', // Укажи свой путь к изображению
+                                  width: double.infinity, // Занимает всю ширину экрана
+                                  //fit: BoxFit.cover, // Растягивает по ширине без масштабирования при прокрутке
+                                ),
+                              );
+                              /*SliverAppBar(
                                 expandedHeight: MediaQuery.of(context).size.width*1.83091418385536,
                                 collapsedHeight: MediaQuery.of(context).size.width*1.83091418385536,
                                 //expandedHeight: 719,
@@ -83,10 +90,10 @@ class SliverWebview extends StatelessWidget {
                                         //fit: StackFit.expand,
                                         children: [
                                           Image.asset(
-                                            'assets/images/333.png',
-                                            //fit: BoxFit.cover,
+                                            'assets/images/444.png',
+                                            fit: BoxFit.cover,
                                             opacity: const AlwaysStoppedAnimation(0.7),
-                                            width: 300,
+                                            width: 800,
                                             //fit: BoxFit.cover,
                                           ),
                                           BlocProvider(
@@ -118,7 +125,7 @@ class SliverWebview extends StatelessWidget {
                                         ],
                                       ),
                                     )),
-                              );
+                              );*/
                             } else {
                               return SliverFillRemaining();
                             }
