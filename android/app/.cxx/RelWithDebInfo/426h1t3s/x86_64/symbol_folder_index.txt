@@ -1,0 +1,1 @@
+D:\AndroidStudioProjects\kdrc_flutter\build\app\intermediates\cxx\RelWithDebInfo\426h1t3s\obj\x86_64

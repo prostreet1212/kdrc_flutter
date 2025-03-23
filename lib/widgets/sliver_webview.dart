@@ -1,3 +1,5 @@
+
+
 import 'dart:io';
 
 import 'package:extended_sliver/extended_sliver.dart';
@@ -23,6 +25,8 @@ class SliverWebview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return BlocConsumer<InetCubit, bool>(
       listener: (context, state) {
         if (state) {
@@ -45,9 +49,11 @@ class SliverWebview extends StatelessWidget {
           }
         }
       },
-      builder: (context, state){
+      builder: (context, state) {
         return LayoutBuilder(builder: (context, constraints) {
           nestedWebviewController.nestedScrollController.enableScroll(context);
+           double screenWidth = constraints.maxWidth;
+           double screenHeight = constraints.maxHeight;
           return Stack(
             children: [
               // Container(
@@ -58,20 +64,63 @@ class SliverWebview extends StatelessWidget {
               CustomScrollView(
                 physics: BouncingScrollPhysics(),
                 slivers: [
-
                   SliverStack(
-                    positionedAlignment: Alignment.topLeft,
+                      positionedAlignment: Alignment.topLeft,
                       children: [
-                    BlocProvider(
-                      create: (context) => sl<BackgroundCubit>(),
-                      child: BlocBuilder<BackgroundCubit, bool>(
-                          builder: (context, state) {
+                        BlocProvider(
+                          create: (context) => sl<BackgroundCubit>(),
+                          child: BlocBuilder<BackgroundCubit, bool>(
+                              builder: (context, state) {
                             if (state) {
                               return SliverToBoxAdapter(
-                                child: Image.asset(
-                                  'assets/images/555.png', // Укажи свой путь к изображению
-                                  width: double.infinity, // Занимает всю ширину экрана
-                                  //fit: BoxFit.cover, // Растягивает по ширине без масштабирования при прокрутке
+                                child: Container(
+                                  color: Colors.green,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    //fit: StackFit.passthrough,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/555.png',
+                                        fit: BoxFit.cover,
+                                        opacity:
+                                            const AlwaysStoppedAnimation(0.7),
+                                        width: double.infinity,
+                                        //fit: BoxFit.cover,
+                                      ),
+                                      BlocProvider(
+                                        create: (context) =>
+                                            sl<ErrorTextCubit>(),
+                                        child:
+                                            BlocBuilder<ErrorTextCubit, bool>(
+                                          builder:
+                                              (context, internetStatetate) {
+                                            if (internetStatetate) {
+                                              return SizedBox();
+                                            } else {
+                                              return Align(
+                                                alignment: Alignment(0, 0.9),
+                                                child: Padding(
+                                                  padding:  EdgeInsets
+                                                      .only(
+                                                      left:screenWidth/5.0,right: screenWidth/5.0, bottom: screenHeight/2),
+                                                  child: Text(
+                                                    'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        color:
+                                                            Colors.grey[700]),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                               /*SliverAppBar(
@@ -130,11 +179,11 @@ class SliverWebview extends StatelessWidget {
                               return SliverFillRemaining();
                             }
                           }),
-                    ),
-                    BlocProvider<ErrorTextCubit>(
-                        create: (c) => sl<ErrorTextCubit>(),
-                        child: BlocBuilder<ScrollHeightCubit, double>(
-                            builder: (context, state) {
+                        ),
+                        BlocProvider<ErrorTextCubit>(
+                            create: (c) => sl<ErrorTextCubit>(),
+                            child: BlocBuilder<ScrollHeightCubit, double>(
+                                builder: (context, state) {
                               return SliverToNestedScrollBoxAdapter(
                                 childExtent: state,
                                 onScrollOffsetChanged: (scrollOffset) {
@@ -147,11 +196,11 @@ class SliverWebview extends StatelessWidget {
                                       .scrollTo(0, y.ceil());
                                 },
                                 child: WebViewWidget(
-                                    controller:
-                                    nestedWebviewController.webViewController!),
+                                    controller: nestedWebviewController
+                                        .webViewController!),
                               );
                             })
-                      /*BlocBuilder<InternetCubit, bool>(
+                            /*BlocBuilder<InternetCubit, bool>(
                         builder: (context, internetState) {
                             if(internetState){
                               return  BlocBuilder<ScrollHeightCubit, double>(
@@ -178,8 +227,8 @@ class SliverWebview extends StatelessWidget {
 
 
                     }),*/
-                    )
-                  ]),
+                            )
+                      ]),
 
                   /* ValueListenableBuilder(
                           valueListenable: nestedWebviewController.scrollHeightNotifier,
