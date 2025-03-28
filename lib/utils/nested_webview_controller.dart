@@ -169,11 +169,14 @@ class NestedWebviewController {
                   .setPixels(0);
             }
           } else if (scrollStatus == ScrollStatus.prev) {
-            //Timer(Duration(milliseconds: 100), () {
-            nestedScrollController.innerScrollController!.position
-                .setPixels(oldScroll);
+            Future.delayed(Duration(milliseconds: 10), () {
+              try {
+                nestedScrollController.innerScrollController!.position
+                    .setPixels(oldScroll);
+              } catch (e) {}
+            });
 
-            //});
+
             //если обновить страницу
           } else {}
           if (Platform.isIOS) {
@@ -191,8 +194,10 @@ class NestedWebviewController {
       )
       ..addJavaScriptChannel('ScrollHeightNotifier',
           onMessageReceived: (message) {
+
         final String msg = message.message;
         final double? height = double.tryParse(msg);
+        print('aaaaaaaa: ${height}');
         if (height != null) {
           if (isFirstRun && internetStatus == false) {
             //sl<ScrollHeightCubit>().updateScrollHeight(0);

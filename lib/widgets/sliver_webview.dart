@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:extended_sliver/extended_sliver.dart';
@@ -25,8 +23,7 @@ class SliverWebview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
+    final double textPadding = MediaQuery.of(context).size.height / 2.15;
     return BlocConsumer<InetCubit, bool>(
       listener: (context, state) {
         if (state) {
@@ -52,8 +49,10 @@ class SliverWebview extends StatelessWidget {
       builder: (context, state) {
         return LayoutBuilder(builder: (context, constraints) {
           nestedWebviewController.nestedScrollController.enableScroll(context);
-           double screenWidth = constraints.maxWidth;
-           double screenHeight = constraints.maxHeight;
+          double screenWidth = constraints.maxWidth;
+          double screenHeight = constraints.maxHeight;
+
+          print('высота: $screenHeight , ширина:$screenWidth');
           return Stack(
             children: [
               // Container(
@@ -62,35 +61,38 @@ class SliverWebview extends StatelessWidget {
               //   color: Colors.transparent,
               // ),
               CustomScrollView(
-                physics: BouncingScrollPhysics(),
+                //physics: BouncingScrollPhysics(),
                 slivers: [
                   SliverStack(
                       positionedAlignment: Alignment.topLeft,
                       children: [
-                        BlocProvider(
-                          create: (context) => sl<BackgroundCubit>(),
+                        MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (context) => sl<BackgroundCubit>(),
+                            ),
+                            BlocProvider(
+                              create: (context) => sl<ErrorTextCubit>(),
+                            ),
+                          ],
                           child: BlocBuilder<BackgroundCubit, bool>(
                               builder: (context, state) {
                             if (state) {
                               return SliverToBoxAdapter(
                                 child: Container(
-                                  color: Colors.green,
+                                  //color: Colors.green,
                                   child: Stack(
-                                    alignment: Alignment.center,
+                                    //alignment: Alignment.center,
                                     //fit: StackFit.passthrough,
                                     children: [
                                       Image.asset(
-                                        'assets/images/555.png',
+                                        'assets/images/background.png',
                                         fit: BoxFit.cover,
                                         opacity:
                                             const AlwaysStoppedAnimation(0.7),
                                         width: double.infinity,
                                         //fit: BoxFit.cover,
                                       ),
-                                      BlocProvider(
-                                        create: (context) =>
-                                            sl<ErrorTextCubit>(),
-                                        child:
                                             BlocBuilder<ErrorTextCubit, bool>(
                                           builder:
                                               (context, internetStatetate) {
@@ -100,9 +102,19 @@ class SliverWebview extends StatelessWidget {
                                               return Align(
                                                 alignment: Alignment(0, 0.9),
                                                 child: Padding(
-                                                  padding:  EdgeInsets
-                                                      .only(
-                                                      left:screenWidth/5.0,right: screenWidth/5.0, bottom: screenHeight/2),
+                                                  padding: EdgeInsets.only(
+                                                      left: screenWidth / 5,
+                                                      //9.5,
+                                                      right: screenWidth / 5,
+                                                      //9.5,
+                                                      /*  left: 40,
+                                                    right: 40,*/
+                                                      //top: textPadding,
+                                                      top:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              2.15),
                                                   child: Text(
                                                     'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
                                                     textAlign: TextAlign.center,
@@ -118,7 +130,7 @@ class SliverWebview extends StatelessWidget {
                                             }
                                           },
                                         ),
-                                      )
+
                                     ],
                                   ),
                                 ),
@@ -188,7 +200,6 @@ class SliverWebview extends StatelessWidget {
                                 childExtent: state,
                                 onScrollOffsetChanged: (scrollOffset) {
                                   double y = scrollOffset;
-                                  print('scroll: $y');
                                   if (Platform.isAndroid) {
                                     y *= View.of(context).devicePixelRatio;
                                   }
@@ -196,8 +207,9 @@ class SliverWebview extends StatelessWidget {
                                       .scrollTo(0, y.ceil());
                                 },
                                 child: WebViewWidget(
-                                    controller: nestedWebviewController
-                                        .webViewController!),
+                                      controller: nestedWebviewController
+                                          .webViewController!),
+
                               );
                             })
                             /*BlocBuilder<InternetCubit, bool>(

@@ -1,0 +1,1 @@
+C:\Users\user\AndroidStudioProjects\kdrc_flutter\build\app\intermediates\cxx\RelWithDebInfo\3j5u4z4i\obj\armeabi-v7a

@@ -13,9 +13,11 @@ import 'package:kdrc_flutter/pages/test/height_page.dart';
 import 'package:kdrc_flutter/pages/test/pdf_page.dart';
 import 'package:kdrc_flutter/pages/test/sl.dart';
 import 'package:kdrc_flutter/pages/sl_copy.dart';
+import 'package:kdrc_flutter/pages/test/testing.dart';
 import 'package:kdrc_flutter/pages/test/web_page.dart';
 import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
 import 'package:kdrc_flutter/pages/welcome_page.dart';
+import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/utils/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kdrc_flutter/locator_service.dart' as di;
@@ -26,7 +28,10 @@ import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 FToast fToast = FToast();
+ NestedWebviewController? nestedWebviewController;
 
+
+@pragma('vm:entry-point')
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
@@ -84,7 +89,8 @@ class MyApp extends StatelessWidget {
 
               } else {
                 return WelcomePage();
-                //return HeightPage();
+                //return Testing();
+
               }
             }),
             //home: WelcomePage(),

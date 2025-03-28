@@ -10,6 +10,7 @@ import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
+import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl=GetIt.instance;

@@ -1,0 +1,1 @@
+C:\Users\user\AndroidStudioProjects\kdrc_flutter\build\app\intermediates\cxx\Debug\115a3718\obj\x86_64

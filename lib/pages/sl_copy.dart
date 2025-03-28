@@ -6,17 +6,20 @@ import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
+
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/custom_toast.dart';
+
 import 'package:kdrc_flutter/widgets/sliver_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../cubits/phone_cubit.dart';
+import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
 import '../utils/utils.dart';
-late NestedWebviewController nestedWebviewController;
+
 class SlWebCopy extends StatefulWidget {
   const SlWebCopy({super.key});
 
@@ -30,16 +33,17 @@ class _SlWebCopyState extends State<SlWebCopy> {
   @override
   void initState() {
     super.initState();
-    ;
-    nestedWebviewController = NestedWebviewController(
+   nestedWebviewController = NestedWebviewController(
         initialUrl: sl<StartCubit>().state.url, context: context);
-    nestedWebviewController.init();
-    //nestedWebviewController.checkInternet();
+    nestedWebviewController!.init();
+
+
   }
+
 
   @override
   void dispose() {
-    nestedWebviewController.internetListener.cancel();
+   // nestedWebviewController!.internetListener.cancel();
     super.dispose();
   }
 
@@ -47,9 +51,9 @@ class _SlWebCopyState extends State<SlWebCopy> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (await nestedWebviewController.webViewController!.canGoBack()) {
-          nestedWebviewController.scrollStatus = ScrollStatus.prev;
-          nestedWebviewController.webViewController!.goBack();
+        if (await nestedWebviewController!.webViewController!.canGoBack()) {
+          nestedWebviewController!.scrollStatus = ScrollStatus.prev;
+          nestedWebviewController!.webViewController!.goBack();
           return false;
         } else {
           return true;
@@ -58,17 +62,18 @@ class _SlWebCopyState extends State<SlWebCopy> {
       child: SafeArea(
         child: Scaffold(
           body: NestedScrollView(
-            controller: nestedWebviewController.nestedScrollController,
+           // controller: nestedWebviewController!.nestedScrollController,
+            controller: nestedWebviewController!.nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 CustomAppBar(
-                  nestedWebviewController: nestedWebviewController,
-
+                  nestedWebviewController: nestedWebviewController!,
                 ),
               ];
             },
-            body: SliverWebview(nestedWebviewController: nestedWebviewController),
+            body: SliverWebview(nestedWebviewController: nestedWebviewController!),
+
           ),
           floatingActionButton: BlocBuilder<PhoneCubit,bool>(
             builder: (context, phoneState) {
@@ -86,9 +91,13 @@ class _SlWebCopyState extends State<SlWebCopy> {
                               size: 36,
                             ),
                             onPressed: () async {
+                            /*  sl<ScrollHeightCubit>().updateScrollHeight(0);
+                              sl<BackgroundCubit>().changeValue(true);
+                              sl<ErrorTextCubit>().changeValue(true);*/
                               //Utils.showCallDialog(context);
-                              //sl<InternetCubit>().changeValue(!(sl<InternetCubit>().state));
-                              // sl<BackgroundCubit>().changeValue(!(sl<BackgroundCubit>().state));
+                              //nestedWebviewController!.nestedScrollController.innerScrollController!.position.animateTo(500, duration: Duration(milliseconds: 10), curve: Curves.bounceOut);
+
+
                             });
                       } else {
                         return SizedBox();

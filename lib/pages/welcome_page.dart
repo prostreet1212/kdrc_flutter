@@ -84,10 +84,15 @@ class _WelcomePageState extends State<WelcomePage> {
               Text(
                 'Котласский\n реабилитационный центр',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.robotoSerif(
+                style:TextStyle(
+                  fontFamily: 'WelcomeFont',
+                    fontSize: 18,
+                    color: Colors.grey[600]
+                )
+               /* style:GoogleFonts.robotoSerif(
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
-                    color: Colors.grey[600]),
+                    color: Colors.grey[600]),*/
               ),
             ],
           ),

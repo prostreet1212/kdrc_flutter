@@ -1,20 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
-import 'package:kdrc_flutter/pages/settings_page.dart';
+
 import 'package:kdrc_flutter/pages/sl_copy.dart';
-import 'package:kdrc_flutter/utils/utils.dart';
 
+import '../cubits/background_cubit.dart';
+import '../cubits/error_text_cubit.dart';
+import '../cubits/inet_cubit.dart';
+import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
-import '../main.dart';
 
+import '../main.dart';
+import 'nested_webview_controller.dart';
+
+@pragma('vm:entry-point')
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -64,7 +68,6 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
     );
 
-
     /* _flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
         onDidReceiveBackgroundNotificationResponse: (n){});*/
@@ -86,9 +89,23 @@ class NotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log('firebase :: Notification clicked! Message: ${message.notification?.title}');
       //_handleNotificationClick(message);
-      //open(message);
-      nestedWebviewController.webViewController
-          ?.loadRequest(Uri.parse(message.data['url']));
+      /*  nestedWebviewController.webViewController
+          ?.loadRequest(Uri.parse(message.data['url']));*/
+      if (sl<InetCubit>().state) {
+        log('firebase :: Notification payload: ${message.data['url']}');
+        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
+        nestedWebviewController!.webViewController
+            ?.loadRequest(Uri.parse(message.data['url']));
+      } else {
+        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
+        nestedWebviewController!.webViewController
+            ?.loadRequest(Uri.parse(message.data['url']));
+        sl<ScrollHeightCubit>().updateScrollHeight(0);
+        sl<BackgroundCubit>().changeValue(true);
+        sl<ErrorTextCubit>().changeValue(false);
+        nestedWebviewController!.isFirstRun = true;
+        nestedWebviewController!.isBackgroundNoInternet=true;
+      }
     });
 
 //Когда приложение закрыто
@@ -96,7 +113,7 @@ class NotificationService {
       log('firebase :: Notification2 clicked! Message: ${message?.notification?.title}');
       if (message != null) {
         // Обработка уведомления, когда приложение запущено из закрытого состояния
-     /*   Future.delayed(Duration(seconds: 3),(){
+        /*   Future.delayed(Duration(seconds: 3),(){
           nestedWebviewController.webViewController
               ?.loadRequest(Uri.parse(message.data['url']));
         });*/
@@ -108,13 +125,13 @@ class NotificationService {
 
     subscribeToTopic();
 
-    RemoteMessage? initialMessage = await _firebaseMessaging.getInitialMessage();
+    RemoteMessage? initialMessage =
+        await _firebaseMessaging.getInitialMessage();
     if (initialMessage != null) {
       sl<StartCubit>().changeValue(initialMessage.data['url']);
     } /*else {
       sl<StartCubit>().changeValue(false);
     }*/
-
   }
 
   Future<void> subscribeToTopic() async {
@@ -128,16 +145,16 @@ class NotificationService {
     ByteArrayAndroidBitmap? largeIcon;
 // converting image into base65 to show in notification bar
     BigPictureStyleInformation? bigPictureStyleInformation;
-      try {
-        // Create BigPictureStyleInformation for displaying the image
-        bigPictureStyleInformation = BigPictureStyleInformation(
-          ByteArrayAndroidBitmap.fromBase64String('base64Image'),
-         // contentTitle: message.notification?.title,
-         // summaryText: message.notification?.body,
-        );
-      } catch (e) {
-        print('Error fetching image: $e');
-      }
+    try {
+      // Create BigPictureStyleInformation for displaying the image
+      bigPictureStyleInformation = BigPictureStyleInformation(
+        ByteArrayAndroidBitmap.fromBase64String('base64Image'),
+        // contentTitle: message.notification?.title,
+        // summaryText: message.notification?.body,
+      );
+    } catch (e) {
+      print('Error fetching image: $e');
+    }
     //}
 
     AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -146,7 +163,7 @@ class NotificationService {
       'High Importance Notifications',
       importance: Importance.high,
       priority: Priority.high,
-       //icon: 'bell',
+      //icon: 'bell',
       // largeIcon: largeIcon, // This sets the small image on the right side ofnotification title
       styleInformation: null,
     );
@@ -174,16 +191,26 @@ class NotificationService {
     // You can navigate to a specific screen using Navigator here
   }
 
-  // Called when a notification is tapped (foreground or background)
   //Когда приложение открыто
   Future<void> _onDidReceiveNotificationResponse(
       NotificationResponse notificationResponse) async {
     final String? payload = notificationResponse.payload;
-    if (payload != null) {
-      log('firebase :: Notification payload: $payload');
-      nestedWebviewController.webViewController
-          ?.loadRequest(Uri.parse(payload));
-      // Navigate or perform an action based on the payload
+    if (sl<InetCubit>().state) {
+      if (payload != null) {
+        log('firebase :: Notification payload: $payload');
+        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
+        nestedWebviewController!.webViewController
+            ?.loadRequest(Uri.parse(payload));
+      }
+    } else {
+      nestedWebviewController!.scrollStatus = ScrollStatus.forward;
+      nestedWebviewController!.webViewController
+          ?.loadRequest(Uri.parse(payload!));
+      sl<ScrollHeightCubit>().updateScrollHeight(0);
+      sl<BackgroundCubit>().changeValue(true);
+      sl<ErrorTextCubit>().changeValue(false);
+      nestedWebviewController!.isFirstRun = true;
+      nestedWebviewController!.isBackgroundNoInternet=true;
     }
   }
 
@@ -193,8 +220,8 @@ class NotificationService {
     log('firebase :: Handling a background message: ${message.messageId}');
   }
 
-  // Get device token (you can send this to your server for targeted notifications)
- /* Future<String?> getDeviceToken() async {
+// Get device token (you can send this to your server for targeted notifications)
+/* Future<String?> getDeviceToken() async {
     String? token = await _firebaseMessaging.getToken();
     print("Device Token: $token");
     return token;

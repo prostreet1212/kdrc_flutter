@@ -1,11 +1,13 @@
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
+
 import 'package:kdrc_flutter/widgets/dynamic_sliver.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
 import '../locator_service.dart';
@@ -26,13 +28,11 @@ class CustomAppBar extends StatefulWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   void loadFeedback() {
-    //nestedWebviewController.webViewController!.loadRequest(Uri.parse(
-    //'https://docs.google.com/gview?embedded=true&url=kdrc.ru/wp-content/uploads/2025/01/%D0%98%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B2-%D0%A3%D1%81%D1%82%D0%B0%D0%B2-%D0%BE%D1%82-16.01.2025.pdf'));
-    // nestedWebviewController.webViewController!.reload();
     if (sl<InetCubit>().state) {
       widget.nestedWebviewController.scrollStatus = ScrollStatus.forward;
       widget.nestedWebviewController.webViewController!
           .loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
+
     } else {
       fToast.showToast(
           child: CustomToast(),
@@ -50,8 +50,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             handle: SliverOverlapAbsorberHandle(),
             //handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             sliver: SliverSafeArea(
-              sliver:
-              SliverAppBar(
+              sliver: SliverAppBar(
                   actions: [
                     state
                         ? Visibility(
@@ -91,12 +90,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             ))
                         : SizedBox(),
                   ],
+                  leading: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.keyboard_backspace,
+                          color: Color.fromARGB(255, 32, 146, 131),
+                          size: 30,
+                        ),
+                      onPressed: null,),
+                  ),
                   backgroundColor: Color.fromARGB(255, 247, 172, 119),
                   foregroundColor: Colors.red,
                   surfaceTintColor: Colors.yellow,
                   //expandedHeight: 216.7,
                   //expandedHeight: MediaQuery.of(context).size.width*0.551820728,
-                  expandedHeight: MediaQuery.of(context).size.width*0.552125,
+                  expandedHeight:
+                      MediaQuery.of(context).size.width * 0.552125 + 0.1,
                   //expandedHeight: 441.7,
                   floating: true,
                   collapsedHeight: 56,
@@ -106,12 +116,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       FlexibleSpaceBar(
                         titlePadding: EdgeInsets.only(right: 0),
                         collapseMode: CollapseMode.pin,
-                        background:
-                         Container(
+                        background: Container(
                           color: Colors.white,
-                          child: Image.asset('assets/images/titleimage.png',
-                              //fit: BoxFit.cover,
-                              ),
+                          child: Image.asset(
+                            'assets/images/titleimage.png',
+                            //fit: BoxFit.cover,
+                          ),
                         ),
                         /*Image.asset(
                       'assets/images/titleimage.png',
