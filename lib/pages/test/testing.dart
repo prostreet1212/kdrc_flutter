@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../locator_service.dart';
 import '../../utils/utils.dart';
@@ -27,7 +28,7 @@ class _TestingState extends State<Testing> {
 
   // ScrollController nestedController = ScrollController();
   //late WebViewController webViewController;
-  final GlobalKey<NestedScrollViewState> myKey = GlobalKey();
+  //final GlobalKey<NestedScrollViewState> myKey = GlobalKey();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
@@ -64,8 +65,15 @@ class _TestingState extends State<Testing> {
       );*/
   }
 
+  final GlobalKey<NestedScrollViewState> sliverKey = GlobalKey();
+  var controller=ScrollController();
+  var controller2=ScrollController();
+  SliverOverlapAbsorberHandle _sliverHandle = SliverOverlapAbsorberHandle();
+
+
   @override
   Widget build(BuildContext context) {
+    bool a = false;
     return BlocProvider(
       create: (c) => sl<ScrollHeightCubit>(),
       child: WillPopScope(
@@ -78,28 +86,29 @@ class _TestingState extends State<Testing> {
         },
         child: SafeArea(
           child: Scaffold(
-            body: NestedScrollView(
-              key: myKey,
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return [
-                  SliverOverlapAbsorber(
-                    handle: SliverOverlapAbsorberHandle(),
-                    sliver: SliverSafeArea(
-                        sliver: SliverAppBar(
-                      expandedHeight: 256,
-                      collapsedHeight: 56,
-                      pinned: true,
-                    )),
-                  )
-                ];
-              },
-              body: CustomScrollView(
-                physics: ClampingScrollPhysics(),
-                slivers: [
-                  BlocBuilder<ScrollHeightCubit, double>(builder: (c, state) {
-                    return SliverToNestedScrollBoxAdapter(
-                      childExtent: state,
+            backgroundColor: Colors.green,
+            body:NestedScrollView(
+              //controller: controller,
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  a = innerBoxIsScrolled;
+                  return [
+                    SliverOverlapAbsorber(
+                      handle: _sliverHandle,
+                      sliver: SliverSafeArea(
+                          sliver: SliverAppBar(
+                        expandedHeight: 256,
+                        collapsedHeight: 56,
+                        pinned: true,
+                      ),
+                      ),
+                    ),
+                  ];
+                },
+                body: CustomScrollView(
+                  slivers: [
+                   SliverToNestedScrollBoxAdapter(
+                      childExtent: 1491,
                       onScrollOffsetChanged: (scrollOffset) {
                         double y = scrollOffset;
                         if (Platform.isAndroid) {
@@ -107,70 +116,39 @@ class _TestingState extends State<Testing> {
                         }
                         _webViewController.scrollTo(x: 0, y: y.ceil());
                       },
-                      child: InAppWebView(
-                        initialUrlRequest: URLRequest(
-                          url: WebUri('https://kdrc.ru'),
+                      child: SizedBox(
+                        height: 1491,
+                        child: InAppWebView(
+                          initialUrlRequest: URLRequest(
+                            url: WebUri('https://flutter.dev'),
+                            //url: WebUri('https://kdrc.ru/novosti'),
+                          ),
+                          onWebViewCreated: (controller) {
+                            _webViewController = controller;
+                          },
+                          initialSettings: InAppWebViewSettings(
+                            useShouldOverrideUrlLoading: true,
+                            allowsInlineMediaPlayback: true,
+                            javaScriptEnabled: true,
+                            preferredContentMode:
+                            UserPreferredContentMode.MOBILE,
+                          ),
+                          onLoadStop: (controller, url) async {
+                            print('STOP');
+                            controller.evaluateJavascript(source: source);
+                          },
                         ),
-                        onWebViewCreated: (controller) {
-                          _webViewController = controller;
-                          controller.addJavaScriptHandler(
-                              handlerName: 'ScrollHeightNotifier',
-                              callback: (args) {
-                                print('aaaaaaaa: ${args[0]}');
-                                double height=(args[0] as int).toDouble();
-                                sl<ScrollHeightCubit>().updateScrollHeight(height);
-                              });
-                        },
-                        onLoadStop: (controller, url) async {
-                          print('STOP');
-                          controller.evaluateJavascript(
-                              source:  '''
-(function() {
-  var height = 0;
-  
-  function checkAndNotify() {
-    var curr = document.body.scrollHeight;
-    if (curr !== height) {
-      height = curr;
-      // Используем window.flutter_inappwebview.callHandler для InAppWebView
-      window.flutter_inappwebview.callHandler('ScrollHeightNotifier', height);
-    }
-  }
-
-  var timer;
-  var ob;
-  if (window.ResizeObserver) {
-    ob = new ResizeObserver(checkAndNotify);
-    ob.observe(document.body);
-  } else {
-    timer = setInterval(checkAndNotify, 200);
-  }
-  
-  // Первоначальная проверка
-  checkAndNotify();
-  
-  window.addEventListener('beforeunload', function() {
-    ob && ob.disconnect();
-    timer && clearInterval(timer);
-  });
-})();
-''');
-
-                          /*  double height = h!.toDouble();
-                           sl<ScrollHeightCubit>()
-                            .updateScrollHeight(height);
-                          print('высота: $h');*/
-                        },
                       ),
-                    );
-                  }),
-                ],
-              ),
-            ),
+                    ),
+
+
+
+                  ],
+                ),
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -218,42 +196,3 @@ controller: webViewController));
 
 ],
 )*/
-
-class MySliverPinnedPersistentHeaderDelegate
-    extends SliverPinnedPersistentHeaderDelegate {
-  MySliverPinnedPersistentHeaderDelegate({
-    required Widget minExtentProtoType,
-    required Widget maxExtentProtoType,
-  }) : super(
-          minExtentProtoType: minExtentProtoType,
-          maxExtentProtoType: maxExtentProtoType,
-        );
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, double? minExtent,
-      double maxExtent, bool overlapsContent) {
-    print(shrinkOffset);
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          child: maxExtentProtoType,
-          top: -shrinkOffset,
-          bottom: 0,
-          left: 0,
-          right: 0,
-        ),
-        Positioned(
-          child: minExtentProtoType,
-          top: 0,
-          left: 0,
-          right: 0,
-        ),
-      ],
-    );
-  }
-
-  @override
-  bool shouldRebuild(SliverPinnedPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
-}
