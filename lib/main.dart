@@ -88,8 +88,8 @@ class MyApp extends StatelessWidget {
                 return SlWebCopy();
 
               } else {
-                //return WelcomePage();
-           return Testing();
+                return WelcomePage();
+           //return Testing();
 
               }
             }),

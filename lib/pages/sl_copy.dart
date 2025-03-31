@@ -19,7 +19,7 @@ import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
 import '../utils/utils.dart';
-
+bool aaa=false;
 class SlWebCopy extends StatefulWidget {
   const SlWebCopy({super.key});
 
@@ -62,12 +62,14 @@ class _SlWebCopyState extends State<SlWebCopy> {
       child: SafeArea(
         child: Scaffold(
           body: NestedScrollView(
+            key: key,
            // controller: nestedWebviewController!.nestedScrollController,
             controller: nestedWebviewController!.nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return [
-                CustomAppBar(
+
+               CustomAppBar(
                   nestedWebviewController: nestedWebviewController!,
                 ),
               ];
@@ -91,6 +93,11 @@ class _SlWebCopyState extends State<SlWebCopy> {
                               size: 36,
                             ),
                             onPressed: () async {
+                              //key.currentState!.innerController.position.setPixels(772);
+                              aaa=!aaa;
+
+                              //key.currentState!.innerController.position.pointerScroll(772);
+                              //key.currentState!.outerController.position.setPixels(150);
                               //nestedWebviewController!.nestedScrollController.innerScrollController.position.
                               //nestedWebviewController!.webViewController!.scrollTo(0, 772);
                               //nestedWebviewController!.nestedScrollController.innerScrollController!.position.setPixels(820);

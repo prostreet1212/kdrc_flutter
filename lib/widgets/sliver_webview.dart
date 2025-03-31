@@ -17,10 +17,14 @@ import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../pages/sl_copy.dart';
+final GlobalKey<NestedScrollViewState> key = GlobalKey();
 class SliverWebview extends StatelessWidget {
   SliverWebview({super.key, required this.nestedWebviewController});
 
   NestedWebviewController nestedWebviewController;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +61,8 @@ class SliverWebview extends StatelessWidget {
           return Stack(
             children: [
               CustomScrollView(
-                //physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                controller: null,
+                physics: AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverStack(insetOnOverlap: true, children: [
                     MultiBlocProvider(
@@ -72,7 +77,9 @@ class SliverWebview extends StatelessWidget {
                       child: BlocBuilder<BackgroundCubit, bool>(
                           builder: (context, state) {
                         if (state) {
+
                           return SliverToBoxAdapter(
+                            key: PageStorageKey('aaa'),
                             child: Container(
                               //color: Colors.green,
                               child: Stack(
@@ -128,6 +135,7 @@ class SliverWebview extends StatelessWidget {
                         }
                       }),
                     ),
+
                     BlocProvider<ErrorTextCubit>(
                         create: (c) => sl<ErrorTextCubit>(),
                         child: BlocBuilder<ScrollHeightCubit, double>(
@@ -137,12 +145,15 @@ class SliverWebview extends StatelessWidget {
                             child: SliverToNestedScrollBoxAdapter(
                               childExtent: state,
                               onScrollOffsetChanged: (scrollOffset) {
-                                double y = scrollOffset;
-                                if (Platform.isAndroid) {
-                                  y *= View.of(context).devicePixelRatio;
-                                }
-                                nestedWebviewController.webViewController!
-                                    .scrollTo(0, y.ceil());
+                               // if(aaa==false){
+                                  double y = scrollOffset;
+                                  if (Platform.isAndroid) {
+                                    y *= View.of(context).devicePixelRatio;
+                                  }
+                                  nestedWebviewController.webViewController!
+                                      .scrollTo(0, y.ceil());
+                              //  }
+
                               },
                               child: WebViewWidget(
                                   controller: nestedWebviewController

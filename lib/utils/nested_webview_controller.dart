@@ -26,6 +26,7 @@ import '../locator_service.dart';
 import '../main.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_toast.dart';
+import '../widgets/sliver_webview.dart';
 
 enum ScrollStatus { prev, forward, reload }
 
@@ -204,9 +205,14 @@ class NestedWebviewController {
           } else {
             sl<ScrollHeightCubit>().updateScrollHeight(height);
             if (scrollStatus == ScrollStatus.prev) {
-              nestedScrollController.innerScrollController!.position
-                  .setPixels(oldScroll);
-              //если обновить страницу
+             /* nestedScrollController.innerScrollController!.position
+                  .setPixels(oldScroll);*/
+              //key.currentState!.innerController.position.setPixels(oldScroll);
+             // Future.delayed(Duration(milliseconds: 1000),(){
+                nestedScrollController.innerScrollController!.position
+                    .setPixels(oldScroll);
+              //});
+
             }
 
 //скрыть фон при первой загрузке
