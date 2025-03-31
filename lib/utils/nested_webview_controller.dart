@@ -168,17 +168,16 @@ class NestedWebviewController {
               nestedScrollController.innerScrollController!.position
                   .setPixels(0);
             }
-          } else if (scrollStatus == ScrollStatus.prev) {
-            Future.delayed(Duration(milliseconds: 10), () {
-              try {
+          } /*else if (scrollStatus == ScrollStatus.prev) {
+            Future.delayed(Duration(milliseconds: 20), () {
                 nestedScrollController.innerScrollController!.position
                     .setPixels(oldScroll);
-              } catch (e) {}
+
             });
 
 
             //если обновить страницу
-          } else {}
+          } else {}*/
           if (Platform.isIOS) {
             scrollStatus = ScrollStatus.forward;
           }
@@ -204,9 +203,16 @@ class NestedWebviewController {
             //sl<InternetCubit>().changeValue(false);
           } else {
             sl<ScrollHeightCubit>().updateScrollHeight(height);
+            if (scrollStatus == ScrollStatus.prev) {
+              nestedScrollController.innerScrollController!.position
+                  .setPixels(oldScroll);
+              //если обновить страницу
+            }
+
 //скрыть фон при первой загрузке
             if (isBackground) {
               isBackground = false;
+              //sl<BackgroundCubit>().changeValue(false);
             } else {
               if (isFirstRun||isBackgroundNoInternet) {
                 sl<BackgroundCubit>().changeValue(false);
@@ -222,7 +228,7 @@ class NestedWebviewController {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
         Uri.parse(initialUrl),
-      );
+      )..setBackgroundColor(Colors.transparent);
 
     nestedScrollController.addListener(() {
       if (nestedScrollController.offset > 112) {

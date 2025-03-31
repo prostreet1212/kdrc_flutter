@@ -4,12 +4,16 @@ import 'dart:ui';
 
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+//import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
 
 import '../../locator_service.dart';
 import '../../utils/utils.dart';
@@ -27,7 +31,7 @@ class _TestingState extends State<Testing> {
   ValueNotifier<double> scrollHeightNotifier = ValueNotifier<double>(1);
 
   // ScrollController nestedController = ScrollController();
-  //late WebViewController webViewController;
+  late WebViewController webViewController;
   //final GlobalKey<NestedScrollViewState> myKey = GlobalKey();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
@@ -37,11 +41,13 @@ class _TestingState extends State<Testing> {
   String prevUrl = '';
 
   late InAppWebViewController _webViewController;
+  late final PlatformWebViewController _controller;
+
 
   @override
   void initState() {
     super.initState();
-    /*  webViewController = WebViewController()
+      webViewController = WebViewController()
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (url) async {
@@ -56,99 +62,72 @@ class _TestingState extends State<Testing> {
         if (height != null) {
           scrollHeightNotifier.value = height;
         }
-        //scrollController.jumpTo(0);
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
         //Uri.parse('https://kdrc.ru/novosti'),
-        Uri.parse('https://kdrc.ru'),
-      );*/
+        //Uri.parse('https://kdrc.ru'),
+        Uri.parse('https://flutter.dev'),
+      );
   }
-
-  final GlobalKey<NestedScrollViewState> sliverKey = GlobalKey();
-  var controller=ScrollController();
-  var controller2=ScrollController();
-  SliverOverlapAbsorberHandle _sliverHandle = SliverOverlapAbsorberHandle();
 
 
   @override
   Widget build(BuildContext context) {
-    bool a = false;
+
     return BlocProvider(
       create: (c) => sl<ScrollHeightCubit>(),
       child: WillPopScope(
         onWillPop: () async {
-          if (await _webViewController.canGoBack()) {
+          if (await webViewController.canGoBack()) {
             scrollStatus = ScrollStatus.prev;
-            _webViewController.goBack();
+            webViewController.goBack();
+
           }
           return false;
         },
         child: SafeArea(
           child: Scaffold(
-            backgroundColor: Colors.green,
-            body:NestedScrollView(
+            body: NestedScrollView(
               //controller: controller,
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  a = innerBoxIsScrolled;
-                  return [
-                    SliverOverlapAbsorber(
-                      handle: _sliverHandle,
-                      sliver: SliverSafeArea(
-                          sliver: SliverAppBar(
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return [
+                  SliverOverlapAbsorber(
+                    handle: SliverOverlapAbsorberHandle(),
+                    sliver: SliverSafeArea(
+                      sliver: SliverAppBar(
+                        stretch: true,
+                        stretchTriggerOffset: 100,
                         expandedHeight: 256,
                         collapsedHeight: 56,
                         pinned: true,
                       ),
-                      ),
                     ),
-                  ];
-                },
-                body: CustomScrollView(
-                  slivers: [
-                   SliverToNestedScrollBoxAdapter(
-                      childExtent: 1491,
+                  ),
+                ];
+              },
+              body: CustomScrollView(
+                key:PageStorageKey('webview-scroll'),
+                slivers: [
+                  SliverToNestedScrollBoxAdapter(
+                      childExtent: 2500,
                       onScrollOffsetChanged: (scrollOffset) {
                         double y = scrollOffset;
                         if (Platform.isAndroid) {
                           y *= View.of(context).devicePixelRatio;
                         }
-                        _webViewController.scrollTo(x: 0, y: y.ceil());
+                        webViewController.scrollTo( 0, y.ceil());
+
                       },
-                      child: SizedBox(
-                        height: 1491,
-                        child: InAppWebView(
-                          initialUrlRequest: URLRequest(
-                            url: WebUri('https://flutter.dev'),
-                            //url: WebUri('https://kdrc.ru/novosti'),
-                          ),
-                          onWebViewCreated: (controller) {
-                            _webViewController = controller;
-                          },
-                          initialSettings: InAppWebViewSettings(
-                            useShouldOverrideUrlLoading: true,
-                            allowsInlineMediaPlayback: true,
-                            javaScriptEnabled: true,
-                            preferredContentMode:
-                            UserPreferredContentMode.MOBILE,
-                          ),
-                          onLoadStop: (controller, url) async {
-                            print('STOP');
-                            controller.evaluateJavascript(source: source);
-                          },
-                        ),
-                      ),
-                    ),
-
-
-
-                  ],
-                ),
+                      child:WebViewWidget(controller: webViewController,)
+                  ),
+                ],
+              ),),
           ),
         ),
       ),
-    ));
+    );
   }
 }
 

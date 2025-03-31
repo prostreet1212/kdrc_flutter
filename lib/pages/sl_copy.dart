@@ -91,6 +91,11 @@ class _SlWebCopyState extends State<SlWebCopy> {
                               size: 36,
                             ),
                             onPressed: () async {
+                              //nestedWebviewController!.nestedScrollController.innerScrollController.position.
+                              //nestedWebviewController!.webViewController!.scrollTo(0, 772);
+                              //nestedWebviewController!.nestedScrollController.innerScrollController!.position.setPixels(820);
+                             // setPixels(772);
+                              //nestedWebviewController!.webViewController!.runJavaScript("window.scrollBy(0, 300);");
                             /*  sl<ScrollHeightCubit>().updateScrollHeight(0);
                               sl<BackgroundCubit>().changeValue(true);
                               sl<ErrorTextCubit>().changeValue(true);*/
