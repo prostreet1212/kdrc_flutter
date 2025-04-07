@@ -18,17 +18,23 @@ import '../locator_service.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../pages/sl_copy.dart';
+
 final GlobalKey<NestedScrollViewState> key = GlobalKey();
+
 class SliverWebview extends StatelessWidget {
   SliverWebview({super.key, required this.nestedWebviewController});
 
   NestedWebviewController nestedWebviewController;
 
-
-
   @override
   Widget build(BuildContext context) {
     final double textPadding = MediaQuery.of(context).size.height / 2.15;
+
+    double heightScreen = MediaQuery.of(context).size.height;
+    //EdgeInsets safeAreaPadding = MediaQuery.of(context).padding;
+    double topPadding = MediaQueryData.fromView(View.of(context)).padding.top;
+    double bottomPadding = MediaQueryData.fromView(View.of(context)).padding.bottom;
+    double heightWebview = heightScreen - topPadding - bottomPadding - 56;
     return BlocConsumer<InetCubit, bool>(
       listener: (context, state) {
         if (state) {
@@ -51,8 +57,8 @@ class SliverWebview extends StatelessWidget {
           }
         }
       },
-      builder: (context, state) {
-        return LayoutBuilder(builder: (context, constraints) {
+      builder: (context1, state) {
+        return LayoutBuilder(builder: (context1, constraints) {
           nestedWebviewController.nestedScrollController.enableScroll(context);
           double screenWidth = constraints.maxWidth;
           double screenHeight = constraints.maxHeight;
@@ -77,7 +83,6 @@ class SliverWebview extends StatelessWidget {
                       child: BlocBuilder<BackgroundCubit, bool>(
                           builder: (context, state) {
                         if (state) {
-
                           return SliverToBoxAdapter(
                             key: PageStorageKey('aaa'),
                             child: Container(
@@ -135,30 +140,41 @@ class SliverWebview extends StatelessWidget {
                         }
                       }),
                     ),
-
                     BlocProvider<ErrorTextCubit>(
                         create: (c) => sl<ErrorTextCubit>(),
                         child: BlocBuilder<ScrollHeightCubit, double>(
                             builder: (context, state) {
-                          return SliverCrossAxisConstrained(
-                            maxCrossAxisExtent: 500,
-                            child: SliverToNestedScrollBoxAdapter(
-                              childExtent: state,
-                              onScrollOffsetChanged: (scrollOffset) {
-                               // if(aaa==false){
-                                  double y = scrollOffset;
-                                  if (Platform.isAndroid) {
-                                    y *= View.of(context).devicePixelRatio;
-                                  }
-                                  nestedWebviewController.webViewController!
-                                      .scrollTo(0, y.ceil());
+                          return SliverToNestedScrollBoxAdapter(
+                            childExtent: state,
+                            onScrollOffsetChanged: (scrollOffset) {
+                              // if(aaa==false){
+                              double y = scrollOffset;
+                              if (Platform.isAndroid) {
+                                y *= View.of(context).devicePixelRatio;
+                              }
+                              nestedWebviewController.webViewController!
+                                  .scrollTo(0, y.ceil());
                               //  }
+                            },
+                            //718,5
+                            child: ListView.builder(
 
-                              },
-                              child: WebViewWidget(
-                                  controller: nestedWebviewController
-                                      .webViewController!),
-                            ),
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: 1,
+                                    itemBuilder: (c, i) {
+                                      return Container(
+                                        width: 500,
+                                        //height:718.5,
+                                        height: heightWebview,
+                                        child: WebViewWidget(
+                                          controller: nestedWebviewController
+                                              .webViewController!,
+                                        ),
+                                      );
+                                    })
+                           /* WebViewWidget(
+                                controller: nestedWebviewController
+                                    .webViewController!),*/
                           );
                         }))
                   ]),

@@ -32,7 +32,7 @@ class _TestingState extends State<Testing> {
 
   // ScrollController nestedController = ScrollController();
   late WebViewController webViewController;
-  //final GlobalKey<NestedScrollViewState> myKey = GlobalKey();
+  final GlobalKey<NestedScrollViewStatePlus> sliverKey = GlobalKey();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
@@ -65,11 +65,30 @@ class _TestingState extends State<Testing> {
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
-        //Uri.parse('https://kdrc.ru/novosti'),
+        Uri.parse('https://kdrc.ru/novosti'),
         //Uri.parse('https://kdrc.ru'),
-        Uri.parse('https://flutter.dev'),
+        //Uri.parse('https://flutter.dev'),
       );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // 3. Access the inner or outer scroll controller using GlobalKey<NestedScrollViewStatePlus>
+      sliverKey.currentState!.innerController.addListener(() {
+        final innerController = sliverKey.currentState!.innerController;
+        if (innerController.positions.length == 1) {
+          print('Scrolling inner nested scrollview: ${innerController.offset}+${innerController.position.pixels}');
+        }
+      });
+      sliverKey.currentState!.outerController.addListener(() {
+        final outerController = sliverKey.currentState!.outerController;
+        if (outerController.positions.length == 1) {
+          print('Scrolling outer nested scrollview: ${outerController.offset}');
+        }
+      });
+    });
+
+
   }
+
 
 
   @override
@@ -88,7 +107,8 @@ class _TestingState extends State<Testing> {
         },
         child: SafeArea(
           child: Scaffold(
-            body: NestedScrollView(
+            body: NestedScrollViewPlus(
+              key: sliverKey,
               //controller: controller,
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
@@ -97,21 +117,22 @@ class _TestingState extends State<Testing> {
                     handle: SliverOverlapAbsorberHandle(),
                     sliver: SliverSafeArea(
                       sliver: SliverAppBar(
-                        stretch: true,
-                        stretchTriggerOffset: 100,
                         expandedHeight: 256,
                         collapsedHeight: 56,
                         pinned: true,
+                        floating: false,
+                        snap: false,
                       ),
                     ),
                   ),
                 ];
               },
               body: CustomScrollView(
+                controller: ScrollController(),
                 key:PageStorageKey('webview-scroll'),
                 slivers: [
                   SliverToNestedScrollBoxAdapter(
-                      childExtent: 2500,
+                      childExtent: 1491,
                       onScrollOffsetChanged: (scrollOffset) {
                         double y = scrollOffset;
                         if (Platform.isAndroid) {
@@ -123,7 +144,33 @@ class _TestingState extends State<Testing> {
                       child:WebViewWidget(controller: webViewController,)
                   ),
                 ],
-              ),),
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+                onPressed: ()async{
+                  //2.75
+                  final pixelRatio = MediaQuery.of(context).devicePixelRatio;
+                  print('pixelRatio $pixelRatio');
+                 /* if (!sliverKey.currentState!.innerController.hasClients) {
+                    // Если контроллер не активен, пробуем его активировать
+                    await Future.delayed(Duration(milliseconds: 100));
+                  }
+
+                  if (sliverKey.currentState!.innerController.hasClients) {
+                    final maxScrollExtent = sliverKey.currentState!.innerController.position.maxScrollExtent;
+                    sliverKey.currentState!.innerController.position.setPixels(maxScrollExtent);
+                  }*/
+                   sliverKey.currentState!.innerController.jumpTo(100);
+
+
+                  // Используем jumpTo вместо animateTo
+                 // sliverKey.currentState!.innerController.position.setPixels(772);
+                  //sliverKey.currentState!.innerController.jumpTo(772);
+                  //sliverKey.currentState!.innerController.position.animateTo(772.4+200, duration: Duration(microseconds: 500), curve: Curves.bounceIn);
+                  //sliverKey.currentState!.innerController.position.setPixels(1000);
+                 // sliverKey.currentState!.outerController.jumpTo(50);
+
+                }),
           ),
         ),
       ),

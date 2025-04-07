@@ -94,7 +94,7 @@ class _SlWebCopyState extends State<SlWebCopy> {
                             ),
                             onPressed: () async {
                               //key.currentState!.innerController.position.setPixels(772);
-                              aaa=!aaa;
+                              nestedWebviewController!.nestedScrollController.innerScrollController!.position.setPixels(772.4);
 
                               //key.currentState!.innerController.position.pointerScroll(772);
                               //key.currentState!.outerController.position.setPixels(150);

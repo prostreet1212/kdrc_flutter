@@ -193,7 +193,7 @@ class NestedWebviewController {
         }),
       )
       ..addJavaScriptChannel('ScrollHeightNotifier',
-          onMessageReceived: (message) {
+          onMessageReceived: (message) async{
 
         final String msg = message.message;
         final double? height = double.tryParse(msg);
@@ -209,8 +209,18 @@ class NestedWebviewController {
                   .setPixels(oldScroll);*/
               //key.currentState!.innerController.position.setPixels(oldScroll);
              // Future.delayed(Duration(milliseconds: 1000),(){
+
+            /*  if (!nestedScrollController.innerScrollController!.hasClients) {
+                // Если контроллер не активен, пробуем его активировать
+                await Future.delayed(Duration(milliseconds: 100));
+              }
+              if (nestedScrollController.innerScrollController!.hasClients) {
+                final maxScrollExtent = nestedScrollController.innerScrollController!.position.maxScrollExtent;
+                nestedScrollController.innerScrollController!.position.setPixels(maxScrollExtent);
+              }*/
+              await Future.delayed(Duration(milliseconds: 100));
                 nestedScrollController.innerScrollController!.position
-                    .setPixels(oldScroll);
+                    .setPixels(772.4);
               //});
 
             }
