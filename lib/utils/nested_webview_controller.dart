@@ -1,46 +1,40 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
-import 'package:kdrc_flutter/pages/test/file_page.dart';
-import 'package:kdrc_flutter/pages/test/pdf_page.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/file_loading_dialog.dart';
-import 'package:nested_scroll_controller/nested_scroll_controller.dart';
+
+import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
 import '../cubits/background_cubit.dart';
-import '../cubits/error_text_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
+import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
 import '../main.dart';
-import '../widgets/custom_appbar.dart';
+import '../pages/pdf_page.dart';
 import '../widgets/custom_toast.dart';
-import '../widgets/sliver_webview.dart';
+
 
 enum ScrollStatus { prev, forward, reload }
 
 class NestedWebviewController {
-  NestedWebviewController({required this.initialUrl, required this.context});
+  NestedWebviewController({/*required this.initialUrl,*/ required this.context});
 
-  final String initialUrl;
+
   BuildContext context;
-
   WebViewController? _webViewController;
-
   WebViewController? get webViewController => _webViewController;
 
-  late NestedScrollController nestedScrollController = NestedScrollController();
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
@@ -49,14 +43,13 @@ class NestedWebviewController {
   bool isBackground = true;
   bool isBackgroundNoInternet = true;
 
-  //double prevPixel=0;
   List<double> prevPixels = [];
-  String prevUrl = '';
+  //String prevUrl = '';
+  bool isStep = false;
 
-
-  late StreamSubscription<InternetStatus> internetListener;
-
+ // late StreamSubscription<InternetStatus> internetListener;
   static var httpClient = new HttpClient();
+  final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
 
   Future<File> _downloadFile(String url, String filename) async {
     var request = await httpClient.getUrl(Uri.parse('${url}'));
@@ -68,40 +61,16 @@ class NestedWebviewController {
     return file;
   }
 
-  // void checkInternet() {
-  //   internetListener = InternetConnection()
-  //       .onStatusChange
-  //       .listen((InternetStatus status) async {
-  //     switch (status) {
-  //       case InternetStatus.connected:
-  //         //print('интернет подключен');
-  //         if (isFirstRun && internetStatus == false) {
-  //           sl<InternetCubit>().changeValue(true);
-  //           scrollStatus = ScrollStatus.reload;
-  //           webViewController!.reload();
-  //           isFirstRun = false;
-  //         } else {
-  //           isFirstRun = false;
-  //         }
-  //         internetStatus = true;
-  //         break;
-  //       case InternetStatus.disconnected:
-  //         //print('интернет отключен');
-  //         internetStatus = false;
-  //         if (isFirstRun && internetStatus == false) {
-  //           sl<ScrollHeightCubit>().updateScrollHeight(0);
-  //           sl<InternetCubit>().changeValue(false);
-  //         }
-  //         break;
-  //     }
-  //   });
-  // }
+
+
+
 
   void init() {
     fToast.init(context);
     _webViewController = WebViewController()
       ..setNavigationDelegate(
-        NavigationDelegate(onNavigationRequest: (request) async {
+        NavigationDelegate(
+            onNavigationRequest: (request) async {
           print('onPageSRequest');
           if (internetStatus) {
             if (!request.url.contains('kdrc.ru') ||
@@ -139,6 +108,7 @@ class NestedWebviewController {
               } else {
                 if (Platform.isAndroid) {
                   scrollStatus = ScrollStatus.forward;
+                  nestedWebviewController!.isStep=true;
                 }
                 return NavigationDecision.navigate;
               }
@@ -156,7 +126,7 @@ class NestedWebviewController {
           sl<BoolCubit>().changeValue(true);
           if (scrollStatus == ScrollStatus.forward) {
             prevPixels.add(
-                nestedScrollController.innerScrollController!.position.pixels);
+                sliverKey1.currentState!.innerController.position.pixels);
           } else if (scrollStatus == ScrollStatus.prev) {
             oldScroll = prevPixels.last;
             prevPixels.removeLast();
@@ -164,21 +134,8 @@ class NestedWebviewController {
         }, onPageFinished: (url) async {
           print('onPageFinished + $isFirstRun');
           await _webViewController!.runJavaScript(Utils.scrollHeightJs);
-          if (scrollStatus == ScrollStatus.forward) {
-            if (nestedScrollController.innerScrollController!.offset > 0) {
-              nestedScrollController.innerScrollController!.position
-                  .setPixels(0);
-            }
-          } /*else if (scrollStatus == ScrollStatus.prev) {
-            Future.delayed(Duration(milliseconds: 20), () {
-                nestedScrollController.innerScrollController!.position
-                    .setPixels(oldScroll);
-
-            });
-
-
-            //если обновить страницу
-          } else {}*/
+         //здесь были смещения
+          ///
           if (Platform.isIOS) {
             scrollStatus = ScrollStatus.forward;
           }
@@ -194,36 +151,12 @@ class NestedWebviewController {
       )
       ..addJavaScriptChannel('ScrollHeightNotifier',
           onMessageReceived: (message) async{
-
         final String msg = message.message;
         final double? height = double.tryParse(msg);
-        print('aaaaaaaa: ${height}');
         if (height != null) {
           if (isFirstRun && internetStatus == false) {
-            //sl<ScrollHeightCubit>().updateScrollHeight(0);
-            //sl<InternetCubit>().changeValue(false);
           } else {
             sl<ScrollHeightCubit>().updateScrollHeight(height);
-            if (scrollStatus == ScrollStatus.prev) {
-             /* nestedScrollController.innerScrollController!.position
-                  .setPixels(oldScroll);*/
-              //key.currentState!.innerController.position.setPixels(oldScroll);
-             // Future.delayed(Duration(milliseconds: 1000),(){
-
-            /*  if (!nestedScrollController.innerScrollController!.hasClients) {
-                // Если контроллер не активен, пробуем его активировать
-                await Future.delayed(Duration(milliseconds: 100));
-              }
-              if (nestedScrollController.innerScrollController!.hasClients) {
-                final maxScrollExtent = nestedScrollController.innerScrollController!.position.maxScrollExtent;
-                nestedScrollController.innerScrollController!.position.setPixels(maxScrollExtent);
-              }*/
-              await Future.delayed(Duration(milliseconds: 100));
-                nestedScrollController.innerScrollController!.position
-                    .setPixels(772.4);
-              //});
-
-            }
 
 //скрыть фон при первой загрузке
             if (isBackground) {
@@ -243,19 +176,22 @@ class NestedWebviewController {
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
-        Uri.parse(initialUrl),
+        Uri.parse(sl<StartCubit>().state.url),
       )..setBackgroundColor(Colors.transparent);
 
-    nestedScrollController.addListener(() {
-      if (nestedScrollController.offset > 112) {
-        if (sl<IsCollapsedCubit>().state != true) {
-          sl<IsCollapsedCubit>().updateIsCollapsed(true);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      sliverKey1.currentState!.outerController.addListener(() {
+        if (sliverKey1.currentState!.outerController.offset > 112) {
+          if (sl<IsCollapsedCubit>().state != true) {
+            sl<IsCollapsedCubit>().updateIsCollapsed(true);
+          }
+        } else {
+          if (sl<IsCollapsedCubit>().state != false) {
+            sl<IsCollapsedCubit>().updateIsCollapsed(false);
+          }
         }
-      } else {
-        if (sl<IsCollapsedCubit>().state != false) {
-          sl<IsCollapsedCubit>().updateIsCollapsed(false);
-        }
-      }
+      });
     });
   }
 }

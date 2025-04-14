@@ -1,14 +1,9 @@
-import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
-
-import 'package:kdrc_flutter/widgets/dynamic_sliver.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
 import '../locator_service.dart';
 import '../main.dart';
@@ -21,7 +16,6 @@ class CustomAppBar extends StatefulWidget {
 
   NestedWebviewController nestedWebviewController;
 
-
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
@@ -32,7 +26,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
       widget.nestedWebviewController.scrollStatus = ScrollStatus.forward;
       widget.nestedWebviewController.webViewController!
           .loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
-
     } else {
       fToast.showToast(
           child: CustomToast(),
@@ -44,8 +37,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<IsCollapsedCubit>(
-        create: (context) => sl<IsCollapsedCubit>(),
-        child: BlocBuilder<IsCollapsedCubit, bool>(builder: (context, state) {
+      create: (context) => sl<IsCollapsedCubit>(),
+      child: BlocBuilder<IsCollapsedCubit, bool>(
+        builder: (context, state) {
           return SliverOverlapAbsorber(
             handle: SliverOverlapAbsorberHandle(),
             //handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -93,21 +87,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   leading: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: IconButton(
-                        icon: Icon(
-                          Icons.keyboard_backspace,
-                          color: Color.fromARGB(255, 32, 146, 131),
-                          size: 30,
-                        ),
-                      onPressed: null,),
+                      icon: Icon(
+                        Icons.keyboard_backspace,
+                        color: Color.fromARGB(255, 32, 146, 131),
+                        size: 30,
+                      ),
+                      onPressed: null,
+                    ),
                   ),
                   backgroundColor: Color.fromARGB(255, 247, 172, 119),
                   foregroundColor: Colors.red,
                   surfaceTintColor: Colors.yellow,
-                  //expandedHeight: 216.7,
-                  //expandedHeight: MediaQuery.of(context).size.width*0.551820728,
                   expandedHeight:
                       MediaQuery.of(context).size.width * 0.552125 + 0.1,
-                  //expandedHeight: 441.7,
                   floating: true,
                   collapsedHeight: 56,
                   pinned: true,
@@ -120,13 +112,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                           color: Colors.white,
                           child: Image.asset(
                             'assets/images/titleimage.png',
-                            //fit: BoxFit.cover,
                           ),
                         ),
-                        /*Image.asset(
-                      'assets/images/titleimage.png',
-                      fit: BoxFit.cover,
-                    ),*/
                       ),
                       state
                           ? SizedBox()
@@ -150,7 +137,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       shadowColor: Colors.grey[400],
                                       padding: EdgeInsets.all(5),
                                       backgroundColor: Colors.transparent,
-                                      // <-- Button color
                                       foregroundColor: Colors
                                           .transparent, // <-- Splash color
                                     ),
@@ -190,6 +176,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   )),
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 }

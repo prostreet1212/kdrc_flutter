@@ -1,16 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:kdrc_flutter/main.dart';
-import 'package:kdrc_flutter/pages/sl_copy.dart';
-import 'package:kdrc_flutter/pages/test/web_page.dart';
-import 'package:kdrc_flutter/pages/test/web_page_copy.dart';
-
-import '../cubits/phone_cubit.dart';
-import '../cubits/scroll_height_cubit.dart';
-import '../locator_service.dart';
+import 'package:kdrc_flutter/pages/main_page.dart';
 import '../utils/utils.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -48,7 +39,7 @@ class _WelcomePageState extends State<WelcomePage> {
       Navigator.pushReplacement(
         context,
         Utils.createRoute(
-        SlWebCopy(),
+        MainPage(),
         ),
       );
     });
@@ -89,10 +80,6 @@ class _WelcomePageState extends State<WelcomePage> {
                     fontSize: 18,
                     color: Colors.grey[600]
                 )
-               /* style:GoogleFonts.robotoSerif(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    color: Colors.grey[600]),*/
               ),
             ],
           ),

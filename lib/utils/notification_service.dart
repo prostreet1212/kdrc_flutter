@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 
-import 'package:kdrc_flutter/pages/sl_copy.dart';
+import 'package:kdrc_flutter/pages/main_page.dart';
 
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
@@ -135,8 +135,10 @@ class NotificationService {
   }
 
   Future<void> subscribeToTopic() async {
-    await _firebaseMessaging.subscribeToTopic('all');
-    print('subscribeToTopic');
+    /*await _firebaseMessaging.subscribeToTopic('all');
+    print('subscribeToTopic');*/
+    await _firebaseMessaging.unsubscribeFromTopic('all');
+    print('unsubscribeToTopic');
   }
 
   // Show local notification

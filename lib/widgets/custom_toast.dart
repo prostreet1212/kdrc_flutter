@@ -30,14 +30,6 @@ class CustomToast extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(height: 1.2,color: Colors.black),
         ),
-        /* child: Expanded(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-
-                                    ],
-                                  ),
-                                ),*/
       ),
     );
   }

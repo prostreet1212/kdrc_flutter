@@ -36,10 +36,8 @@ dependencies:
   flutter_bloc: ^9.0.0
   flutter_direct_call_plus: ^0.0.3
   permission_handler: ^11.3.1
-  google_fonts: 6.2.1
   flutter_exit_app: ^1.1.4
   shared_preferences: ^2.5.2
-  nested_scroll_controller: ^1.0.0
   get_it: ^8.0.3
   flutter_pdfview: 1.4.0
   path_provider: ^2.1.5
@@ -50,32 +48,19 @@ dependencies:
   firebase_core: ^3.12.1
   fluttertoast: ^8.2.12
   equatable: ^2.0.7
-  flutter_sticky_header: ^0.7.0
-  intrinsic_dimension: ^0.3.1
-  intrinsic_size_builder: ^2.0.2
-
-  flutter_inappwebview: ^6.1.5
   nested_scroll_view_plus: ^3.0.0
-
-
+  firebase_messaging: ^15.2.4
+  flutter_local_notifications: ^18.0.1
 
   #docx_viewer: ^0.2.1
   #docx_file_viewer: ^0.0.7
   #document_viewer: ^0.0.1
   #flutter_file_preview: ^0.0.9
 
-
-
-
-
-
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  firebase_messaging: ^15.2.4
-  dio: ^5.0.0
-  flutter_local_notifications: ^18.0.1
+
 
 dev_dependencies:
   flutter_test:
@@ -119,16 +104,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Calibri
-      fonts:
-        - asset: assets/fonts/calibri/calibri.ttf
-        - asset: assets/fonts/calibri/calibri_bold.ttf
-    - family: Couriernew
-      fonts:
-        - asset: assets/fonts/couriernew/couriernew.ttf
-    - family: Arial
-      fonts:
-        - asset: assets/fonts/arial/arial.ttf
     - family: WelcomeFont
       fonts:
         - asset: assets/fonts/welcome_font.ttf
