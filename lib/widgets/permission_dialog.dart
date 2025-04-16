@@ -13,9 +13,11 @@ class PermissionDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () {
+          onPressed: () async{
             Navigator.pop(context);
-            openAppSettings();
+           bool result=await openAppSettings();
+           print('call $result');
+           //проверка на разрешение?
           },
           child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
         ),
