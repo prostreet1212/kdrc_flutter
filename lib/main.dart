@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
-import 'package:kdrc_flutter/cubits/settings_cubit.dart';
+
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 import 'package:kdrc_flutter/pages/main_page.dart';
 
@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kdrc_flutter/locator_service.dart' as di;
 
 import 'cubits/scroll_height_cubit.dart';
+import 'cubits/settings_cubit/settings_cubit.dart';
 import 'cubits/start_cubit/start_state.dart';
 import 'firebase_options.dart';
 
@@ -28,6 +29,7 @@ NestedWebviewController? nestedWebviewController;
 @pragma('vm:entry-point')
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -36,7 +38,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await NotificationService.instance.initialize();
+  //await NotificationService.instance.initialize();
+  await di.sl<NotificationService>().initialize();
+
   runApp(const MyApp());
 }
 
@@ -59,6 +63,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<InetCubit>(
           create: (context) => di.sl<InetCubit>(),
         ),
+        BlocProvider<SettingsCubit>(
+          create: (c) => di.sl<SettingsCubit>(),
+        )
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
@@ -73,6 +80,7 @@ class MyApp extends StatelessWidget {
         home: BlocBuilder<StartCubit, StartState>(
           // future: NotificationService.instance.getInitialMessage(),
           builder: ((context, state) {
+
             if (state is StartPush) {
               // Если приложение было открыто через уведомление
               return MainPage();

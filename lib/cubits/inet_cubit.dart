@@ -6,11 +6,15 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 class InetCubit extends Cubit<bool> {
   //late final StreamSubscription<InternetStatus> internetListener;
-  InternetConnection internetChecker=InternetConnection();
+  InternetConnection internetChecker=InternetConnection();/*.createInstance(
+    customCheckOptions: [
+      InternetCheckOption(uri: Uri.parse('https://google.com')),
+    ],
+  );*/
   late StreamSubscription<InternetStatus> internetListener;
 
-  InetCubit() : super(false) {
-    init();
+  InetCubit() : super(true) {
+    //init();
   }
 
   void init() {
@@ -24,8 +28,7 @@ class InetCubit extends Cubit<bool> {
 
   @override
   Future<void> close() {
-    //_internetChecker.dispose();
-    //internetListener.cancel();
+    internetListener.cancel();
     return super.close();
   }
 }

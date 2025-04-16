@@ -5,9 +5,11 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 
 import 'package:kdrc_flutter/pages/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
@@ -104,7 +106,7 @@ class NotificationService {
         sl<BackgroundCubit>().changeValue(true);
         sl<ErrorTextCubit>().changeValue(false);
         nestedWebviewController!.isFirstRun = true;
-        nestedWebviewController!.isBackgroundNoInternet=true;
+        //nestedWebviewController!.isBackgroundNoInternet = true;
       }
     });
 
@@ -123,7 +125,7 @@ class NotificationService {
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    subscribeToTopic();
+    subscribeToTopic( sl<SettingsCubit>().state.isPush);
 
     RemoteMessage? initialMessage =
         await _firebaseMessaging.getInitialMessage();
@@ -134,11 +136,14 @@ class NotificationService {
     }*/
   }
 
-  Future<void> subscribeToTopic() async {
-    /*await _firebaseMessaging.subscribeToTopic('all');
-    print('subscribeToTopic');*/
-    await _firebaseMessaging.unsubscribeFromTopic('all');
-    print('unsubscribeToTopic');
+  Future<void> subscribeToTopic(bool isSubscribe) async {
+    if (isSubscribe) {
+      await _firebaseMessaging.subscribeToTopic('all');
+      print('subscribeToTopic');
+    } else {
+      await _firebaseMessaging.unsubscribeFromTopic('all');
+      print('unsubscribeToTopic');
+    }
   }
 
   // Show local notification
@@ -212,7 +217,7 @@ class NotificationService {
       sl<BackgroundCubit>().changeValue(true);
       sl<ErrorTextCubit>().changeValue(false);
       nestedWebviewController!.isFirstRun = true;
-      nestedWebviewController!.isBackgroundNoInternet=true;
+      //nestedWebviewController!.isBackgroundNoInternet = true;
     }
   }
 

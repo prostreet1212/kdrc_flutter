@@ -28,7 +28,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           .loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
     } else {
       fToast.showToast(
-          child: CustomToast(),
+          child: CustomToast(
+            message: 'Проверьте подключение к сети интернет',
+          ),
           toastDuration: Duration(seconds: 2),
           gravity: ToastGravity.BOTTOM);
     }
@@ -85,14 +87,33 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         : SizedBox(),
                   ],
                   leading: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.only(bottom: 10, right: 16),
                     child: IconButton(
                       icon: Icon(
-                        Icons.keyboard_backspace,
+                        //Icons.keyboard_backspace,
+                        Icons.arrow_back,
+                        //Icons.arrow_back_ios,
                         color: Color.fromARGB(255, 32, 146, 131),
-                        size: 30,
+                        size: 25,
                       ),
-                      onPressed: null,
+                      onPressed: () async {
+                        if (await nestedWebviewController!.webViewController!
+                            .canGoBack()) {
+                          nestedWebviewController!.scrollStatus =
+                              ScrollStatus.prev;
+                          nestedWebviewController!.isStep = true;
+                          nestedWebviewController!.webViewController!.goBack();
+                        }else{
+                          fToast.showToast(
+                              child: CustomToast(
+                                message:
+                               // 'Это начальная странцица',
+                                'Это начальная страница. Дальнейший переход не требуется',
+                              ),
+                              toastDuration: Duration(seconds: 2),
+                              gravity: ToastGravity.BOTTOM);
+                        }
+                      },
                     ),
                   ),
                   backgroundColor: Color.fromARGB(255, 247, 172, 119),

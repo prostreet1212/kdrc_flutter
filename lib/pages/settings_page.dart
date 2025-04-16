@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
-import 'package:kdrc_flutter/cubits/settings_cubit.dart';
+import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 
+import '../cubits/settings_cubit/settings_state.dart';
 import '../locator_service.dart';
 import '../main.dart';
+import '../utils/notification_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -40,60 +42,63 @@ class _SettingsPageState extends State<SettingsPage> {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              BlocBuilder<PhoneCubit,bool>(
-                  builder: (context,phoneState){
-                    if(phoneState){
-                    return  Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            contentPadding:
-                            EdgeInsets.only( left: 16, right: 6),
-                            //leading: SizedBox(width: 50,),
-                            title: Text('Кнопка "Звонок"'),
-                            subtitle: Text(
-                              'Отображать кнопку звонка на экране',
-                              style: TextStyle(color: Colors.grey[500]),
-                            ),
-                            trailing: Checkbox(
-                                activeColor: Colors.teal,
-                                //value: settingPrefs.getBool('isCalling')??true,
-                                value: sl<SettingsCubit>().state,
-                                onChanged: (value) {
-                                  setState(() {
-                                    sl<SettingsCubit>().changeCalling(value!);
-                                  });
-                                }),
-                          ),
-                          Container(
-                            height: 1,
-                            color: Colors.grey[400],
-                          ),
-                        ],
-                      );
-                    }else{
-                      return SizedBox();
-                    }
-                  }),
-
+              BlocBuilder<PhoneCubit, bool>(builder: (context, phoneState) {
+                if (phoneState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.only(left: 16, right: 6),
+                        //leading: SizedBox(width: 50,),
+                        title: Text('Кнопка "Звонок"'),
+                        subtitle: Text(
+                          'Отображать кнопку звонка на экране',
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
+                        trailing: BlocBuilder<SettingsCubit, SettingsState>(
+                          buildWhen:(prev,next){
+                            return prev.isCalling!=next.isCalling;
+                          },
+                            builder: (context, settingsState) {
+                          return Checkbox(
+                              activeColor: Colors.teal,
+                              value: settingsState.isCalling,
+                              onChanged: (value) {
+                                sl<SettingsCubit>().updateIsCalling(value!);
+                              });
+                        }),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Colors.grey[400],
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+              }),
               ListTile(
-                contentPadding:
-                EdgeInsets.only( left: 16, right: 6),
-                //leading: SizedBox(width: 50,),
-                title: Text('Push-уведомления'),
-                subtitle: Text(
-                  'Отправлять push-уведомления',
-                  style: TextStyle(color: Colors.grey[500]),
-                ),
-                trailing: Checkbox(
-                    activeColor: Colors.teal,
-                    value: isPush,
-                    onChanged: (value) {
-                      setState(() {
-                        isPush = value!;
-                      });
-                    }),
-              ),
+                  contentPadding: EdgeInsets.only(left: 16, right: 6),
+                  //leading: SizedBox(width: 50,),
+                  title: Text('Push-уведомления'),
+                  subtitle: Text(
+                    'Отправлять push-уведомления',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                  trailing: BlocBuilder<SettingsCubit, SettingsState>(
+                      buildWhen:(prev,next){
+                        return prev.isPush!=next.isPush;
+                      },
+                      builder: (context, settingsState) {
+                    return Checkbox(
+                        activeColor: Colors.teal,
+                        value: settingsState.isPush,
+                        onChanged: (value) {
+                          sl<SettingsCubit>().updateIsPush(value!);
+                          sl<NotificationService>().subscribeToTopic(value);
+                        });
+                  })),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: double.infinity,
@@ -104,11 +109,17 @@ class _SettingsPageState extends State<SettingsPage> {
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                   ),
-                  child: Text('ОК',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16),),
-                    onPressed: (){
-                Navigator.pop(context);
-                    },
-                   ),
+                  child: Text(
+                    'ОК',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               )
             ],
           )),

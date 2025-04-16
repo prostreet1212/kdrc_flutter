@@ -58,9 +58,10 @@ class Utils {
                     //openAppSettings();
                   } else if (status.isDenied) {
                     Navigator.pop(context);
-                    await Permission.phone.request();
-
-
+                    final status1 = await Permission.phone.request();
+                    if(status1.isGranted){
+                      await FlutterDirectCall.makeDirectCall("+79210779641");
+                    }
                   } else {
                     print("Permission denied");
                   }

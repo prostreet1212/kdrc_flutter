@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kdrc_flutter/cubits/settings_cubit.dart';
+import 'package:kdrc_flutter/cubits/inet_cubit.dart';
+import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
+import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
-import 'package:kdrc_flutter/widgets/sliver_webview.dart';
+import 'package:kdrc_flutter/widgets/custom_toast.dart';
+import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
@@ -21,6 +24,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    sl<InetCubit>().init();
     nestedWebviewController = NestedWebviewController(
         /*initialUrl: sl<StartCubit>().state.url,*/ context: context);
     nestedWebviewController!.init();
@@ -28,6 +32,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    sl<InetCubit>().close();
     // nestedWebviewController!.internetListener.cancel();
     super.dispose();
   }
@@ -36,13 +41,15 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (await nestedWebviewController!.webViewController!.canGoBack()) {
+        bool canGoBack=await nestedWebviewController!.webViewController!.canGoBack();
+        if (canGoBack) {
           nestedWebviewController!.scrollStatus = ScrollStatus.prev;
           nestedWebviewController!.isStep = true;
           nestedWebviewController!.webViewController!.goBack();
           return false;
         } else {
-          return true;
+          fToast.showToast(child: CustomToast(message: 'aaa'));
+          return false;
         }
       },
       child: SafeArea(
@@ -58,16 +65,14 @@ class _MainPageState extends State<MainPage> {
               ];
             },
             body: SliverWebview(
-                nestedWebviewController: nestedWebviewController!),
+              /*  nestedWebviewController: nestedWebviewController!*/),
           ),
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
             builder: (context, phoneState) {
               if (phoneState) {
-                return BlocProvider<SettingsCubit>(
-                    create: (c) => sl<SettingsCubit>()..getCalling(),
-                    child: BlocBuilder<SettingsCubit, bool>(
-                        builder: (context, state) {
-                      if (state) {
+                return BlocBuilder<SettingsCubit, SettingsState>(
+                    builder: (context, state) {
+                      if (state.isCalling) {
                         return FloatingActionButton(
                             backgroundColor: Colors.grey[50],
                             shape: const CircleBorder(),
@@ -78,11 +83,12 @@ class _MainPageState extends State<MainPage> {
                             ),
                             onPressed: () async {
                               Utils.showCallDialog(context);
+                              //nestedWebviewController!.webViewController!.reload();
                             });
                       } else {
                         return SizedBox();
                       }
-                    }));
+                    });
               } else {
                 return SizedBox();
               }

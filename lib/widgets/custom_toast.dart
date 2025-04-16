@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomToast extends StatelessWidget {
-  const CustomToast({Key? key}) : super(key: key);
+   const CustomToast({Key? key,required this.message}) : super(key: key);
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class CustomToast extends StatelessWidget {
           ],
         ),
         child:  Text(
-          'Проверьте подключение к сети интернет',
+         message,
           textAlign: TextAlign.center,
           style: TextStyle(height: 1.2,color: Colors.black),
         ),
