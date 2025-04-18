@@ -49,7 +49,7 @@ class Utils {
                   } else if (status.isPermanentlyDenied) {
                     //await Permission.phone.request();
                     Navigator.pop(context);
-                    showDialog(
+                   showDialog(
                         context: context,
                         builder: (context){
                       //Navigator.pop(context);

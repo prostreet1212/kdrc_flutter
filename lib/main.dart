@@ -25,6 +25,7 @@ import 'firebase_options.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 FToast fToast = FToast();
 NestedWebviewController? nestedWebviewController;
+bool callRequestResult=false;
 
 @pragma('vm:entry-point')
 void main() async {

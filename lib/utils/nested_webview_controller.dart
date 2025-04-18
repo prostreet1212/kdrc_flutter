@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
@@ -158,7 +158,6 @@ class NestedWebviewController {
           if (Platform.isIOS) {
             scrollStatus = ScrollStatus.forward;
           }
-
           sl<BoolCubit>().changeValue(false);
         }, onProgress: (progress) {
           print('$progress');
@@ -184,12 +183,12 @@ class NestedWebviewController {
               //isBackground = false;
               sl<BackgroundCubit>().changeValue(false);
               //доп
-              isFirstRun=false;
+              //isFirstRun=false;
             } else {
               if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
                 sl<BackgroundCubit>().changeValue(false);
                 //доп
-                isFirstRun=false;
+                //isFirstRun=false;
 
                 //isBackgroundNoInternet = false;
                 print('aaa');

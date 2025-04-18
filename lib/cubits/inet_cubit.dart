@@ -2,16 +2,17 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+
 
 class InetCubit extends Cubit<bool> {
   //late final StreamSubscription<InternetStatus> internetListener;
-  InternetConnection internetChecker=InternetConnection();/*.createInstance(
+  InternetConnectionChecker internetChecker=InternetConnectionChecker.instance;/*.createInstance(
     customCheckOptions: [
       InternetCheckOption(uri: Uri.parse('https://google.com')),
     ],
   );*/
-  late StreamSubscription<InternetStatus> internetListener;
+  late StreamSubscription<InternetConnectionStatus> internetListener;
 
   InetCubit() : super(true) {
     //init();
@@ -21,8 +22,8 @@ class InetCubit extends Cubit<bool> {
     // Подписываемся на изменения состояния интернета
 
     internetListener=internetChecker.onStatusChange.listen((status) {
-      print('интернет ${status == InternetStatus.connected}');
-      emit(status == InternetStatus.connected);
+      print('интернет ${status == InternetConnectionStatus.connected}');
+      emit(status == InternetConnectionStatus.connected);
     });
   }
 

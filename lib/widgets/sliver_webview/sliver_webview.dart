@@ -42,7 +42,7 @@ class SliverWebview extends StatelessWidget {
               /*nestedWebviewController.internetStatus == false*/sl<InetCubit>().state==true/*false*/) {
             sl<ErrorTextCubit>().changeValue(true);
             nestedWebviewController!.scrollStatus = ScrollStatus.reload;
-            //nestedWebviewController!.webViewController!.reload();
+            nestedWebviewController!.webViewController!.reload();
             nestedWebviewController!.isFirstRun = false;
           } else {
             nestedWebviewController!.isFirstRun = false;
@@ -58,7 +58,8 @@ class SliverWebview extends StatelessWidget {
         }
       },
       builder: (context1, state) {
-        return Stack(
+        return
+        Stack(
           children: [
             CustomScrollView(
               slivers: [
