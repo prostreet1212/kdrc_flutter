@@ -36,16 +36,20 @@ class SliverWebview extends StatelessWidget {
         MediaQueryData.fromView(View.of(context)).padding.bottom;
     double heightWebview = heightScreen - topPadding - bottomPadding - 56;
     return BlocConsumer<InetCubit, bool>(
+      listenWhen: (prev,next){
+        return prev!=next;
+      },
       listener: (context, state) {
         if (state) {
           if (nestedWebviewController!.isFirstRun &&
               /*nestedWebviewController.internetStatus == false*/sl<InetCubit>().state==true/*false*/) {
+            print('перезагрузка');
             sl<ErrorTextCubit>().changeValue(true);
             nestedWebviewController!.scrollStatus = ScrollStatus.reload;
             nestedWebviewController!.webViewController!.reload();
-            nestedWebviewController!.isFirstRun = false;
+            //nestedWebviewController!.isFirstRun = false;
           } else {
-            nestedWebviewController!.isFirstRun = false;
+            //nestedWebviewController!.isFirstRun = false;
           }
           /*nestedWebviewController.internetStatus = true*/;
         } else {

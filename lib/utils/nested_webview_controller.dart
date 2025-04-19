@@ -163,9 +163,13 @@ class NestedWebviewController {
           print('$progress');
         }, onWebResourceError: (error) {
           if (error.errorType == WebResourceErrorType.hostLookup) {
+            //если всё таки страница пошла грузится без интернета, этот переключатель даст возможность перезагрузить
+            //страницу при появлении интернета
+            isFirstRun=true;
             print('ошибка интернета нетю: ${error.description}');
           }
-        }),
+        },
+        ),
       )
       ..addJavaScriptChannel('ScrollHeightNotifier',
           onMessageReceived: (message) async {
@@ -173,10 +177,10 @@ class NestedWebviewController {
         final double? height = double.tryParse(msg);
         if (height != null) {
           if (isFirstRun &&/* internetStatus == false*/sl<InetCubit>().state==false) {
-            sl<ErrorTextCubit>().changeValue(false);
+            //sl<ErrorTextCubit>().changeValue(false);
           } else {
             sl<ScrollHeightCubit>().updateScrollHeight(height);
-
+            isFirstRun=false;
 
 //скрыть фон при первой загрузке
             if (sl<BackgroundCubit>().state==true/*isBackground*/) {
