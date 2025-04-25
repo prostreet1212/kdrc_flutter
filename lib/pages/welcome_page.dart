@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/pages/main_page.dart';
 import '../utils/utils.dart';
 
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({super.key});
+   const WelcomePage({super.key,required this.fToast,required this.callRequestResult});
+  final FToast fToast;
+  final bool callRequestResult;
+
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
@@ -15,7 +19,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Route createRoute(Widget widget) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => widget,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      transitionsBuilder: (context1, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево
         var slideAnimation = Tween<Offset>(
           begin: Offset(1.0, 0.0),
@@ -33,17 +37,20 @@ class _WelcomePageState extends State<WelcomePage> {
       transitionDuration: Duration(milliseconds: 500),
     );
   }
-
   runRoutePage() async {
-    await Future.delayed(const Duration(milliseconds: 700), () {
-      Navigator.pushReplacement(
-        context,
-        Utils.createRoute(
-        MainPage(),
-        ),
-      );
+    await Future.delayed(const Duration(milliseconds: 700), ()async {
+      if(context.mounted){
+        await Navigator.pushReplacement(
+          context,
+          Utils.createRoute(
+            MainPage(fToast: widget.fToast,callRequestResult: widget.callRequestResult,),
+          ),
+        );
+      }
+
     });
   }
+
 
   @override
   void initState() {
@@ -54,6 +61,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(

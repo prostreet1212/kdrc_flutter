@@ -6,15 +6,16 @@ import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
 import '../locator_service.dart';
-import '../main.dart';
 import '../utils/nested_webview_controller.dart';
 import '../utils/utils.dart';
 import 'custom_toast.dart';
 
 class CustomAppBar extends StatefulWidget {
-  CustomAppBar({super.key, required this.nestedWebviewController});
+   const CustomAppBar({super.key, required this.nestedWebviewController,required this.fToast,});
 
-  NestedWebviewController nestedWebviewController;
+  final NestedWebviewController nestedWebviewController;
+  final FToast fToast;
+
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -27,7 +28,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       widget.nestedWebviewController.webViewController!
           .loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
     } else {
-      fToast.showToast(
+      widget.fToast.showToast(
           child: CustomToast(
             message: 'Проверьте подключение к сети интернет',
           ),
@@ -97,14 +98,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         size: 25,
                       ),
                       onPressed: () async {
-                        if (await nestedWebviewController!.webViewController!
+                        if (await widget.nestedWebviewController.webViewController!
                             .canGoBack()) {
-                          nestedWebviewController!.scrollStatus =
+                          widget.nestedWebviewController.scrollStatus =
                               ScrollStatus.prev;
-                          nestedWebviewController!.isStep = true;
-                          nestedWebviewController!.webViewController!.goBack();
+                          widget.nestedWebviewController.isStep = true;
+                          widget.nestedWebviewController.webViewController!.goBack();
                         }else{
-                          fToast.showToast(
+                          widget.fToast.showToast(
                               child: CustomToast(
                                 message:
                                // 'Это начальная странцица',
@@ -147,8 +148,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     onPressed: () {
                                       loadFeedback();
                                     },
-                                    child: Image.asset(
-                                        'assets/images/ic_feedback1.png'),
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: Size(56, 56),
                                       shape: CircleBorder(
@@ -161,6 +160,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       foregroundColor: Colors
                                           .transparent, // <-- Splash color
                                     ),
+                                    child: Image.asset(
+                                        'assets/images/ic_feedback1.png'),
                                   ),
                                   SizedBox(
                                     width: 10,
@@ -171,11 +172,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                           context: context,
                                           builder: (context) => ExitDialog());
                                     },
-                                    child: Icon(
-                                      Icons.exit_to_app,
-                                      color: Color.fromARGB(255, 249, 176, 116),
-                                      size: 36,
-                                    ),
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: Size(56, 56),
                                       shape: CircleBorder(
@@ -188,6 +184,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       // <-- Button color
                                       foregroundColor: Colors
                                           .transparent, // <-- Splash color
+                                    ),
+                                    child: Icon(
+                                      Icons.exit_to_app,
+                                      color: Color.fromARGB(255, 249, 176, 116),
+                                      size: 36,
                                     ),
                                   ),
                                 ],

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../main.dart';
 
 class PermissionDialog extends StatefulWidget {
-  const PermissionDialog({super.key});
+  const PermissionDialog({super.key,required this.callRequestResult});
+  final bool callRequestResult;
 
   @override
   State<PermissionDialog> createState() => _PermissionDialogState();
@@ -42,8 +41,8 @@ class _PermissionDialogState extends State<PermissionDialog>  {
         TextButton(
           onPressed: () async{
             Navigator.pop(context);
-            callRequestResult=await openAppSettings();
-           print('call $callRequestResult');
+            widget.callRequestResult!=await openAppSettings();
+           print('call ${widget.callRequestResult}');
            //проверка на разрешение?
           },
           child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),

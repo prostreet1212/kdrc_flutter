@@ -8,8 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 
-import 'package:kdrc_flutter/pages/main_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
@@ -17,7 +15,7 @@ import '../cubits/inet_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 
-import '../main.dart';
+
 import 'nested_webview_controller.dart';
 
 @pragma('vm:entry-point')
@@ -95,17 +93,18 @@ class NotificationService {
           ?.loadRequest(Uri.parse(message.data['url']));*/
       if (sl<InetCubit>().state) {
         log('firebase :: Notification payload: ${message.data['url']}');
-        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
-        nestedWebviewController!.webViewController
+
+        sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
+        sl<NestedWebviewController>().webViewController
             ?.loadRequest(Uri.parse(message.data['url']));
       } else {
-        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
-        nestedWebviewController!.webViewController
+        sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
+        sl<NestedWebviewController>().webViewController
             ?.loadRequest(Uri.parse(message.data['url']));
         sl<ScrollHeightCubit>().updateScrollHeight(0);
         sl<BackgroundCubit>().changeValue(true);
         sl<ErrorTextCubit>().changeValue(false);
-        nestedWebviewController!.isFirstRun = true;
+        //nestedWebviewController!.isFirstRun = true;
         //nestedWebviewController!.isBackgroundNoInternet = true;
       }
     });
@@ -148,10 +147,10 @@ class NotificationService {
 
   // Show local notification
   Future<void> _showNotification(RemoteMessage message) async {
-    String? imgUrl = message.notification?.android?.imageUrl;
-    ByteArrayAndroidBitmap? largeIcon;
+    //String? imgUrl = message.notification?.android?.imageUrl;
+    //ByteArrayAndroidBitmap? largeIcon;
 // converting image into base65 to show in notification bar
-    BigPictureStyleInformation? bigPictureStyleInformation;
+  /*  BigPictureStyleInformation? bigPictureStyleInformation;
     try {
       // Create BigPictureStyleInformation for displaying the image
       bigPictureStyleInformation = BigPictureStyleInformation(
@@ -161,7 +160,7 @@ class NotificationService {
       );
     } catch (e) {
       print('Error fetching image: $e');
-    }
+    }*/
     //}
 
     AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -193,10 +192,10 @@ class NotificationService {
   }
 
   // Handle notification click action
-  Future<void> _handleNotificationClick(RemoteMessage message) async {
+ /* Future<void> _handleNotificationClick(RemoteMessage message) async {
     log('firebase :: User tapped on notification: ${message.notification?.title}');
     // You can navigate to a specific screen using Navigator here
-  }
+  }*/
 
   //Когда приложение открыто
   Future<void> _onDidReceiveNotificationResponse(
@@ -205,18 +204,18 @@ class NotificationService {
     if (sl<InetCubit>().state) {
       if (payload != null) {
         log('firebase :: Notification payload: $payload');
-        nestedWebviewController!.scrollStatus = ScrollStatus.forward;
-        nestedWebviewController!.webViewController
+        sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
+        sl<NestedWebviewController>().webViewController
             ?.loadRequest(Uri.parse(payload));
       }
     } else {
-      nestedWebviewController!.scrollStatus = ScrollStatus.forward;
-      nestedWebviewController!.webViewController
+      sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
+      sl<NestedWebviewController>().webViewController
           ?.loadRequest(Uri.parse(payload!));
       sl<ScrollHeightCubit>().updateScrollHeight(0);
       sl<BackgroundCubit>().changeValue(true);
       sl<ErrorTextCubit>().changeValue(false);
-      nestedWebviewController!.isFirstRun = true;
+      sl<NestedWebviewController>().isFirstRun = true;
       //nestedWebviewController!.isBackgroundNoInternet = true;
     }
   }

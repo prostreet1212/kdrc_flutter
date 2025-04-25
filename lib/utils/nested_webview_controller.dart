@@ -21,18 +21,19 @@ import '../cubits/inet_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
-import '../main.dart';
 import '../pages/pdf_page.dart';
 import '../widgets/custom_toast.dart';
 
 enum ScrollStatus { prev, forward, reload }
 
 class NestedWebviewController {
-  NestedWebviewController({required this.context});
+  NestedWebviewController();
 
-  BuildContext context;
-  WebViewController? _webViewController;
-  WebViewController? get webViewController => _webViewController;
+  /*FToast fToast;
+  BuildContext context;*/
+
+  late WebViewController webViewController;
+
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
@@ -43,24 +44,28 @@ class NestedWebviewController {
   bool isFirstRun = true;
   //bool isBackground = true;
   //bool isBackgroundNoInternet = true;
+  NavigationDecision navigationDecision=NavigationDecision.navigate;
+  bool loadError = false;
 
 
 
   // late StreamSubscription<InternetStatus> internetListener;
-  static var httpClient = new HttpClient();
+  static var httpClient =  HttpClient();
   final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
 
-  Future<File?> _downloadFile(String url, String filename) async {
+  Future<File?> _downloadFile(String url, String filename,FToast fToast, BuildContext context) async {
     try {
-      var request = await httpClient.getUrl(Uri.parse('${url}'));
+      var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
       String dir = (await getApplicationDocumentsDirectory()).path;
-      File file = new File('$dir/$filename');
+      File file =  File('$dir/$filename');
       await file.writeAsBytes(bytes);
       return file;
     } catch (e) {
-      Navigator.pop(context);
+      if(context.mounted){
+        Navigator.pop(context);
+      }
       fToast.showToast(
           child: CustomToast(
             message:
@@ -74,12 +79,12 @@ class NestedWebviewController {
   }
 
   Future<bool> canGoBack() async {
-    return await _webViewController!.canGoBack();
+    return await webViewController!.canGoBack();
   }
 
-  void init() {
-    fToast.init(context);
-    _webViewController = WebViewController()
+  void init(FToast fToast,BuildContext context)async {
+   // fToast.init(context);
+    webViewController = WebViewController()
       ..setNavigationDelegate(
         NavigationDelegate(
             onNavigationRequest: (request) async {
@@ -99,10 +104,13 @@ class NestedWebviewController {
                       return FileLoadingDialog();
                     });
                 File? pdfFile = await _downloadFile(
-                    request.url, 'file.${Utils.getTypeFile(request.url)}');
+                    request.url, 'file.${Utils.getTypeFile(request.url)}',fToast,context);
                 if (pdfFile != null) {
-                  Navigator.pop(context);
-                  OpenFilex.open(pdfFile!.path);
+                    OpenFilex.open(pdfFile.path);
+                    if(context.mounted){
+                    Navigator.pop(context);
+                  }
+
                 }
                 return NavigationDecision.prevent;
               } else if (request.url.contains('.pdf')) {
@@ -113,18 +121,22 @@ class NestedWebviewController {
                       return FileLoadingDialog();
                     });
                 File? pdfFile = await _downloadFile(
-                    request.url, 'file.${Utils.getTypeFile(request.url)}');
+                    request.url, 'file.${Utils.getTypeFile(request.url)}',fToast,context);
                 if (pdfFile != null) {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context, Utils.createRoute(PdfPage(path: pdfFile!.path)));
+                  if(context.mounted){
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context, Utils.createRoute(PdfPage(path: pdfFile.path)));
+                  }
+
                 }
                 return NavigationDecision.prevent;
               } else {
                 if (Platform.isAndroid) {
                   scrollStatus = ScrollStatus.forward;
-                  nestedWebviewController!.isStep = true;
+                  isStep = true;
                 }
+                navigationDecision=NavigationDecision.navigate;
                 return NavigationDecision.navigate;
               }
             }
@@ -135,7 +147,7 @@ class NestedWebviewController {
                 ),
                 toastDuration: Duration(seconds: 2),
                 gravity: ToastGravity.BOTTOM);
-
+            navigationDecision=NavigationDecision.prevent;
             return NavigationDecision.prevent;
           }
         },
@@ -152,7 +164,7 @@ class NestedWebviewController {
         }
         , onPageFinished: (url) async {
           print('onPageFinished + $isFirstRun');
-          await _webViewController!.runJavaScript(Utils.scrollHeightJs);
+          await webViewController!.runJavaScript(Utils.scrollHeightJs);
           //здесь были смещения
           ///
           if (Platform.isIOS) {
@@ -164,8 +176,15 @@ class NestedWebviewController {
         }, onWebResourceError: (error) {
           if (error.errorType == WebResourceErrorType.hostLookup) {
             print('ошибка интернета нетю: ${error.description}');
+            if(navigationDecision==NavigationDecision.navigate){
+              isFirstRun=true;
+              loadError=true;
+              print('onPageErrorNaigate');
+            }else{
+              print('onPageErrorPrev');
+            }
           }
-        }),
+        },),
       )
       ..addJavaScriptChannel('ScrollHeightNotifier',
           onMessageReceived: (message) async {
@@ -175,35 +194,43 @@ class NestedWebviewController {
           if (isFirstRun &&/* internetStatus == false*/sl<InetCubit>().state==false) {
             sl<ErrorTextCubit>().changeValue(false);
           } else {
-            sl<ScrollHeightCubit>().updateScrollHeight(height);
 
-
+              if(loadError ==true ){
+                loadError =false;
+              }else{
+                isFirstRun=false;
+                loadError =false;
+              }
 //скрыть фон при первой загрузке
-            if (sl<BackgroundCubit>().state==true/*isBackground*/) {
-              //isBackground = false;
-              sl<BackgroundCubit>().changeValue(false);
-              //доп
-              //isFirstRun=false;
-            } else {
-              if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
+              if (sl<BackgroundCubit>().state==true/*isBackground*/) {
+                //isBackground = false;
                 sl<BackgroundCubit>().changeValue(false);
                 //доп
                 //isFirstRun=false;
-
-                //isBackgroundNoInternet = false;
-                print('aaa');
+              } else {
+                if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
+                  sl<BackgroundCubit>().changeValue(false);
+                  //доп
+                  //isFirstRun=false;
+                  //isBackgroundNoInternet = false;
+                  print('aaa');
+                }
               }
-            }
-
-            print('onMessageReceived+ $isFirstRun');
+              print('onMessageReceived+ $isFirstRun');
+            sl<ScrollHeightCubit>().updateScrollHeight(height);
           }
         }
       })
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
+     // ..setBackgroundColor(Color.fromARGB(255, 255, 247, 255));
+      ..setBackgroundColor(Colors.white);
+   /*    await webViewController.loadRequest(
         Uri.parse(sl<StartCubit>().state.url),
-      )
-      ..setBackgroundColor(Colors.transparent);
+      );*/
+
+       webViewController.setOnConsoleMessage((m){
+         print('aaa ${m.message}');
+       });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       sliverKey1.currentState!.outerController.addListener(() {

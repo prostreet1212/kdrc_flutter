@@ -5,7 +5,6 @@ import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 
 import '../cubits/settings_cubit/settings_state.dart';
 import '../locator_service.dart';
-import '../main.dart';
 import '../utils/notification_service.dart';
 
 class SettingsPage extends StatefulWidget {

@@ -1,0 +1,2 @@
+C:/Users/user/AndroidStudioProjects/kdrc_flutter/android/app/.cxx/RelWithDebInfo/4m1o5p28/x86/CMakeFiles/edit_cache.dir
+C:/Users/user/AndroidStudioProjects/kdrc_flutter/android/app/.cxx/RelWithDebInfo/4m1o5p28/x86/CMakeFiles/rebuild_cache.dir

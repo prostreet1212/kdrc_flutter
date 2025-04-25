@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ExitDialog extends StatelessWidget {
   const ExitDialog({super.key});
@@ -17,7 +16,7 @@ class ExitDialog extends StatelessWidget {
         'Выход',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Text(
           'Выйти из приложения?',

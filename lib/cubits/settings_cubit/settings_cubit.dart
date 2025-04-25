@@ -3,7 +3,6 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
-import 'package:kdrc_flutter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../locator_service.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomToast extends StatelessWidget {
-   const CustomToast({Key? key,required this.message}) : super(key: key);
+   const CustomToast({super.key,required this.message});
   final String message;
 
   @override

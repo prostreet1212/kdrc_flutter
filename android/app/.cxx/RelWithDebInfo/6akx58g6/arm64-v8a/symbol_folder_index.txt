@@ -1,0 +1,1 @@
+C:\Users\user\AndroidStudioProjects\kdrc_flutter\build\app\intermediates\cxx\RelWithDebInfo\6akx58g6\obj\arm64-v8a
