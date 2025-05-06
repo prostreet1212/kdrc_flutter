@@ -116,9 +116,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: NestedScrollViewPlus(
-            physics: ClampingScrollPhysics(),
-            key: sl<NestedWebviewController>().sliverKey1,
+          body: NestedScrollView(
+            controller: sl<NestedWebviewController>().nestedScrollController,
+            //physics: ClampingScrollPhysics(),
+            //key: sl<NestedWebviewController>().sliverKey1,
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
@@ -148,10 +149,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           size: 36,
                         ),
                         onPressed: () async {
-                          Utils.showCallDialog(
+                          sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(0);
+                          /*Utils.showCallDialog(
                             context,
                             widget.callRequestResult,
-                          );
+                          );*/
                           //nestedWebviewController!.webViewController!.reload();
                         },
                       );

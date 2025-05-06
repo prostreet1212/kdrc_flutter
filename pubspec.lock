@@ -440,6 +440,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  nested_scroll_controller:
+    dependency: "direct main"
+    description:
+      name: nested_scroll_controller
+      sha256: "026c584f360a5311bbcee190792881e4543f88089632fc7eaa031743d997572d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   nested_scroll_view_plus:
     dependency: "direct main"
     description:

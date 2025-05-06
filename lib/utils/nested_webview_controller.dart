@@ -9,6 +9,7 @@ import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/file_loading_dialog.dart';
+import 'package:nested_scroll_controller/nested_scroll_controller.dart';
 
 import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:open_filex/open_filex.dart';
@@ -51,7 +52,9 @@ class NestedWebviewController {
 
   // late StreamSubscription<InternetStatus> internetListener;
   static var httpClient =  HttpClient();
-  final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
+  //доступ к внутреннему контроллеру-альтернатива
+  //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
+  final NestedScrollController nestedScrollController = NestedScrollController();
 
   Future<File?> _downloadFile(String url, String filename,FToast fToast, BuildContext context) async {
     try {
@@ -156,7 +159,7 @@ class NestedWebviewController {
           sl<BoolCubit>().changeValue(true);
           if (scrollStatus == ScrollStatus.forward) {
             prevPixels
-                .add(sliverKey1.currentState!.innerController.position.pixels);
+                .add(nestedScrollController.innerScrollController!.position.pixels/*sliverKey1.currentState!.innerController.position.pixels*/);
           } else if (scrollStatus == ScrollStatus.prev) {
             oldScroll = prevPixels.last;
             prevPixels.removeLast();
@@ -224,17 +227,18 @@ class NestedWebviewController {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
      // ..setBackgroundColor(Color.fromARGB(255, 255, 247, 255));
       ..setBackgroundColor(Colors.white);
-   /*    await webViewController.loadRequest(
+       await webViewController.loadRequest(
         Uri.parse(sl<StartCubit>().state.url),
-      );*/
+      );
 
        webViewController.setOnConsoleMessage((m){
          print('aaa ${m.message}');
        });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      sliverKey1.currentState!.outerController.addListener(() {
-        if (sliverKey1.currentState!.outerController.offset > 112) {
+
+      /*sliverKey1.currentState!.outerController.*/nestedScrollController.addListener(() {
+        if (/*sliverKey1.currentState!.outerController.*/nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {
             sl<IsCollapsedCubit>().updateIsCollapsed(true);
           }

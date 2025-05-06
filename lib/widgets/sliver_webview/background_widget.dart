@@ -14,13 +14,13 @@ class BackgroundWidget extends StatelessWidget {
       key: PageStorageKey('aaa'),
       child: Stack(
         children: [
-      /*    Image.asset(
+          Image.asset(
             'assets/images/background.png',
             fit: BoxFit.cover,
             opacity: const AlwaysStoppedAnimation(0.7),
             width: double.infinity,
             //fit: BoxFit.cover,
-          ),*/
+          ),
           BlocBuilder<ErrorTextCubit, bool>(
             builder: (context, internetStatetate) {
               if (internetStatetate) {
