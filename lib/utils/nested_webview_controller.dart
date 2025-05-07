@@ -86,7 +86,7 @@ class NestedWebviewController {
   }
 
   void init(FToast fToast,BuildContext context)async {
-   // fToast.init(context);
+    fToast.init(context);
     webViewController = WebViewController()
       ..setNavigationDelegate(
         NavigationDelegate(

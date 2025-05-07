@@ -19,7 +19,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Route createRoute(Widget widget) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => widget,
-      transitionsBuilder: (context1, animation, secondaryAnimation, child) {
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево
         var slideAnimation = Tween<Offset>(
           begin: Offset(1.0, 0.0),
@@ -61,7 +61,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-
+print('build WelcomePage');
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(

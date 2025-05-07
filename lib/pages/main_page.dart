@@ -149,11 +149,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           size: 36,
                         ),
                         onPressed: () async {
-                          sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(0);
-                          /*Utils.showCallDialog(
+                        //  sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(0);
+                          Utils.showCallDialog(
                             context,
                             widget.callRequestResult,
-                          );*/
+                          );
                           //nestedWebviewController!.webViewController!.reload();
                         },
                       );
