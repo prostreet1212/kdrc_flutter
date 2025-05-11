@@ -10,7 +10,6 @@ import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 import 'package:kdrc_flutter/pages/main_page.dart';
-import 'package:kdrc_flutter/pages/settings_page.dart';
 
 import 'package:kdrc_flutter/pages/welcome_page.dart';
 

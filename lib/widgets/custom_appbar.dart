@@ -26,7 +26,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void loadFeedback() {
     if (sl<InetCubit>().state) {
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-      sl<NestedWebviewController>().webViewController!
+      sl<NestedWebviewController>().webViewController
       .loadUrl(urlRequest: URLRequest(
         url: WebUri('https://kdrc.ru/obratnaya-svyaz'),
       ));
@@ -102,12 +102,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         size: 25,
                       ),
                       onPressed: () async {
-                        if (await sl<NestedWebviewController>().webViewController!
+                        if (await sl<NestedWebviewController>().webViewController
                             .canGoBack()) {
                           sl<NestedWebviewController>().scrollStatus =
                               ScrollStatus.prev;
                           sl<NestedWebviewController>().isStep = true;
-                          sl<NestedWebviewController>().webViewController!.goBack();
+                          sl<NestedWebviewController>().webViewController.goBack();
                         }else{
                           widget.fToast.showToast(
                               child: CustomToast(

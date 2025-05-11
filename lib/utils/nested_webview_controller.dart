@@ -11,8 +11,6 @@ import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/file_loading_dialog.dart';
 import 'package:nested_scroll_controller/nested_scroll_controller.dart';
-
-import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,7 +18,6 @@ import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
 import '../cubits/inet_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
-import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
 import '../pages/pdf_page.dart';
 import '../widgets/custom_toast.dart';
@@ -72,43 +69,10 @@ class NestedWebviewController{
     }
   }
 
-  Future<bool> canGoBack() async {
-    return await webViewController!.canGoBack();
-  }
+
 
   void init(FToast fToast,BuildContext context)async {
     fToast.init(context);
-  /*  webViewController = WebViewController()
-      ..addJavaScriptChannel('ScrollHeightNotifier',
-          onMessageReceived: (message) async {
-            final String msg = message.message;
-            final double? height = double.tryParse(msg);
-            if (height != null) {
-              if (isFirstRun &&sl<InetCubit>().state==false) {
-                sl<ErrorTextCubit>().changeValue(false);
-              } else {
-
-                if(loadError ==true ){
-                  loadError =false;
-                }else{
-                  isFirstRun=false;
-                  loadError =false;
-                }
-//скрыть фон при первой загрузке
-                if (sl<BackgroundCubit>().state==true/*isBackground*/) {
-                  sl<BackgroundCubit>().changeValue(false);
-                } else {
-                  if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
-                    sl<BackgroundCubit>().changeValue(false);
-                    print('aaa');
-                  }
-                }
-                print('onMessageReceived+ $isFirstRun');
-                sl<ScrollHeightCubit>().updateScrollHeight(height);
-              }
-            }
-          });
-*/
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
         if (nestedScrollController.offset > 112) {
@@ -184,14 +148,14 @@ class NestedWebviewController{
     print('$progress');
   }
 
-  shouldOverrideUrlLoading(InAppWebViewController c,NavigationAction navigationAction,FToast fToast,BuildContext context)async{
+  Future<NavigationActionPolicy> shouldOverrideUrlLoading(InAppWebViewController c,NavigationAction navigationAction,FToast fToast,BuildContext context)async{
     print('onPageSRequest');
     if (sl<InetCubit>().state==true) {
-
+print('url1 ${navigationAction.request.url.toString()}');
       if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
           navigationAction.request.url.toString().contains('mailto:')) {
         launchUrl(Uri.parse(navigationAction.request.url.toString()));
-        return await NavigationActionPolicy.CANCEL;
+        return  NavigationActionPolicy.CANCEL;
       } else {
         if (navigationAction.request.url.toString().contains('.doc') ||
             navigationAction.request.url.toString().contains('.xls')) {
@@ -210,7 +174,7 @@ class NestedWebviewController{
             }
 
           }
-          return await NavigationActionPolicy.CANCEL;;
+          return  NavigationActionPolicy.CANCEL;
         } else if (navigationAction.request.url.toString().contains('.pdf')) {
           showDialog(
               barrierDismissible: false,
@@ -228,14 +192,14 @@ class NestedWebviewController{
             }
 
           }
-          return await NavigationActionPolicy.CANCEL;;
+          return  NavigationActionPolicy.CANCEL;
         } else {
           if (Platform.isAndroid) {
             scrollStatus = ScrollStatus.forward;
             isStep = true;
           }
-          navigationDecision=await NavigationActionPolicy.ALLOW;
-          return await NavigationActionPolicy.ALLOW;
+          navigationDecision= NavigationActionPolicy.ALLOW;
+          return  NavigationActionPolicy.ALLOW;
         }
       }
     } else {
@@ -245,8 +209,8 @@ class NestedWebviewController{
           ),
           toastDuration: Duration(seconds: 2),
           gravity: ToastGravity.BOTTOM);
-      navigationDecision=await NavigationActionPolicy.CANCEL;
-      return await NavigationActionPolicy.CANCEL;
+      navigationDecision= NavigationActionPolicy.CANCEL;
+      return  NavigationActionPolicy.CANCEL;
     }
   }
 
@@ -266,9 +230,9 @@ class NestedWebviewController{
 }
 
 
+/*
 
-
-/*class NestedWebviewController111 {
+class NestedWebviewController111 {
   NestedWebviewController();
 
 

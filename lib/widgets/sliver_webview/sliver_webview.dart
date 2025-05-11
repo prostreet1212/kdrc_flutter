@@ -54,7 +54,7 @@ class SliverWebview extends StatelessWidget {
               print('перезагрузка');
               sl<ErrorTextCubit>().changeValue(true);
               sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
-              sl<NestedWebviewController>().webViewController!.reload();
+              sl<NestedWebviewController>().webViewController.reload();
               sl<NestedWebviewController>().isFirstRun = false;
             } else {
               sl<NestedWebviewController>().isFirstRun = false;
@@ -104,17 +104,17 @@ class SliverWebview extends StatelessWidget {
                               if(sl<NestedWebviewController>().isStep){
                                 if (sl<NestedWebviewController>().scrollStatus ==
                                     ScrollStatus.forward) {
-                                  if (sl<NestedWebviewController>().nestedScrollController.innerScrollController!/*sliverKey1.currentState!.innerController*/.offset>0
+                                  if (sl<NestedWebviewController>().nestedScrollController.innerScrollController!.offset>0
                                   ) {
-                                    sl<NestedWebviewController>().nestedScrollController.innerScrollController!/*sliverKey1.currentState!.innerController*/.position.setPixels(0);
+                                    sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(0);
                                   }
                                 } else if (sl<NestedWebviewController>().scrollStatus ==
                                     ScrollStatus.prev) {
-                                  double maxScrollExtent= sl<NestedWebviewController>().nestedScrollController.innerScrollController!/*sliverKey1.currentState!.innerController*/.position.maxScrollExtent;
+                                  double maxScrollExtent= sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.maxScrollExtent;
                                   if(maxScrollExtent<sl<NestedWebviewController>().oldScroll){
-                                    sl<NestedWebviewController>().nestedScrollController.innerScrollController!/*sliverKey1.currentState!.innerController*/.position.setPixels(maxScrollExtent);
+                                    sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(maxScrollExtent);
                                   }else{
-                                    sl<NestedWebviewController>()./*sliverKey1.currentState!.innerController*/nestedScrollController.innerScrollController!.position.setPixels(sl<NestedWebviewController>().oldScroll);
+                                    sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(sl<NestedWebviewController>().oldScroll);
                                   }
 
                                   //если обновить страницу
@@ -133,10 +133,10 @@ class SliverWebview extends StatelessWidget {
                                     if (Platform.isAndroid) {
                                       y *= View.of(context).devicePixelRatio;
                                     }
-                                    if(sl<NestedWebviewController>().webViewController!=null){
+                                    //if(sl<NestedWebviewController>().webViewController!=null){
                                       sl<NestedWebviewController>().webViewController
                                           .scrollTo(x:0, y:y.ceil());
-                                    }
+                                  //  }
 
                                   }
                                 },
@@ -154,6 +154,8 @@ class SliverWebview extends StatelessWidget {
                                             initialSettings: InAppWebViewSettings(
                                               javaScriptEnabled: true,
                                               transparentBackground: true,
+                                              useShouldOverrideUrlLoading: true,
+                                              useOnRenderProcessGone: true,
                                             ),
                                           initialUrlRequest: URLRequest(
                                             url: WebUri(sl<StartCubit>().state.url),
@@ -167,15 +169,17 @@ class SliverWebview extends StatelessWidget {
                                           onProgressChanged: (c,progress){
                                             sl<NestedWebviewController>().onProgressChanged(c, progress);
                                           },
-
                                           shouldOverrideUrlLoading: (c,navigationAction)async{
-                                            sl<NestedWebviewController>().shouldOverrideUrlLoading(c, navigationAction, fToast, context);
-                                            return await NavigationActionPolicy.ALLOW;
+                                           return sl<NestedWebviewController>().shouldOverrideUrlLoading(c, navigationAction, fToast, context);
                                           },
                                           onReceivedError: (c,request,error){
                                             sl<NestedWebviewController>().onReceivedError(error);
                                           },
-                                          onReceivedHttpError: (c,request,response){},
+                                          onRenderProcessGone: (c,details)async{
+                                            print('onRenderProcessGone');
+                                            await sl<NestedWebviewController>().webViewController.reload();
+                                          },
+                                         // onReceivedHttpError: (c,request,response){},
 
                                         )
                                         /*WebViewWidget(

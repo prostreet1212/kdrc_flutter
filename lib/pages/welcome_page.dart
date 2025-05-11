@@ -37,17 +37,18 @@ class _WelcomePageState extends State<WelcomePage> {
       transitionDuration: Duration(milliseconds: 500),
     );
   }
-  runRoutePage() async {
-    await Future.delayed(const Duration(milliseconds: 700), ()async {
-      if(context.mounted){
-        await Navigator.pushReplacement(
-          context,
-          Utils.createRoute(
-            MainPage(fToast: widget.fToast,callRequestResult: widget.callRequestResult,),
+  runRoutePage()  {
+    Future.delayed(const Duration(milliseconds: 700)).then((_) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        Utils.createRoute(
+          MainPage(
+            fToast: widget.fToast,
+            callRequestResult: widget.callRequestResult,
           ),
-        );
-      }
-
+        ),
+      );
     });
   }
 

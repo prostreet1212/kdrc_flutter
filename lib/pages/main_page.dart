@@ -1,10 +1,8 @@
-import 'dart:io';
 
-import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
@@ -12,7 +10,6 @@ import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
-import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
@@ -82,42 +79,42 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context3) {
-    return WillPopScope(
-      /* canPop: false,
+    return PopScope(
+       canPop: false,
      onPopInvokedWithResult: ( didPop,  result)async{
        if (didPop) {
          return;
        }
-       bool canGoBack=await nestedWebviewController!.webViewController!.canGoBack();
+       bool canGoBack=await sl<NestedWebviewController>().webViewController.canGoBack();
        if (canGoBack) {
-         nestedWebviewController!.scrollStatus = ScrollStatus.prev;
-         nestedWebviewController!.isStep = true;
-         nestedWebviewController!.webViewController!.goBack();
+         sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
+         sl<NestedWebviewController>().isStep = true;
+         sl<NestedWebviewController>().webViewController.goBack();
        } else {
-         await SystemNavigator.pop();
-         //await FlutterExitApp.exitApp();
+         //await SystemNavigator.pop();
+         await FlutterExitApp.exitApp();
        }
-     },*/
-      onWillPop: () async {
+     },
+     /* onWillPop: () async {
         bool canGoBack =
-            await sl<NestedWebviewController>().webViewController!.canGoBack();
+            await sl<NestedWebviewController>().webViewController.canGoBack();
         if (canGoBack) {
           sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
           sl<NestedWebviewController>().isStep = true;
-          sl<NestedWebviewController>().webViewController!.goBack();
+          sl<NestedWebviewController>().webViewController.goBack();
           return false;
         } else {
           return true;
           //await SystemNavigator.pop();
           //await FlutterExitApp.exitApp();
         }
-      },
+      },*/
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
           body: NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
-            //physics: ClampingScrollPhysics(),
+            physics: ClampingScrollPhysics(),
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
