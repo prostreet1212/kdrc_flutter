@@ -58,7 +58,23 @@ class Utils {
     return emailRegex.hasMatch(email);
   }
 
-  static const String scrollHeightJs = '''(function() {
+ static const String scrollHeightJs ='''     (function() {
+          var height = 0;
+          function checkAndNotify() {
+            var curr = document.body.scrollHeight;
+            if (curr !== height) {
+              height = curr;
+              window.flutter_inappwebview.callHandler('onContentHeightChanged', height.toString());
+            }
+          }
+          if (window.ResizeObserver) {
+            new ResizeObserver(checkAndNotify).observe(document.body);
+          } else {
+            setInterval(checkAndNotify, 200);
+          }
+        })(); ''';
+
+ /* static const String scrollHeightJs = '''(function() {
   var height = 0;
   var notifier = window.ScrollHeightNotifier || window.webkit.messageHandlers.ScrollHeightNotifier;
   if (!notifier) return;
@@ -83,5 +99,5 @@ class Utils {
     ob && ob.disconnect();
     timer && clearTimeout(timer);
   };
-})();''';
+})();''';*/
 }

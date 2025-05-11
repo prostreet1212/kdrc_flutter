@@ -3,15 +3,16 @@ import 'dart:io';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 
-import 'package:webview_flutter/webview_flutter.dart';
-
 import '../../cubits/scroll_height_cubit.dart';
+import '../../cubits/start_cubit/start_cubit.dart';
 import '../../locator_service.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -23,7 +24,9 @@ import 'background_widget.dart';
 
 
 class SliverWebview extends StatelessWidget {
-  const SliverWebview({super.key});
+  final FToast fToast;
+
+  const SliverWebview({super.key, required this.fToast,});
 
 
 
@@ -47,7 +50,7 @@ class SliverWebview extends StatelessWidget {
         listener: (context, state) {
           if (state) {
             if (   sl<NestedWebviewController>().isFirstRun &&
-                /*nestedWebviewController.internetStatus == false*/sl<InetCubit>().state==true/*false*/) {
+               sl<InetCubit>().state==true/*false*/) {
               print('перезагрузка');
               sl<ErrorTextCubit>().changeValue(true);
               sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
@@ -56,11 +59,9 @@ class SliverWebview extends StatelessWidget {
             } else {
               sl<NestedWebviewController>().isFirstRun = false;
             }
-            /*nestedWebviewController.internetStatus = true;*/
           } else {
-            //nestedWebviewController.internetStatus = false;
             if (sl<NestedWebviewController>().isFirstRun &&
-                /*nestedWebviewController.internetStatus == false*/sl<InetCubit>().state==false) {
+                sl<InetCubit>().state==false) {
               sl<ScrollHeightCubit>().updateScrollHeight(0);
               sl<ErrorTextCubit>().changeValue(false);
             }
@@ -132,8 +133,11 @@ class SliverWebview extends StatelessWidget {
                                     if (Platform.isAndroid) {
                                       y *= View.of(context).devicePixelRatio;
                                     }
-                                    sl<NestedWebviewController>().webViewController!
-                                        .scrollTo(0, y.ceil());
+                                    if(sl<NestedWebviewController>().webViewController!=null){
+                                      sl<NestedWebviewController>().webViewController
+                                          .scrollTo(x:0, y:y.ceil());
+                                    }
+
                                   }
                                 },
                                 //718,5
@@ -142,20 +146,46 @@ class SliverWebview extends StatelessWidget {
                                     itemCount: 1,
                                     itemBuilder: (c, i) {
                                       return SizedBox(
-                                        //width: 500,
-                                        //height:718.5,
-                                        //height:1252,
                                         height: heightWebview,
-                                        child:Container(
-                                          color: Colors.yellow,
-                                        )/* WebViewWidget(
+                                        child:InAppWebView(
+                                          onWebViewCreated: (c){
+                                            sl<NestedWebviewController>().onWebViewCreated(c);
+                                          },
+                                            initialSettings: InAppWebViewSettings(
+                                              javaScriptEnabled: true,
+                                              transparentBackground: true,
+                                            ),
+                                          initialUrlRequest: URLRequest(
+                                            url: WebUri(sl<StartCubit>().state.url),
+                                          ),
+                                            onLoadStart: (c,uri){
+                                              sl<NestedWebviewController>().onLoadStart(c, uri);
+                                            },
+                                          onLoadStop: (c,uri){
+                                            sl<NestedWebviewController>().onLoadStop(c, uri);
+                                          },
+                                          onProgressChanged: (c,progress){
+                                            sl<NestedWebviewController>().onProgressChanged(c, progress);
+                                          },
+
+                                          shouldOverrideUrlLoading: (c,navigationAction)async{
+                                            sl<NestedWebviewController>().shouldOverrideUrlLoading(c, navigationAction, fToast, context);
+                                            return await NavigationActionPolicy.ALLOW;
+                                          },
+                                          onReceivedError: (c,request,error){
+                                            sl<NestedWebviewController>().onReceivedError(error);
+                                          },
+                                          onReceivedHttpError: (c,request,response){},
+
+                                        )
+                                        /*WebViewWidget(
                                           controller: sl<NestedWebviewController>()
                                               .webViewController,
                                         ),*/
                                       );
                                     })
                             );
-                          }))
+                          }),),
                     ]),
                   ],
                 ),

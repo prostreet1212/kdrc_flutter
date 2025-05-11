@@ -14,7 +14,6 @@ import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 import '../utils/utils.dart';
@@ -119,19 +118,18 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
           body: NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
             //physics: ClampingScrollPhysics(),
-            //key: sl<NestedWebviewController>().sliverKey1,
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
             ) {
               return [
                 CustomAppBar(
-                  nestedWebviewController: sl<NestedWebviewController>(),
                   fToast: widget.fToast,
                 ),
               ];
             },
             body: SliverWebview(
+              fToast: widget.fToast,
               ),
           ),
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
@@ -149,12 +147,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           size: 36,
                         ),
                         onPressed: () async {
-                        //  sl<NestedWebviewController>().nestedScrollController.innerScrollController!.position.setPixels(0);
                           Utils.showCallDialog(
                             context,
                             widget.callRequestResult,
                           );
-                          //nestedWebviewController!.webViewController!.reload();
+
                         },
                       );
                     } else {

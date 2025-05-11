@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
@@ -15,7 +16,6 @@ import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
 import '../cubits/inet_cubit.dart';
@@ -27,11 +27,251 @@ import '../widgets/custom_toast.dart';
 
 enum ScrollStatus { prev, forward, reload }
 
-class NestedWebviewController {
+class NestedWebviewController{
   NestedWebviewController();
 
-  /*FToast fToast;
-  BuildContext context;*/
+  late InAppWebViewController webViewController;
+
+  ScrollStatus scrollStatus = ScrollStatus.forward;
+  double oldScroll = 0.0;
+
+  List<double> prevPixels = [];
+  bool isStep = false;
+
+  bool isFirstRun = true;
+  NavigationActionPolicy navigationDecision= NavigationActionPolicy.ALLOW;
+  bool loadError = false;
+
+  static var httpClient =  HttpClient();
+  //доступ к внутреннему контроллеру-альтернатива
+  //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
+  final NestedScrollController nestedScrollController = NestedScrollController();
+
+  Future<File?> _downloadFile(String url, String filename,FToast fToast, BuildContext context) async {
+    try {
+      var request = await httpClient.getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      String dir = (await getApplicationDocumentsDirectory()).path;
+      File file =  File('$dir/$filename');
+      await file.writeAsBytes(bytes);
+      return file;
+    } catch (e) {
+      if(context.mounted){
+        Navigator.pop(context);
+      }
+      fToast.showToast(
+          child: CustomToast(
+            message:
+            'Не удалось открыть файл. Проверьте подключение к сети интернет',
+          ),
+          toastDuration: Duration(seconds: 3),
+          gravity: ToastGravity.BOTTOM);
+      return null;
+      //throw Exception(e);
+    }
+  }
+
+  Future<bool> canGoBack() async {
+    return await webViewController!.canGoBack();
+  }
+
+  void init(FToast fToast,BuildContext context)async {
+    fToast.init(context);
+  /*  webViewController = WebViewController()
+      ..addJavaScriptChannel('ScrollHeightNotifier',
+          onMessageReceived: (message) async {
+            final String msg = message.message;
+            final double? height = double.tryParse(msg);
+            if (height != null) {
+              if (isFirstRun &&sl<InetCubit>().state==false) {
+                sl<ErrorTextCubit>().changeValue(false);
+              } else {
+
+                if(loadError ==true ){
+                  loadError =false;
+                }else{
+                  isFirstRun=false;
+                  loadError =false;
+                }
+//скрыть фон при первой загрузке
+                if (sl<BackgroundCubit>().state==true/*isBackground*/) {
+                  sl<BackgroundCubit>().changeValue(false);
+                } else {
+                  if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
+                    sl<BackgroundCubit>().changeValue(false);
+                    print('aaa');
+                  }
+                }
+                print('onMessageReceived+ $isFirstRun');
+                sl<ScrollHeightCubit>().updateScrollHeight(height);
+              }
+            }
+          });
+*/
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      nestedScrollController.addListener(() {
+        if (nestedScrollController.offset > 112) {
+          if (sl<IsCollapsedCubit>().state != true) {
+            sl<IsCollapsedCubit>().updateIsCollapsed(true);
+          }
+        } else {
+          if (sl<IsCollapsedCubit>().state != false) {
+            sl<IsCollapsedCubit>().updateIsCollapsed(false);
+          }
+        }
+      });
+    });
+  }
+
+  onWebViewCreated (InAppWebViewController c){
+    webViewController=c;
+    webViewController.addJavaScriptHandler(handlerName: 'onContentHeightChanged', callback:  (args) {
+      final double? height = double.tryParse(args[0]);
+      print('Высота контента: $height');
+
+      if (height != null) {
+        if (isFirstRun &&sl<InetCubit>().state==false) {
+          sl<ErrorTextCubit>().changeValue(false);
+        } else {
+
+          if(loadError ==true ){
+            loadError =false;
+          }else{
+            isFirstRun=false;
+            loadError =false;
+          }
+//скрыть фон при первой загрузке
+          if (sl<BackgroundCubit>().state==true/*isBackground*/) {
+            sl<BackgroundCubit>().changeValue(false);
+          } else {
+            if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
+              sl<BackgroundCubit>().changeValue(false);
+              print('aaa');
+            }
+          }
+          print('onMessageReceived+ $isFirstRun');
+          sl<ScrollHeightCubit>().updateScrollHeight(height);
+        }
+      }
+    });
+  }
+
+  onLoadStart(InAppWebViewController c,WebUri? uri){
+    print('onPageStarted');
+    sl<BoolCubit>().changeValue(true);
+    if (scrollStatus == ScrollStatus.forward) {
+      prevPixels
+          .add(nestedScrollController.innerScrollController!.position.pixels/*sliverKey1.currentState!.innerController.position.pixels*/);
+    } else if (scrollStatus == ScrollStatus.prev) {
+      oldScroll = prevPixels.last;
+      prevPixels.removeLast();
+    } else {}
+  }
+
+  onLoadStop(InAppWebViewController c,WebUri? uri)async{
+    print('onPageFinished + $isFirstRun');
+    await webViewController.evaluateJavascript(source: Utils.scrollHeightJs);
+    //здесь были смещения
+    ///
+    if (Platform.isIOS) {
+    scrollStatus = ScrollStatus.forward;
+    }
+    sl<BoolCubit>().changeValue(false);
+  }
+
+  onProgressChanged(InAppWebViewController c,int progress){
+    print('$progress');
+  }
+
+  shouldOverrideUrlLoading(InAppWebViewController c,NavigationAction navigationAction,FToast fToast,BuildContext context)async{
+    print('onPageSRequest');
+    if (sl<InetCubit>().state==true) {
+
+      if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
+          navigationAction.request.url.toString().contains('mailto:')) {
+        launchUrl(Uri.parse(navigationAction.request.url.toString()));
+        return await NavigationActionPolicy.CANCEL;
+      } else {
+        if (navigationAction.request.url.toString().contains('.doc') ||
+            navigationAction.request.url.toString().contains('.xls')) {
+          showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return FileLoadingDialog();
+              });
+          File? pdfFile = await _downloadFile(
+              navigationAction.request.url.toString(), 'file.${Utils.getTypeFile(navigationAction.request.url.toString())}',fToast,context);
+          if (pdfFile != null) {
+            OpenFilex.open(pdfFile.path);
+            if(context.mounted){
+              Navigator.pop(context);
+            }
+
+          }
+          return await NavigationActionPolicy.CANCEL;;
+        } else if (navigationAction.request.url.toString().contains('.pdf')) {
+          showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) {
+                return FileLoadingDialog();
+              });
+          File? pdfFile = await _downloadFile(
+              navigationAction.request.url.toString(), 'file.${Utils.getTypeFile(navigationAction.request.url.toString())}',fToast,context);
+          if (pdfFile != null) {
+            if(context.mounted){
+              Navigator.pop(context);
+              Navigator.push(
+                  context, Utils.createRoute(PdfPage(path: pdfFile.path)));
+            }
+
+          }
+          return await NavigationActionPolicy.CANCEL;;
+        } else {
+          if (Platform.isAndroid) {
+            scrollStatus = ScrollStatus.forward;
+            isStep = true;
+          }
+          navigationDecision=await NavigationActionPolicy.ALLOW;
+          return await NavigationActionPolicy.ALLOW;
+        }
+      }
+    } else {
+      fToast.showToast(
+          child: CustomToast(
+            message: 'Проверьте подключение к сети интернет',
+          ),
+          toastDuration: Duration(seconds: 2),
+          gravity: ToastGravity.BOTTOM);
+      navigationDecision=await NavigationActionPolicy.CANCEL;
+      return await NavigationActionPolicy.CANCEL;
+    }
+  }
+
+  onReceivedError(WebResourceError error){
+    if (error.type == WebResourceErrorType.HOST_LOOKUP) {
+      print('ошибка интернета нетю: ${error.description}');
+      if(navigationDecision==NavigationActionPolicy.ALLOW){
+        isFirstRun=true;
+        loadError=true;
+        print('onPageErrorNaigate');
+      }else{
+        print('onPageErrorPrev');
+      }
+    }
+
+  }
+}
+
+
+
+
+/*class NestedWebviewController111 {
+  NestedWebviewController();
+
+
 
   late WebViewController webViewController;
 
@@ -41,16 +281,10 @@ class NestedWebviewController {
   List<double> prevPixels = [];
   bool isStep = false;
 
-  //bool internetStatus = true;
   bool isFirstRun = true;
-  //bool isBackground = true;
-  //bool isBackgroundNoInternet = true;
   NavigationDecision navigationDecision=NavigationDecision.navigate;
   bool loadError = false;
 
-
-
-  // late StreamSubscription<InternetStatus> internetListener;
   static var httpClient =  HttpClient();
   //доступ к внутреннему контроллеру-альтернатива
   //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
@@ -92,7 +326,7 @@ class NestedWebviewController {
         NavigationDelegate(
             onNavigationRequest: (request) async {
           print('onPageSRequest');
-          if (/*internetStatus*/sl<InetCubit>().state==true) {
+          if (sl<InetCubit>().state==true) {
             if (!request.url.contains('kdrc.ru') ||
                 request.url.contains('mailto:')) {
               launchUrl(Uri.parse(request.url));
@@ -194,7 +428,7 @@ class NestedWebviewController {
         final String msg = message.message;
         final double? height = double.tryParse(msg);
         if (height != null) {
-          if (isFirstRun &&/* internetStatus == false*/sl<InetCubit>().state==false) {
+          if (isFirstRun &&sl<InetCubit>().state==false) {
             sl<ErrorTextCubit>().changeValue(false);
           } else {
 
@@ -206,16 +440,10 @@ class NestedWebviewController {
               }
 //скрыть фон при первой загрузке
               if (sl<BackgroundCubit>().state==true/*isBackground*/) {
-                //isBackground = false;
                 sl<BackgroundCubit>().changeValue(false);
-                //доп
-                //isFirstRun=false;
               } else {
                 if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
                   sl<BackgroundCubit>().changeValue(false);
-                  //доп
-                  //isFirstRun=false;
-                  //isBackgroundNoInternet = false;
                   print('aaa');
                 }
               }
@@ -237,8 +465,8 @@ class NestedWebviewController {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
 
-      /*sliverKey1.currentState!.outerController.*/nestedScrollController.addListener(() {
-        if (/*sliverKey1.currentState!.outerController.*/nestedScrollController.offset > 112) {
+      nestedScrollController.addListener(() {
+        if (nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {
             sl<IsCollapsedCubit>().updateIsCollapsed(true);
           }
@@ -250,4 +478,4 @@ class NestedWebviewController {
       });
     });
   }
-}
+}*/

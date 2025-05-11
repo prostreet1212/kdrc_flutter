@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
@@ -11,9 +12,9 @@ import '../utils/utils.dart';
 import 'custom_toast.dart';
 
 class CustomAppBar extends StatefulWidget {
-   const CustomAppBar({super.key, required this.nestedWebviewController,required this.fToast,});
+   const CustomAppBar({super.key,required this.fToast,});
 
-  final NestedWebviewController nestedWebviewController;
+
   final FToast fToast;
 
 
@@ -24,9 +25,12 @@ class CustomAppBar extends StatefulWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   void loadFeedback() {
     if (sl<InetCubit>().state) {
-      widget.nestedWebviewController.scrollStatus = ScrollStatus.forward;
-      widget.nestedWebviewController.webViewController!
-          .loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
+      sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
+      sl<NestedWebviewController>().webViewController!
+      .loadUrl(urlRequest: URLRequest(
+        url: WebUri('https://kdrc.ru/obratnaya-svyaz'),
+      ));
+          //.loadRequest(Uri.parse('https://kdrc.ru/obratnaya-svyaz'));
     } else {
       widget.fToast.showToast(
           child: CustomToast(
@@ -98,12 +102,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         size: 25,
                       ),
                       onPressed: () async {
-                        if (await widget.nestedWebviewController.webViewController!
+                        if (await sl<NestedWebviewController>().webViewController!
                             .canGoBack()) {
-                          widget.nestedWebviewController.scrollStatus =
+                          sl<NestedWebviewController>().scrollStatus =
                               ScrollStatus.prev;
-                          widget.nestedWebviewController.isStep = true;
-                          widget.nestedWebviewController.webViewController!.goBack();
+                          sl<NestedWebviewController>().isStep = true;
+                          sl<NestedWebviewController>().webViewController!.goBack();
                         }else{
                           widget.fToast.showToast(
                               child: CustomToast(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
@@ -95,12 +96,17 @@ class NotificationService {
         log('firebase :: Notification payload: ${message.data['url']}');
 
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController
-            ?.loadRequest(Uri.parse(message.data['url']));
+        sl<NestedWebviewController>().webViewController.loadUrl(urlRequest:  URLRequest(
+          url: WebUri(message.data['url']),
+        ));
+            //?.loadRequest(Uri.parse(message.data['url']));
       } else {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         sl<NestedWebviewController>().webViewController
-            ?.loadRequest(Uri.parse(message.data['url']));
+            .loadUrl(urlRequest:  URLRequest(
+          url: WebUri(message.data['url']),
+        ));
+            //?.loadRequest(Uri.parse(message.data['url']));
         sl<ScrollHeightCubit>().updateScrollHeight(0);
         sl<BackgroundCubit>().changeValue(true);
         sl<ErrorTextCubit>().changeValue(false);
@@ -206,12 +212,18 @@ class NotificationService {
         log('firebase :: Notification payload: $payload');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         sl<NestedWebviewController>().webViewController
-            ?.loadRequest(Uri.parse(payload));
+            .loadUrl(urlRequest:  URLRequest(
+          url: WebUri(payload),
+        ));
+            //?.loadRequest(Uri.parse(payload));
       }
     } else {
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
       sl<NestedWebviewController>().webViewController
-          ?.loadRequest(Uri.parse(payload!));
+          .loadUrl(urlRequest:  URLRequest(
+        url: WebUri(payload!),
+      ));
+          //?.loadRequest(Uri.parse(payload!));
       sl<ScrollHeightCubit>().updateScrollHeight(0);
       sl<BackgroundCubit>().changeValue(true);
       sl<ErrorTextCubit>().changeValue(false);
