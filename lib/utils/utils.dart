@@ -11,11 +11,11 @@ class Utils {
   }
 
 
-  static void showCallDialog(BuildContext context,  bool callRequestResult) {
+  static void showCallDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
-          return CallDialog(callRequestResult: callRequestResult,);
+          return CallDialog();
         });
   }
 

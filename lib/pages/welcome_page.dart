@@ -6,9 +6,10 @@ import 'package:kdrc_flutter/pages/main_page.dart';
 import '../utils/utils.dart';
 
 class WelcomePage extends StatefulWidget {
-   const WelcomePage({super.key,required this.fToast,required this.callRequestResult});
+   const WelcomePage({super.key,required this.fToast});
   final FToast fToast;
-  final bool callRequestResult;
+
+
 
 
   @override
@@ -45,7 +46,6 @@ class _WelcomePageState extends State<WelcomePage> {
         Utils.createRoute(
           MainPage(
             fToast: widget.fToast,
-            callRequestResult: widget.callRequestResult,
           ),
         ),
       );

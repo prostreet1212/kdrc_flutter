@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
+import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
@@ -25,6 +26,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PhoneCubit());
   sl.registerLazySingleton(() => StartCubit());
   sl.registerLazySingleton(() => InetCubit());
+  sl.registerLazySingleton(() => CallRequestIsOpenedCubit());
 
   //external
   SharedPreferences settingPrefs = await SharedPreferences.getInstance();
@@ -32,6 +34,7 @@ Future<void> init() async {
 
   //firebase-notification
   sl.registerLazySingleton(() => NotificationService.instance);
-
   sl.registerLazySingleton(() => NestedWebviewController());
+
+
 }

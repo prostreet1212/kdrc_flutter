@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
@@ -20,7 +21,6 @@ import 'cubits/scroll_height_cubit.dart';
 import 'cubits/settings_cubit/settings_cubit.dart';
 import 'cubits/start_cubit/start_state.dart';
 import 'firebase_options.dart';
-
 
 
 
@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
    final FToast fToast = FToast();
-  final  bool callRequestResult=false;
    //NestedWebviewController? nestedWebviewController;
   @override
   Widget build(BuildContext context) {
@@ -70,7 +69,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<SettingsCubit>(
           create: (c) => di.sl<SettingsCubit>(),
-        )
+        ),
+        BlocProvider<CallRequestIsOpenedCubit>(
+          create: (c) => di.sl<CallRequestIsOpenedCubit>(),
+        ),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
@@ -87,9 +89,9 @@ class MyApp extends StatelessWidget {
           builder: ((context, state) {
             if (state is StartPush) {
               // Если приложение было открыто через уведомление
-              return MainPage(fToast: fToast,callRequestResult: callRequestResult);
+              return MainPage(fToast: fToast);
             } else {
-              return WelcomePage(fToast: fToast,callRequestResult: callRequestResult);
+              return WelcomePage(fToast: fToast );
             }
           }),
         ),

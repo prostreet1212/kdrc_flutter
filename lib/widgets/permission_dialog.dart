@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../cubits/call_request_is_opened_cubit.dart';
+
 
 
 class PermissionDialog extends StatefulWidget {
-  const PermissionDialog({super.key,required this.callRequestResult});
-  final bool callRequestResult;
+   const PermissionDialog({super.key});
+
 
   @override
   State<PermissionDialog> createState() => _PermissionDialogState();
@@ -41,8 +45,11 @@ class _PermissionDialogState extends State<PermissionDialog>  {
         TextButton(
           onPressed: () async{
             Navigator.pop(context);
-            widget.callRequestResult!=await openAppSettings();
-           print('call ${widget.callRequestResult}');
+                await openAppSettings().then((data){
+                  print('data ${data}');
+                }).whenComplete((){});
+            context.read<CallRequestIsOpenedCubit>().changeValue(true);
+           print('call ${context.read<CallRequestIsOpenedCubit>().state}');
            //проверка на разрешение?
           },
           child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),

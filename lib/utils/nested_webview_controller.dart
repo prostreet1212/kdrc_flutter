@@ -24,7 +24,7 @@ import '../widgets/custom_toast.dart';
 
 enum ScrollStatus { prev, forward, reload }
 
-class NestedWebviewController{
+class NestedWebviewController {
   NestedWebviewController();
 
   late InAppWebViewController webViewController;
@@ -36,45 +36,58 @@ class NestedWebviewController{
   bool isStep = false;
 
   bool isFirstRun = true;
-  NavigationActionPolicy navigationDecision= NavigationActionPolicy.ALLOW;
+  NavigationActionPolicy navigationDecision = NavigationActionPolicy.ALLOW;
   bool loadError = false;
 
-  static var httpClient =  HttpClient();
+  static var httpClient = HttpClient();
+  double currentPixel = 0;
+  bool isCrashed = false;
+
+
+
   //доступ к внутреннему контроллеру-альтернатива
   //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
-  final NestedScrollController nestedScrollController = NestedScrollController();
+  final NestedScrollController nestedScrollController =
+      NestedScrollController();
 
-  Future<File?> _downloadFile(String url, String filename,FToast fToast, BuildContext context) async {
+  Future<File?> _downloadFile(
+    String url,
+    String filename,
+    FToast fToast,
+    BuildContext context,
+  ) async {
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
       String dir = (await getApplicationDocumentsDirectory()).path;
-      File file =  File('$dir/$filename');
+      File file = File('$dir/$filename');
       await file.writeAsBytes(bytes);
       return file;
     } catch (e) {
-      if(context.mounted){
+      if (context.mounted) {
         Navigator.pop(context);
       }
       fToast.showToast(
-          child: CustomToast(
-            message:
-            'Не удалось открыть файл. Проверьте подключение к сети интернет',
-          ),
-          toastDuration: Duration(seconds: 3),
-          gravity: ToastGravity.BOTTOM);
+        child: CustomToast(
+          message:
+              'Не удалось открыть файл. Проверьте подключение к сети интернет',
+        ),
+        toastDuration: Duration(seconds: 3),
+        gravity: ToastGravity.BOTTOM,
+      );
       return null;
       //throw Exception(e);
     }
   }
 
-
-
-  void init(FToast fToast,BuildContext context)async {
+  void init(FToast fToast, BuildContext context) async {
     fToast.init(context);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
+        currentPixel =
+            nestedScrollController.innerScrollController!.position.pixels;
+        print('pixels: $currentPixel');
         if (nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {
             sl<IsCollapsedCubit>().updateIsCollapsed(true);
@@ -88,147 +101,198 @@ class NestedWebviewController{
     });
   }
 
-  onWebViewCreated (InAppWebViewController c){
-    webViewController=c;
-    webViewController.addJavaScriptHandler(handlerName: 'onContentHeightChanged', callback:  (args) {
-      final double? height = double.tryParse(args[0]);
-      print('Высота контента: $height');
+  onWebViewCreated(InAppWebViewController c) {
+    webViewController = c;
+    webViewController.addJavaScriptHandler(
+      handlerName: 'onContentHeightChanged',
+      callback: (args) {
+        final double? height = double.tryParse(args[0]);
+        print('Высота контента: $height');
 
-      if (height != null) {
-        if (isFirstRun &&sl<InetCubit>().state==false) {
-          sl<ErrorTextCubit>().changeValue(false);
-        } else {
-
-          if(loadError ==true ){
-            loadError =false;
-          }else{
-            isFirstRun=false;
-            loadError =false;
-          }
-//скрыть фон при первой загрузке
-          if (sl<BackgroundCubit>().state==true/*isBackground*/) {
-            sl<BackgroundCubit>().changeValue(false);
+        if (height != null) {
+          if (isFirstRun && sl<InetCubit>().state == false) {
+            sl<ErrorTextCubit>().changeValue(false);
           } else {
-            if (isFirstRun||sl<BackgroundCubit>().state==true /*|| isBackgroundNoInternet*/) {
-              sl<BackgroundCubit>().changeValue(false);
-              print('aaa');
+            if (loadError == true) {
+              loadError = false;
+            } else {
+              isFirstRun = false;
+              loadError = false;
             }
+            //скрыть фон при первой загрузке
+            if (sl<BackgroundCubit>().state == true /*isBackground*/ ) {
+              sl<BackgroundCubit>().changeValue(false);
+            } else {
+              if (isFirstRun ||
+                  sl<BackgroundCubit>().state ==
+                      true /*|| isBackgroundNoInternet*/ ) {
+                sl<BackgroundCubit>().changeValue(false);
+                print('aaa');
+              }
+            }
+            print('onMessageReceived+ $isFirstRun');
+            sl<ScrollHeightCubit>().updateScrollHeight(height);
           }
-          print('onMessageReceived+ $isFirstRun');
-          sl<ScrollHeightCubit>().updateScrollHeight(height);
         }
-      }
-    });
+      },
+    );
   }
 
-  onLoadStart(InAppWebViewController c,WebUri? uri){
+  onLoadStart(InAppWebViewController c, WebUri? uri) {
     print('onPageStarted');
     sl<BoolCubit>().changeValue(true);
     if (scrollStatus == ScrollStatus.forward) {
-      prevPixels
-          .add(nestedScrollController.innerScrollController!.position.pixels/*sliverKey1.currentState!.innerController.position.pixels*/);
+      prevPixels.add(
+        nestedScrollController
+            .innerScrollController!
+            .position
+            .pixels /*sliverKey1.currentState!.innerController.position.pixels*/,
+      );
     } else if (scrollStatus == ScrollStatus.prev) {
       oldScroll = prevPixels.last;
       prevPixels.removeLast();
     } else {}
   }
 
-  onLoadStop(InAppWebViewController c,WebUri? uri)async{
+  onLoadStop(InAppWebViewController c, WebUri? uri) async {
     print('onPageFinished + $isFirstRun');
     await webViewController.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
     ///
     if (Platform.isIOS) {
-    scrollStatus = ScrollStatus.forward;
+      scrollStatus = ScrollStatus.forward;
     }
     sl<BoolCubit>().changeValue(false);
   }
 
-  onProgressChanged(InAppWebViewController c,int progress){
+  onProgressChanged(InAppWebViewController c, int progress) {
     print('$progress');
   }
 
-  Future<NavigationActionPolicy> shouldOverrideUrlLoading(InAppWebViewController c,NavigationAction navigationAction,FToast fToast,BuildContext context)async{
+  Future<NavigationActionPolicy> shouldOverrideUrlLoading(
+    InAppWebViewController c,
+    NavigationAction navigationAction,
+    FToast fToast,
+    BuildContext context,
+  ) async {
     print('onPageSRequest');
-    if (sl<InetCubit>().state==true) {
-print('url1 ${navigationAction.request.url.toString()}');
+    if (sl<InetCubit>().state == true) {
+      print('url1 ${navigationAction.request.url.toString()}');
       if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
           navigationAction.request.url.toString().contains('mailto:')) {
         launchUrl(Uri.parse(navigationAction.request.url.toString()));
-        return  NavigationActionPolicy.CANCEL;
+        return NavigationActionPolicy.CANCEL;
       } else {
         if (navigationAction.request.url.toString().contains('.doc') ||
             navigationAction.request.url.toString().contains('.xls')) {
           showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) {
-                return FileLoadingDialog();
-              });
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return FileLoadingDialog();
+            },
+          );
+          var typeFile = Utils.getTypeFile(
+            navigationAction.request.url.toString(),
+          );
           File? pdfFile = await _downloadFile(
-              navigationAction.request.url.toString(), 'file.${Utils.getTypeFile(navigationAction.request.url.toString())}',fToast,context);
+            navigationAction.request.url.toString(),
+            'file.$typeFile',
+            fToast,
+            context,
+          );
           if (pdfFile != null) {
-            OpenFilex.open(pdfFile.path);
-            if(context.mounted){
+            OpenResult openResult = await OpenFilex.open(
+              pdfFile.path,
+              //type: 'application/msword',
+            );
+            if (openResult.type != ResultType.done) {
+              /* fToast.showToast(
+                child: CustomToast(message: 'Не удалось открыть файл. Для просмотра документа установите приложение, формата .$typeFile'),
+                toastDuration: Duration(seconds: 3),
+                gravity: ToastGravity.BOTTOM,
+              );*/
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Не удалось открыть документ. Установите приложение, для просмотра документов в формате $typeFile',
+                  ),
+                  duration: Duration(milliseconds: 3500),
+                  behavior: SnackBarBehavior.floating,
+                  action: SnackBarAction(
+                      label: 'ОК',
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        //ScaffoldMessenger.of(context).sna
+                      },
+                  textColor: Color.fromARGB(255, 247, 176, 116),),
+                ),
+              );
+            }
+            print('openx ${openResult.message}');
+            if (context.mounted) {
               Navigator.pop(context);
             }
-
           }
-          return  NavigationActionPolicy.CANCEL;
+          return NavigationActionPolicy.CANCEL;
         } else if (navigationAction.request.url.toString().contains('.pdf')) {
           showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) {
-                return FileLoadingDialog();
-              });
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return FileLoadingDialog();
+            },
+          );
           File? pdfFile = await _downloadFile(
-              navigationAction.request.url.toString(), 'file.${Utils.getTypeFile(navigationAction.request.url.toString())}',fToast,context);
+            navigationAction.request.url.toString(),
+            'file.${Utils.getTypeFile(navigationAction.request.url.toString())}',
+            fToast,
+            context,
+          );
           if (pdfFile != null) {
-            if(context.mounted){
+            if (context.mounted) {
               Navigator.pop(context);
               Navigator.push(
-                  context, Utils.createRoute(PdfPage(path: pdfFile.path)));
+                context,
+                Utils.createRoute(PdfPage(path: pdfFile.path)),
+              );
             }
-
           }
-          return  NavigationActionPolicy.CANCEL;
+          return NavigationActionPolicy.CANCEL;
         } else {
           if (Platform.isAndroid) {
             scrollStatus = ScrollStatus.forward;
             isStep = true;
           }
-          navigationDecision= NavigationActionPolicy.ALLOW;
-          return  NavigationActionPolicy.ALLOW;
+          navigationDecision = NavigationActionPolicy.ALLOW;
+          return NavigationActionPolicy.ALLOW;
         }
       }
     } else {
       fToast.showToast(
-          child: CustomToast(
-            message: 'Проверьте подключение к сети интернет',
-          ),
-          toastDuration: Duration(seconds: 2),
-          gravity: ToastGravity.BOTTOM);
-      navigationDecision= NavigationActionPolicy.CANCEL;
-      return  NavigationActionPolicy.CANCEL;
+        child: CustomToast(message: 'Проверьте подключение к сети интернет'),
+        toastDuration: Duration(seconds: 2),
+        gravity: ToastGravity.BOTTOM,
+      );
+      navigationDecision = NavigationActionPolicy.CANCEL;
+      return NavigationActionPolicy.CANCEL;
     }
   }
 
-  onReceivedError(WebResourceError error){
+  onReceivedError(WebResourceError error) {
     if (error.type == WebResourceErrorType.HOST_LOOKUP) {
       print('ошибка интернета нетю: ${error.description}');
-      if(navigationDecision==NavigationActionPolicy.ALLOW){
-        isFirstRun=true;
-        loadError=true;
+      if (navigationDecision == NavigationActionPolicy.ALLOW) {
+        isFirstRun = true;
+        loadError = true;
         print('onPageErrorNaigate');
-      }else{
+      } else {
         print('onPageErrorPrev');
       }
     }
-
   }
 }
-
 
 /*
 

@@ -3,12 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_direct_call_plus/flutter_direct_call.dart';
-import 'package:kdrc_flutter/widgets/permission_dialog.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 
 class CallDialog extends StatelessWidget {
-  const CallDialog({super.key,required this.callRequestResult});
-  final bool callRequestResult;
+  const CallDialog({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,36 +35,10 @@ class CallDialog extends StatelessWidget {
             style: TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
           ),
           onPressed: () async {
-            PermissionStatus status = await Permission.phone.status;
-            if (status.isGranted) {
-              if(context.mounted){
-                Navigator.pop(context);
-              }
-
-              FlutterDirectCall.makeDirectCall("+79210779641");
-            } else if (status.isPermanentlyDenied) {
-              //await Permission.phone.request();
-              if(context.mounted) {
-                Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (context){
-                    //Navigator.pop(context);
-                    return PermissionDialog(callRequestResult: callRequestResult,);
-                  });
-              }
-              //openAppSettings();
-            } else if (status.isDenied) {
-    if(context.mounted){
+            if(context.mounted){
               Navigator.pop(context);
-    }
-              final status1 = await Permission.phone.request();
-              if(status1.isGranted){
-                await FlutterDirectCall.makeDirectCall("+79210779641");
-              }
-            } else {
-              print("Permission denied");
             }
+           await FlutterDirectCall.makeDirectCall("+79210779641");
             /* final Uri _url = Uri.parse('tel:+7-81837-300-50');
                       await launchUrl(
                         _url,
