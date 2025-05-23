@@ -5,6 +5,7 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
+import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
@@ -54,13 +55,18 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       print('app resumed');
       if(sl<NestedWebviewController>().isCrashed==true){
         print('релоад');
+        sl<NestedWebviewController>().scrollStatus =
+            ScrollStatus.reload;
         await sl<NestedWebviewController>().webViewController.reload();
-            sl<NestedWebviewController>()
+           /* sl<NestedWebviewController>()
                 .nestedScrollController
                 .innerScrollController!
                 .position
-                .setPixels(300/*sl<NestedWebviewController>().currentPixel*/);
+                .setPixels(300/*sl<NestedWebviewController>().currentPixel*/);*/
+
+        sl<NestedWebviewController>().isStep=true;
             sl<NestedWebviewController>().isCrashed=false;
+
 
 
       }
@@ -143,12 +149,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           size: 36,
                         ),
                         onPressed: () async {
+
                           //await sl<NestedWebviewController>().webViewController.reload();
                           sl<NestedWebviewController>()
                               .nestedScrollController
                               .innerScrollController!
                               .position
-                              .setPixels(300);
+                              .setPixels(752.4);
 
                           /*PermissionStatus status = await Permission.phone.status;
                           if (status.isGranted) {

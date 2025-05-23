@@ -87,7 +87,11 @@ class NestedWebviewController {
       nestedScrollController.addListener(() {
         currentPixel =
             nestedScrollController.innerScrollController!.position.pixels;
-        print('pixels: $currentPixel');
+        double outerPixel =
+            nestedScrollController.position.pixels;
+
+        print('inner pixels: $currentPixel');
+        print('outer pixels: $outerPixel');
         if (nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {
             sl<IsCollapsedCubit>().updateIsCollapsed(true);

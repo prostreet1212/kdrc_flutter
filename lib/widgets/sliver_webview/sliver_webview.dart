@@ -95,7 +95,8 @@ class SliverWebview extends StatelessWidget {
                           create: (c) => sl<ErrorTextCubit>(),
                           child: BlocBuilder<ScrollHeightCubit, double>(
                             buildWhen: (next, prev) {
-                              return next != prev;
+                              bool isBuild=(next != prev)||(next == prev);
+                              return isBuild;
                             },
                             builder: (context, state) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -150,8 +151,20 @@ class SliverWebview extends StatelessWidget {
                                     }
 
                                     //если обновить страницу
-                                  } else {}
-                                  sl<NestedWebviewController>().isStep = false;
+                                  } else if(sl<NestedWebviewController>()
+                                      .scrollStatus ==
+                                      ScrollStatus.reload) {
+                                    sl<NestedWebviewController>()
+                                        .nestedScrollController
+                                        .innerScrollController!
+                                        .position
+                                        //.setPixels(752.4);
+                                        .setPixels(300);
+
+
+
+                                  }
+                                    sl<NestedWebviewController>().isStep = false;
                                 }
                               });
                               return SliverToNestedScrollBoxAdapter(
