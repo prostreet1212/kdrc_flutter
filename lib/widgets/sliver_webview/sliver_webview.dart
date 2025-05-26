@@ -155,7 +155,7 @@ class SliverWebview extends StatelessWidget {
                                       .scrollStatus ==
                                       ScrollStatus.reload) {
 
-                                    double aaa=sl<NestedWebviewController>().currentPixel;
+                                    double currentInnerPixel=sl<NestedWebviewController>().currentInnerPixel;
 
                                     double maxScrollExtent =
                                         sl<NestedWebviewController>()
@@ -163,14 +163,14 @@ class SliverWebview extends StatelessWidget {
                                             .innerScrollController!
                                             .position
                                             .maxScrollExtent;
-                                    print('сдвиг ${aaa}');
+                                    print('сдвиг ${currentInnerPixel}');
                                     print('макс ${maxScrollExtent}');
                                       sl<NestedWebviewController>()
                                           .nestedScrollController
                                           .innerScrollController!
                                           .position
                                       //.setPixels(752.4545454545455);
-                                          .setPixels(aaa-0.0000000000001);
+                                          .setPixels(currentInnerPixel-0.0000000000001);
 
 
 

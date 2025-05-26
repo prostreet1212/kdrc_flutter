@@ -40,7 +40,7 @@ class NestedWebviewController {
   bool loadError = false;
 
   static var httpClient = HttpClient();
-  double currentPixel = 0;
+  double currentInnerPixel = 0;
   bool isCrashed = false;
 
 
@@ -85,12 +85,12 @@ class NestedWebviewController {
     fToast.init(context);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
-        currentPixel =
+        currentInnerPixel =
             nestedScrollController.innerScrollController!.position.pixels;
         double outerPixel =
             nestedScrollController.position.pixels;
 
-        print('inner pixels: $currentPixel');
+        print('inner pixels: $currentInnerPixel');
         print('outer pixels: $outerPixel');
         if (nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {

@@ -94,6 +94,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         activeColor: Colors.teal,
                         value: settingsState.isPush,
                         onChanged: (value) {
+                          if(settingsState==false){
+
+                          }
                           sl<SettingsCubit>().updateIsPush(value!);
                           sl<NotificationService>().subscribeToTopic(value);
                         });

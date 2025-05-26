@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 import '../cubits/background_cubit.dart';
@@ -39,13 +40,22 @@ class NotificationService {
 
   Future<void> initialize() async {
     // Request permissions for iOS
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    if(sl<SettingsCubit>().state.isFirstPushRequest==true){
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      log('firebase :: User granted permission: ${settings.authorizationStatus}');
 
-    log('firebase :: User granted permission: ${settings.authorizationStatus}');
+      if(settings.authorizationStatus==AuthorizationStatus.denied){
+        sl<SettingsCubit>().updateIsPush(false);
+      }else{
+        sl<SettingsCubit>().updateIsPush(true);
+      }
+      sl<SettingsCubit>().updateIsFirstPushRequest(false);
+    }
+
 
     // Configure Local Notification settings
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -130,15 +140,15 @@ class NotificationService {
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    subscribeToTopic( sl<SettingsCubit>().state.isPush);
+    subscribeToTopic(sl<SettingsCubit>().state.isPush);
+
+
 
     RemoteMessage? initialMessage =
         await _firebaseMessaging.getInitialMessage();
     if (initialMessage != null) {
       sl<StartCubit>().changeValue(initialMessage.data['url']);
-    } /*else {
-      sl<StartCubit>().changeValue(false);
-    }*/
+    }
   }
 
   Future<void> subscribeToTopic(bool isSubscribe) async {
