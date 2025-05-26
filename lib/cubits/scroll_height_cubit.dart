@@ -2,14 +2,14 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ScrollHeightCubit extends Cubit<double> {
-  ScrollHeightCubit() : super(0);
+class ScrollHeightCubit extends Cubit<ScrollHeightState> {
+  ScrollHeightCubit() : super(ScrollHeightState(height: 0));
 
   void updateScrollHeight(double height1) {
-    emit(height1);
+    emit(ScrollHeightState( height: height1));
   }
 }
-/*
+
 class ScrollHeightState {
   final double height;
 
@@ -26,4 +26,4 @@ class ScrollHeightState {
       height: height ?? this.height,
     );
   }
-}*/
+}

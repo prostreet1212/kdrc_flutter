@@ -57,6 +57,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         print('релоад');
         sl<NestedWebviewController>().scrollStatus =
             ScrollStatus.reload;
+
         await sl<NestedWebviewController>().webViewController.reload();
            /* sl<NestedWebviewController>()
                 .nestedScrollController
@@ -151,11 +152,8 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         onPressed: () async {
 
                           //await sl<NestedWebviewController>().webViewController.reload();
-                          sl<NestedWebviewController>()
-                              .nestedScrollController
-                              .innerScrollController!
-                              .position
-                              .setPixels(752.4);
+                      print('${sl<NestedWebviewController>()
+                          .scrollStatus}');
 
                           /*PermissionStatus status = await Permission.phone.status;
                           if (status.isGranted) {

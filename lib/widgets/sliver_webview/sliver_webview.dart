@@ -93,11 +93,11 @@ class SliverWebview extends StatelessWidget {
                         ),
                         BlocProvider<ErrorTextCubit>(
                           create: (c) => sl<ErrorTextCubit>(),
-                          child: BlocBuilder<ScrollHeightCubit, double>(
-                            buildWhen: (next, prev) {
+                          child: BlocBuilder<ScrollHeightCubit, ScrollHeightState>(
+                         /*   buildWhen: (next, prev) {
                               bool isBuild=(next != prev)||(next == prev);
                               return isBuild;
-                            },
+                            },*/
                             builder: (context, state) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                /* if(sl<NestedWebviewController>().isCrashed){
@@ -154,12 +154,25 @@ class SliverWebview extends StatelessWidget {
                                   } else if(sl<NestedWebviewController>()
                                       .scrollStatus ==
                                       ScrollStatus.reload) {
-                                    sl<NestedWebviewController>()
-                                        .nestedScrollController
-                                        .innerScrollController!
-                                        .position
-                                        //.setPixels(752.4);
-                                        .setPixels(300);
+
+                                    double aaa=sl<NestedWebviewController>().currentPixel;
+
+                                    double maxScrollExtent =
+                                        sl<NestedWebviewController>()
+                                            .nestedScrollController
+                                            .innerScrollController!
+                                            .position
+                                            .maxScrollExtent;
+                                    print('сдвиг ${aaa}');
+                                    print('макс ${maxScrollExtent}');
+                                      sl<NestedWebviewController>()
+                                          .nestedScrollController
+                                          .innerScrollController!
+                                          .position
+                                      //.setPixels(752.4545454545455);
+                                          .setPixels(aaa-0.0000000000001);
+
+
 
 
 
@@ -168,7 +181,7 @@ class SliverWebview extends StatelessWidget {
                                 }
                               });
                               return SliverToNestedScrollBoxAdapter(
-                                childExtent: state,
+                                childExtent: state.height,
                                 onScrollOffsetChanged: (scrollOffset) {
                                   if (sl<NestedWebviewController>().isStep) {
                                     // nestedWebviewController.isStep = false;
