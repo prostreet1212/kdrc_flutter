@@ -57,19 +57,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         print('релоад');
         sl<NestedWebviewController>().scrollStatus =
             ScrollStatus.reload;
-
         await sl<NestedWebviewController>().webViewController.reload();
-           /* sl<NestedWebviewController>()
-                .nestedScrollController
-                .innerScrollController!
-                .position
-                .setPixels(300/*sl<NestedWebviewController>().currentPixel*/);*/
-
         sl<NestedWebviewController>().isStep=true;
             sl<NestedWebviewController>().isCrashed=false;
-
-
-
       }
       checkCallStatus();
     } else if (state == AppLifecycleState.detached) {
@@ -152,10 +142,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         onPressed: () async {
 
                           //await sl<NestedWebviewController>().webViewController.reload();
-                      print('${sl<NestedWebviewController>()
-                          .scrollStatus}');
+                    /*  print('${sl<NestedWebviewController>()
+                          .scrollStatus}');*/
 
-                          /*PermissionStatus status = await Permission.phone.status;
+                          PermissionStatus status = await Permission.phone.status;
                           if (status.isGranted) {
                             Utils.showCallDialog(
                             context
@@ -180,7 +170,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                             }
                           } else {
                             print("Permission denied");
-                          }*/
+                          }
                         },
                       );
                     } else {

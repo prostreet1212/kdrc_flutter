@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../cubits/settings_cubit/settings_state.dart';
 import '../locator_service.dart';
 import '../utils/notification_service.dart';
+import '../widgets/custom_toast.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key,required this.fToast});
+  final FToast fToast;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  bool isPush = true;
+
+
+class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver {
+
+  bool isPushSettingsOpen=false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+     if(isPushSettingsOpen){
+        isPushSettingsOpen=false;
+        bool pushPermission=await sl<NotificationService>().checkPushPermission();
+        if(pushPermission){
+          sl<SettingsCubit>().updateIsPush(true);
+          sl<NotificationService>().subscribeToTopic(true);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +90,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Checkbox(
                               activeColor: Colors.teal,
                               value: settingsState.isCalling,
-                              onChanged: (value) {
-                                sl<SettingsCubit>().updateIsCalling(value!);
+                              onChanged: (value)async {
+                                await sl<SettingsCubit>().updateIsCalling(value!);
                               });
                         }),
                       ),
@@ -93,12 +121,41 @@ class _SettingsPageState extends State<SettingsPage> {
                     return Checkbox(
                         activeColor: Colors.teal,
                         value: settingsState.isPush,
-                        onChanged: (value) {
-                          if(settingsState==false){
-
+                        onChanged: (value) async{
+                        if(value==true){
+                          bool pushPermission=await sl<NotificationService>().checkPushPermission();
+                          if(pushPermission){
+                            sl<SettingsCubit>().updateIsPush(value!);
+                            sl<NotificationService>().subscribeToTopic(value);
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Не удалось получить разрешение \"Уведомления\", перейдите в настройки приложения и включите его вручную.",
+                                ),
+                                duration: Duration(milliseconds: 3500),
+                                behavior: SnackBarBehavior.floating,
+                                action: SnackBarAction(
+                                  label: 'Открыть настройки',
+                                  onPressed: () async{
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    await openAppSettings().then((v){
+                                      isPushSettingsOpen=true;
+                                    })
+                                        .whenComplete(
+                                            (){
+                                              isPushSettingsOpen=true;
+                                            });
+                                  },
+                                  textColor: Color.fromARGB(255, 247, 176, 116),),
+                              ),
+                            );
                           }
+                        }else{
                           sl<SettingsCubit>().updateIsPush(value!);
                           sl<NotificationService>().subscribeToTopic(value);
+                        }
+
                         });
                   })),
               Container(

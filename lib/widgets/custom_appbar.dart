@@ -71,7 +71,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            Utils.createRoute(SettingsPage()),
+                            Utils.createRoute(SettingsPage(fToast:widget.fToast ,)),
                           );
                         },
                         icon: Icon(

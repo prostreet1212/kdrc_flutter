@@ -10,13 +10,11 @@ import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
 import '../cubits/inet_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
-
 
 import 'nested_webview_controller.dart';
 
@@ -38,24 +36,35 @@ class NotificationService {
 
   late RemoteMessage m;
 
+  Future<bool> checkPushPermission() async {
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<void> initialize() async {
     // Request permissions for iOS
-    if(sl<SettingsCubit>().state.isFirstPushRequest==true){
-      NotificationSettings settings = await _firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
+    //спрашивать разрешенение только при 1-м запуске
+    if (sl<SettingsCubit>().state.isFirstPushRequest == true) {
+      NotificationSettings settings = await _firebaseMessaging
+          .requestPermission(alert: true, badge: true, sound: true);
+      log(
+        'firebase :: User granted permission: ${settings.authorizationStatus}',
       );
-      log('firebase :: User granted permission: ${settings.authorizationStatus}');
-
-      if(settings.authorizationStatus==AuthorizationStatus.denied){
-        sl<SettingsCubit>().updateIsPush(false);
-      }else{
-        sl<SettingsCubit>().updateIsPush(true);
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        await sl<SettingsCubit>().updateIsPush(true);
+      } else {
+        await sl<SettingsCubit>().updateIsPush(false);
       }
-      sl<SettingsCubit>().updateIsFirstPushRequest(false);
+      await sl<SettingsCubit>().updateIsFirstPushRequest(false);
     }
-
 
     // Configure Local Notification settings
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -63,16 +72,16 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
 
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -98,7 +107,9 @@ class NotificationService {
     // Handle when the app is opened from a notification
     //Когда приложение свернуто
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('firebase :: Notification clicked! Message: ${message.notification?.title}');
+      log(
+        'firebase :: Notification clicked! Message: ${message.notification?.title}',
+      );
       //_handleNotificationClick(message);
       /*  nestedWebviewController.webViewController
           ?.loadRequest(Uri.parse(message.data['url']));*/
@@ -106,17 +117,16 @@ class NotificationService {
         log('firebase :: Notification payload: ${message.data['url']}');
 
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController.loadUrl(urlRequest:  URLRequest(
-          url: WebUri(message.data['url']),
-        ));
-            //?.loadRequest(Uri.parse(message.data['url']));
+        sl<NestedWebviewController>().webViewController.loadUrl(
+          urlRequest: URLRequest(url: WebUri(message.data['url'])),
+        );
+        //?.loadRequest(Uri.parse(message.data['url']));
       } else {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController
-            .loadUrl(urlRequest:  URLRequest(
-          url: WebUri(message.data['url']),
-        ));
-            //?.loadRequest(Uri.parse(message.data['url']));
+        sl<NestedWebviewController>().webViewController.loadUrl(
+          urlRequest: URLRequest(url: WebUri(message.data['url'])),
+        );
+        //?.loadRequest(Uri.parse(message.data['url']));
         sl<ScrollHeightCubit>().updateScrollHeight(0);
         sl<BackgroundCubit>().changeValue(true);
         sl<ErrorTextCubit>().changeValue(false);
@@ -125,9 +135,11 @@ class NotificationService {
       }
     });
 
-//Когда приложение закрыто
+    //Когда приложение закрыто
     FirebaseMessaging.instance.getInitialMessage().then((message) {
-      log('firebase :: Notification2 clicked! Message: ${message?.notification?.title}');
+      log(
+        'firebase :: Notification2 clicked! Message: ${message?.notification?.title}',
+      );
       if (message != null) {
         // Обработка уведомления, когда приложение запущено из закрытого состояния
         /*   Future.delayed(Duration(seconds: 3),(){
@@ -141,8 +153,6 @@ class NotificationService {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     subscribeToTopic(sl<SettingsCubit>().state.isPush);
-
-
 
     RemoteMessage? initialMessage =
         await _firebaseMessaging.getInitialMessage();
@@ -165,8 +175,8 @@ class NotificationService {
   Future<void> _showNotification(RemoteMessage message) async {
     //String? imgUrl = message.notification?.android?.imageUrl;
     //ByteArrayAndroidBitmap? largeIcon;
-// converting image into base65 to show in notification bar
-  /*  BigPictureStyleInformation? bigPictureStyleInformation;
+    // converting image into base65 to show in notification bar
+    /*  BigPictureStyleInformation? bigPictureStyleInformation;
     try {
       // Create BigPictureStyleInformation for displaying the image
       bigPictureStyleInformation = BigPictureStyleInformation(
@@ -179,8 +189,8 @@ class NotificationService {
     }*/
     //}
 
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails
+    androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'high_importance_channel',
       'High Importance Notifications',
       importance: Importance.high,
@@ -204,36 +214,36 @@ class NotificationService {
     );
 
     print(
-        'push-уведомление: ${message.notification!.title}, ${message.notification!.body}/${message.data}');
+      'push-уведомление: ${message.notification!.title}, ${message.notification!.body}/${message.data}',
+    );
   }
 
   // Handle notification click action
- /* Future<void> _handleNotificationClick(RemoteMessage message) async {
+  /* Future<void> _handleNotificationClick(RemoteMessage message) async {
     log('firebase :: User tapped on notification: ${message.notification?.title}');
     // You can navigate to a specific screen using Navigator here
   }*/
 
   //Когда приложение открыто
   Future<void> _onDidReceiveNotificationResponse(
-      NotificationResponse notificationResponse) async {
+    NotificationResponse notificationResponse,
+  ) async {
     final String? payload = notificationResponse.payload;
     if (sl<InetCubit>().state) {
       if (payload != null) {
         log('firebase :: Notification payload: $payload');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController
-            .loadUrl(urlRequest:  URLRequest(
-          url: WebUri(payload),
-        ));
-            //?.loadRequest(Uri.parse(payload));
+        sl<NestedWebviewController>().webViewController.loadUrl(
+          urlRequest: URLRequest(url: WebUri(payload)),
+        );
+        //?.loadRequest(Uri.parse(payload));
       }
     } else {
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-      sl<NestedWebviewController>().webViewController
-          .loadUrl(urlRequest:  URLRequest(
-        url: WebUri(payload!),
-      ));
-          //?.loadRequest(Uri.parse(payload!));
+      sl<NestedWebviewController>().webViewController.loadUrl(
+        urlRequest: URLRequest(url: WebUri(payload!)),
+      );
+      //?.loadRequest(Uri.parse(payload!));
       sl<ScrollHeightCubit>().updateScrollHeight(0);
       sl<BackgroundCubit>().changeValue(true);
       sl<ErrorTextCubit>().changeValue(false);
@@ -244,12 +254,13 @@ class NotificationService {
 
   // Background handler (required for background notifications)
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+    RemoteMessage message,
+  ) async {
     log('firebase :: Handling a background message: ${message.messageId}');
   }
 
-// Get device token (you can send this to your server for targeted notifications)
-/* Future<String?> getDeviceToken() async {
+  // Get device token (you can send this to your server for targeted notifications)
+  /* Future<String?> getDeviceToken() async {
     String? token = await _firebaseMessaging.getToken();
     print("Device Token: $token");
     return token;
