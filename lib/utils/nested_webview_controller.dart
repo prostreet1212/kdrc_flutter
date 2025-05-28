@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -90,8 +91,8 @@ class NestedWebviewController {
         double outerPixel =
             nestedScrollController.position.pixels;
 
-        print('inner pixels: $currentInnerPixel');
-        print('outer pixels: $outerPixel');
+        log('inner pixels: $currentInnerPixel');
+        log('outer pixels: $outerPixel');
         if (nestedScrollController.offset > 112) {
           if (sl<IsCollapsedCubit>().state != true) {
             sl<IsCollapsedCubit>().updateIsCollapsed(true);
@@ -111,7 +112,7 @@ class NestedWebviewController {
       handlerName: 'onContentHeightChanged',
       callback: (args) {
         final double? height = double.tryParse(args[0]);
-        print('Высота контента: $height');
+        log('Высота контента: $height');
 
         if (height != null) {
           if (isFirstRun && sl<InetCubit>().state == false) {
@@ -131,10 +132,10 @@ class NestedWebviewController {
                   sl<BackgroundCubit>().state ==
                       true /*|| isBackgroundNoInternet*/ ) {
                 sl<BackgroundCubit>().changeValue(false);
-                print('aaa');
+                log('aaa');
               }
             }
-            print('onMessageReceived+ $isFirstRun');
+            log('onMessageReceived+ $isFirstRun');
             sl<ScrollHeightCubit>().updateScrollHeight(height);
           }
         }
@@ -143,8 +144,8 @@ class NestedWebviewController {
   }
 
   onLoadStart(InAppWebViewController c, WebUri? uri) {
-    print('onPageStarted');
-    sl<BoolCubit>().changeValue(true);
+    log('onPageStarted');
+    //sl<BoolCubit>().changeValue(true);
     if (scrollStatus == ScrollStatus.forward) {
       prevPixels.add(
         nestedScrollController
@@ -159,7 +160,7 @@ class NestedWebviewController {
   }
 
   onLoadStop(InAppWebViewController c, WebUri? uri) async {
-    print('onPageFinished + $isFirstRun');
+    log('onPageFinished + $isFirstRun');
     await webViewController.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
     ///
@@ -170,7 +171,7 @@ class NestedWebviewController {
   }
 
   onProgressChanged(InAppWebViewController c, int progress) {
-    print('$progress');
+    log('$progress');
   }
 
   Future<NavigationActionPolicy> shouldOverrideUrlLoading(
@@ -179,9 +180,10 @@ class NestedWebviewController {
     FToast fToast,
     BuildContext context,
   ) async {
-    print('onPageSRequest');
+
+    log('onPageSRequest');
     if (sl<InetCubit>().state == true) {
-      print('url1 ${navigationAction.request.url.toString()}');
+      log('url1 ${navigationAction.request.url.toString()}');
       if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
           navigationAction.request.url.toString().contains('mailto:')) {
         launchUrl(Uri.parse(navigationAction.request.url.toString()));
@@ -216,8 +218,8 @@ class NestedWebviewController {
                 toastDuration: Duration(seconds: 3),
                 gravity: ToastGravity.BOTTOM,
               );*/
-
-              ScaffoldMessenger.of(context).showSnackBar(
+              if(context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
                     'Не удалось открыть документ. Установите приложение, для просмотра документов в формате $typeFile',
@@ -233,8 +235,9 @@ class NestedWebviewController {
                   textColor: Color.fromARGB(255, 247, 176, 116),),
                 ),
               );
+              }
             }
-            print('openx ${openResult.message}');
+            log('openx ${openResult.message}');
             if (context.mounted) {
               Navigator.pop(context);
             }
@@ -265,6 +268,7 @@ class NestedWebviewController {
           }
           return NavigationActionPolicy.CANCEL;
         } else {
+          sl<BoolCubit>().changeValue(true);
           if (Platform.isAndroid) {
             scrollStatus = ScrollStatus.forward;
             isStep = true;
@@ -286,13 +290,13 @@ class NestedWebviewController {
 
   onReceivedError(WebResourceError error) {
     if (error.type == WebResourceErrorType.HOST_LOOKUP) {
-      print('ошибка интернета нетю: ${error.description}');
+      log('ошибка интернета нетю: ${error.description}');
       if (navigationDecision == NavigationActionPolicy.ALLOW) {
         isFirstRun = true;
         loadError = true;
-        print('onPageErrorNaigate');
+        log('onPageErrorNaigate');
       } else {
-        print('onPageErrorPrev');
+        log('onPageErrorPrev');
       }
     }
   }

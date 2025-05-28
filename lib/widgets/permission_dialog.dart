@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../cubits/call_request_is_opened_cubit.dart';
+import '../locator_service.dart';
 
 
 
@@ -46,11 +46,9 @@ class _PermissionDialogState extends State<PermissionDialog>  {
           onPressed: () async{
             Navigator.pop(context);
                 await openAppSettings().then((data){
-                  print('data ${data}');
                 }).whenComplete((){});
-            context.read<CallRequestIsOpenedCubit>().changeValue(true);
-           print('call ${context.read<CallRequestIsOpenedCubit>().state}');
-           //проверка на разрешение?
+                sl<CallRequestIsOpenedCubit>().changeValue(true);
+            //context.read<CallRequestIsOpenedCubit>().changeValue(true);
           },
           child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
         ),

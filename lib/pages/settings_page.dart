@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,11 +7,10 @@ import 'package:permission_handler/permission_handler.dart';
 import '../cubits/settings_cubit/settings_state.dart';
 import '../locator_service.dart';
 import '../utils/notification_service.dart';
-import '../widgets/custom_toast.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key,required this.fToast});
-  final FToast fToast;
+  const SettingsPage({super.key});
+
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -128,7 +126,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             sl<SettingsCubit>().updateIsPush(value!);
                             sl<NotificationService>().subscribeToTopic(value);
                           }else{
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            if(context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
                                   "Не удалось получить разрешение \"Уведомления\", перейдите в настройки приложения и включите его вручную.",
@@ -150,6 +149,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                   textColor: Color.fromARGB(255, 247, 176, 116),),
                               ),
                             );
+                            }
                           }
                         }else{
                           sl<SettingsCubit>().updateIsPush(value!);

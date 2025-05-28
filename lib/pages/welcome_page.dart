@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,7 +18,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  Route createRoute(Widget widget) {
+/*  Route createRoute(Widget widget) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => widget,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -37,9 +38,9 @@ class _WelcomePageState extends State<WelcomePage> {
       },
       transitionDuration: Duration(milliseconds: 500),
     );
-  }
-  runRoutePage()  {
-    Future.delayed(const Duration(milliseconds: 700)).then((_) {
+  }*/
+  runRoutePage() async {
+    await Future.delayed(const Duration(milliseconds: 700)).then((_) {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -62,7 +63,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-print('build WelcomePage');
+log('build WelcomePage');
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -74,20 +75,22 @@ print('build WelcomePage');
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 80,
               ),
               Image.asset(
                 'assets/images/logo.png',
                 width: 180,
               ),
-              Text(
+              const Text(
                 'Котласский\n реабилитационный центр',
                 textAlign: TextAlign.center,
                 style:TextStyle(
                   fontFamily: 'WelcomeFont',
                     fontSize: 18,
-                    color: Colors.grey[600]
+                    //color: Colors.grey[600],
+                    color: Color(0xFF757575),
+                   // color: Colors.grey
                 )
               ),
             ],

@@ -1,11 +1,15 @@
 
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
-import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
@@ -44,7 +48,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   void dispose() {
     sl<InetCubit>().close();
     WidgetsBinding.instance.removeObserver(this);
-    print('dispose');
+    log('dispose');
     super.dispose();
   }
 
@@ -52,9 +56,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      print('app resumed');
+      log('app resumed');
       if(sl<NestedWebviewController>().isCrashed==true){
-        print('релоад');
+        log('релоад');
         sl<NestedWebviewController>().scrollStatus =
             ScrollStatus.reload;
         await sl<NestedWebviewController>().webViewController.reload();
@@ -63,13 +67,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       }
       checkCallStatus();
     } else if (state == AppLifecycleState.detached) {
-      print('app detached');
+      log('app detached');
     } else if (state == AppLifecycleState.hidden) {
-      print('app hidden');
+      log('app hidden');
     } else if (state == AppLifecycleState.inactive) {
-      print('app inactive');
+      log('app inactive');
     } else if (state == AppLifecycleState.paused) {
-      print('app paused');
+      log('app paused');
     }
   }
 
@@ -77,18 +81,21 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     if (context.read<CallRequestIsOpenedCubit>().state) {
       final status1 = await Permission.phone.status;
       if (status1.isGranted) {
-        Utils.showCallDialog(
+        if(mounted) {
+          Utils.showCallDialog(
             context
         );
+        }
           if (!mounted) return;
           context.read<CallRequestIsOpenedCubit>().changeValue(false);
       }
     }
   }
-
+  late InAppWebViewController inAppWebViewController;
   @override
   Widget build(BuildContext context3) {
-    print('build mainpage');
+    log('build mainpage');
+
     return PopScope(
        canPop: false,
      onPopInvokedWithResult: ( didPop,  result)async{
@@ -108,15 +115,42 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: NestedScrollView(
+          body: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            scrollBehavior: ScrollBehavior(),
+            slivers: [
+              SliverToNestedScrollBoxAdapter(
+                childExtent: 1491,
+                onScrollOffsetChanged: (scrollOffset){
+                  double y = scrollOffset;
+                  if (Platform.isAndroid) {
+                    y *= View.of(context).devicePixelRatio;
+                  }
+                  inAppWebViewController
+                      .scrollTo(x: 0, y: y.ceil());
+                },
+                child: InAppWebView(
+                  onWebViewCreated: (c){
+                    inAppWebViewController=c;
+                  },
+                  initialUrlRequest:  URLRequest(
+                    url: WebUri(
+                      'https://kdrc.ru/novosti',
+                    ),
+                  ),
+                ),)
+            ],
+          ),
+          /*NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
-            physics: ClampingScrollPhysics(),
+            //physics: AlwaysScrollableScrollPhysics(),
+            //physics: ClampingScrollPhysics(),
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
             ) {
               return [
-                CustomAppBar(
+                 CustomAppBar(
                   fToast: widget.fToast,
                 ),
               ];
@@ -124,7 +158,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             body: SliverWebview(
               fToast: widget.fToast,
               ),
-          ),
+          ),*/
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
             builder: (context, phoneState) {
               if (phoneState) {
@@ -140,23 +174,19 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           size: 36,
                         ),
                         onPressed: () async {
-
-                          //await sl<NestedWebviewController>().webViewController.reload();
-                    /*  print('${sl<NestedWebviewController>()
-                          .scrollStatus}');*/
-
                           PermissionStatus status = await Permission.phone.status;
+
                           if (status.isGranted) {
-                            Utils.showCallDialog(
+                            if(context.mounted) {
+                              Utils.showCallDialog(
                             context
                           );
+                            }
                           }else if (status.isPermanentlyDenied) {
-                            //await Permission.phone.request();
                             if(context.mounted) {
                               showDialog(
                                   context: context,
                                   builder: (context){
-                                    //Navigator.pop(context);
                                     return PermissionDialog();
                                   });
                             }
@@ -164,12 +194,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           } else if (status.isDenied) {
                             final status1 = await Permission.phone.request();
                             if(status1.isGranted){
-                              Utils.showCallDialog(
+                              if(context.mounted) {
+                                Utils.showCallDialog(
                                   context
                               );
+                              }
                             }
                           } else {
-                            print("Permission denied");
+                            log("Permission denied");
                           }
                         },
                       );

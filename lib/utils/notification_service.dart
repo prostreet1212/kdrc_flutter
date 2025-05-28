@@ -8,7 +8,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
 import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
@@ -164,10 +163,10 @@ class NotificationService {
   Future<void> subscribeToTopic(bool isSubscribe) async {
     if (isSubscribe) {
       await _firebaseMessaging.subscribeToTopic('all');
-      print('subscribeToTopic');
+      log('subscribeToTopic');
     } else {
       await _firebaseMessaging.unsubscribeFromTopic('all');
-      print('unsubscribeToTopic');
+      log('unsubscribeToTopic');
     }
   }
 
@@ -213,7 +212,7 @@ class NotificationService {
       payload: message.data['url'],
     );
 
-    print(
+    log(
       'push-уведомление: ${message.notification!.title}, ${message.notification!.body}/${message.data}',
     );
   }
