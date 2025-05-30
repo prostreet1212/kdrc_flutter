@@ -116,8 +116,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         child: Scaffold(
           backgroundColor: Colors.white,
           body: CustomScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            scrollBehavior: ScrollBehavior(),
+            cacheExtent: 1000,
+            physics: CarouselScrollPhysics(),
+            //physics: AlwaysScrollableScrollPhysics(),
+            //scrollBehavior: ScrollBehavior(),
             slivers: [
               SliverToNestedScrollBoxAdapter(
                 childExtent: 1491,
@@ -141,7 +143,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 ),)
             ],
           ),
-          /*NestedScrollView(
+        /*  NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
             //physics: AlwaysScrollableScrollPhysics(),
             //physics: ClampingScrollPhysics(),
