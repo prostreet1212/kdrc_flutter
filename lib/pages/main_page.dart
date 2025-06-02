@@ -122,7 +122,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: NestedScrollView(
+          body: /*NestedScrollView(
             headerSliverBuilder: (c, b) {
               return [
                 SliverPadding(
@@ -195,11 +195,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 ),
               ],
             ),
-          ),
-          /*NestedScrollView(
+          ),*/
+
+
+
+          NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
             //physics: AlwaysScrollableScrollPhysics(),
-            //physics: ClampingScrollPhysics(),
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
@@ -213,7 +215,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             body: SliverWebview(
               fToast: widget.fToast,
               ),
-          ),*/
+          ),
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
             builder: (context, phoneState) {
               if (phoneState) {

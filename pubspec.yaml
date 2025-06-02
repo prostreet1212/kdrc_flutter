@@ -57,7 +57,7 @@ dependencies:
 
   nested_scroll_controller: ^1.0.0
 
-  flutter_inappwebview : ^6.2.0-beta.2
+  flutter_inappwebview : ^6.1.5
 
 
   #docx_viewer: ^0.2.1

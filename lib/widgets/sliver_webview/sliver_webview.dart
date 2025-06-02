@@ -70,7 +70,7 @@ class SliverWebview extends StatelessWidget {
               children: [
                 CustomScrollView(
                   //physics: NeverScrollableScrollPhysics(),
-                 // physics: CarouselScrollPhysics(allowImplicitScrolling:a),
+                 physics: ClampingScrollPhysics(),
                   slivers: [
                     SliverStack(
                       insetOnOverlap: true,
@@ -186,7 +186,7 @@ class SliverWebview extends StatelessWidget {
                               });
                               return SliverToNestedScrollBoxAdapter(
                                 childExtent: state.height,
-                                onScrollOffsetChanged: (scrollOffset) {
+                                onScrollOffsetChanged: (scrollOffset) async{
                                   if (sl<NestedWebviewController>().isStep) {
                                     // nestedWebviewController.isStep = false;
                                   } else {
@@ -195,7 +195,7 @@ class SliverWebview extends StatelessWidget {
                                       y *= View.of(context).devicePixelRatio;
                                     }
                                     //if(sl<NestedWebviewController>().webViewController!=null){
-                                    sl<NestedWebviewController>()
+                                    await sl<NestedWebviewController>()
                                         .webViewController
                                         .scrollTo(x: 0, y: y.ceil());
                                     //  }
