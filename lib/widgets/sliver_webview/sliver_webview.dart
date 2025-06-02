@@ -69,6 +69,7 @@ class SliverWebview extends StatelessWidget {
             return Stack(
               children: [
                 CustomScrollView(
+                  //physics: NeverScrollableScrollPhysics(),
                  // physics: CarouselScrollPhysics(allowImplicitScrolling:a),
                   slivers: [
                     SliverStack(
