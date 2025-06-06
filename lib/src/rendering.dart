@@ -12,11 +12,10 @@ class RenderSliverToNestedScrollBoxAdapter
     extends RenderSliverSingleBoxAdapter {
   /// Creates a [RenderSliver] that wraps a [RenderBox].
   RenderSliverToNestedScrollBoxAdapter({
-    RenderBox? child,
+    super.child,
     required double childExtent,
     required this.onScrollOffsetChanged,
-  })  : _childExtent = childExtent,
-        super(child: child);
+  })  : _childExtent = childExtent;
 
   double get childExtent => _childExtent;
   double _childExtent;

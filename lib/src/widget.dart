@@ -8,11 +8,11 @@ import 'rendering.dart';
 class SliverToNestedScrollBoxAdapter extends SingleChildRenderObjectWidget {
   /// Creates a sliver that contains a single nested scrollable box widget.
   const SliverToNestedScrollBoxAdapter({
-    Key? key,
-    Widget? child,
+    super.key,
+    super.child,
     required this.childExtent,
     required this.onScrollOffsetChanged,
-  }) : super(key: key, child: child);
+  });
 
   final double childExtent;
   final ScrollOffsetChanged onScrollOffsetChanged;

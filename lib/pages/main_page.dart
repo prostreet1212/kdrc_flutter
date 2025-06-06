@@ -96,7 +96,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     }
   }
 
-  InAppWebViewController? inAppWebViewController = null;
+  InAppWebViewController? inAppWebViewController;
 
   @override
   Widget build(BuildContext context3) {

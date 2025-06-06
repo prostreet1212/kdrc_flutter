@@ -84,7 +84,7 @@ class NestedWebviewController {
 
   void init(FToast fToast, BuildContext context) async {
     fToast.init(context);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+  /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
         currentInnerPixel =
             nestedScrollController.innerScrollController!.position.pixels;
@@ -103,7 +103,7 @@ class NestedWebviewController {
           }
         }
       });
-    });
+    });*/
   }
 
   onWebViewCreated(InAppWebViewController c) {
