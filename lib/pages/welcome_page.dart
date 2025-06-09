@@ -88,7 +88,6 @@ log('build WelcomePage');
                 style:TextStyle(
                   fontFamily: 'WelcomeFont',
                     fontSize: 18,
-                    //color: Colors.grey[600],
                     color: Color(0xFF757575),
                    // color: Colors.grey
                 )

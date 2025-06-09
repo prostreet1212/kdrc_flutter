@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
    final FToast fToast = FToast();
-   //NestedWebviewController? nestedWebviewController;
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -85,7 +84,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: BlocBuilder<StartCubit, StartState>(
-          // future: NotificationService.instance.getInitialMessage(),
           builder: ((context, state) {
             if (state is StartPush) {
               // Если приложение было открыто через уведомление

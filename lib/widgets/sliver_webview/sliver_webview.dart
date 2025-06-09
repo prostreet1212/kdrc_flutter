@@ -29,8 +29,9 @@ class SliverWebview extends StatelessWidget {
     //final double textPadding = MediaQuery.of(context).size.height / 2.15;
     double heightScreen = MediaQuery.of(context).size.height;
     double topPadding = MediaQueryData.fromView(View.of(context)).padding.top;
-    double bottomPadding =
-        MediaQueryData.fromView(View.of(context)).padding.bottom;
+    double bottomPadding = MediaQueryData.fromView(
+      View.of(context),
+    ).padding.bottom;
     double heightWebview = heightScreen - topPadding - bottomPadding - 56;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -69,8 +70,7 @@ class SliverWebview extends StatelessWidget {
             return Stack(
               children: [
                 CustomScrollView(
-                  //physics: NeverScrollableScrollPhysics(),
-                 physics: ClampingScrollPhysics(),
+                  physics: ClampingScrollPhysics(),
                   slivers: [
                     SliverStack(
                       insetOnOverlap: true,
@@ -96,23 +96,9 @@ class SliverWebview extends StatelessWidget {
                         ),
                         BlocProvider<ErrorTextCubit>(
                           create: (c) => sl<ErrorTextCubit>(),
-                          child: BlocBuilder<
-                            ScrollHeightCubit,
-                            ScrollHeightState
-                          >(
-                            /*   buildWhen: (next, prev) {
-                              bool isBuild=(next != prev)||(next == prev);
-                              return isBuild;
-                            },*/
+                          child: BlocBuilder<ScrollHeightCubit, ScrollHeightState>(
                             builder: (context, state) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                /* if(sl<NestedWebviewController>().isCrashed){
-                                  sl<NestedWebviewController>()
-                                      .nestedScrollController
-                                      .innerScrollController!
-                                      .position
-                                      .setPixels(300/*sl<NestedWebviewController>().currentPixel*/);
-                                }*/
                                 if (sl<NestedWebviewController>().isStep) {
                                   if (sl<NestedWebviewController>()
                                           .scrollStatus ==
@@ -186,7 +172,7 @@ class SliverWebview extends StatelessWidget {
                               });
                               return SliverToNestedScrollBoxAdapter(
                                 childExtent: state.height,
-                                onScrollOffsetChanged: (scrollOffset) async{
+                                onScrollOffsetChanged: (scrollOffset) async {
                                   if (sl<NestedWebviewController>().isStep) {
                                     // nestedWebviewController.isStep = false;
                                   } else {
@@ -201,81 +187,11 @@ class SliverWebview extends StatelessWidget {
                                     //  }
                                   }
                                 },
-                                child: ListView(
+                                child: ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
-                                  children: [
-                                    SizedBox(
-                                      height: heightWebview,
-                                      child: InAppWebView(
-                                        onWebViewCreated: (c) {
-                                          sl<NestedWebviewController>()
-                                              .onWebViewCreated(c);
-                                        },
-                                        initialSettings: InAppWebViewSettings(
-                                          javaScriptEnabled: true,
-                                          transparentBackground: true,
-                                          useShouldOverrideUrlLoading: true,
-                                          useOnRenderProcessGone: true,
-                                        ),
-                                        initialUrlRequest: URLRequest(
-                                          url: WebUri(
-                                            sl<StartCubit>().state.url,
-                                          ),
-                                        ),
-                                        onLoadStart: (c, uri) {
-                                          sl<NestedWebviewController>()
-                                              .onLoadStart(c, uri);
-                                        },
-                                        onLoadStop: (c, uri) {
-                                          sl<NestedWebviewController>()
-                                              .onLoadStop(c, uri);
-                                        },
-                                        onProgressChanged: (c, progress) {
-                                          sl<NestedWebviewController>()
-                                              .onProgressChanged(c, progress);
-                                        },
-                                        shouldOverrideUrlLoading: (
-                                          c,
-                                          navigationAction,
-                                        ) async {
-                                          return sl<NestedWebviewController>()
-                                              .shouldOverrideUrlLoading(
-                                                c,
-                                                navigationAction,
-                                                fToast,
-                                                context,
-                                              );
-                                        },
-                                        onReceivedError: (c, request, error) {
-                                          sl<NestedWebviewController>()
-                                              .onReceivedError(error);
-                                        },
-                                        onRenderProcessGone: (
-                                          c,
-                                          details,
-                                        ) async {
-                                          log(
-                                            'onRenderProcessGone: $details',
-                                          );
-                                          sl<NestedWebviewController>()
-                                              .isCrashed = true;
-                                        },
-                                        onWebContentProcessDidTerminate: (c) {
-                                          log(
-                                            'onWebContentProcessDidTerminate',
-                                          );
-                                        },
-                                        onReceivedHttpError:
-                                            (c, request, response) {},
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                //718,5
-                                /*  child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: 1,
-                                  itemBuilder: (c, i) {
+                                 itemCount: 1,
+                                  padding: EdgeInsets.all(0),
+                                 itemBuilder: (c,i){
                                     return SizedBox(
                                       height: heightWebview,
                                       child: InAppWebView(
@@ -306,34 +222,33 @@ class SliverWebview extends StatelessWidget {
                                           sl<NestedWebviewController>()
                                               .onProgressChanged(c, progress);
                                         },
-                                        shouldOverrideUrlLoading: (
-                                          c,
-                                          navigationAction,
-                                        ) async {
-                                          return sl<NestedWebviewController>()
+                                        shouldOverrideUrlLoading:
+                                            (c, navigationAction) async {
+                                          return sl<
+                                              NestedWebviewController
+                                          >()
                                               .shouldOverrideUrlLoading(
-                                                c,
-                                                navigationAction,
-                                                fToast,
-                                                context,
-                                              );
+                                            c,
+                                            navigationAction,
+                                            fToast,
+                                            context,
+                                          );
                                         },
                                         onReceivedError: (c, request, error) {
                                           sl<NestedWebviewController>()
                                               .onReceivedError(error);
                                         },
-                                        onRenderProcessGone: (
-                                          c,
-                                          details,
-                                        ) async {
-                                          print(
+                                        onRenderProcessGone:
+                                            (c, details) async {
+                                          log(
                                             'onRenderProcessGone: $details',
                                           );
                                           sl<NestedWebviewController>()
-                                              .isCrashed = true;
+                                              .isCrashed =
+                                          true;
                                         },
                                         onWebContentProcessDidTerminate: (c) {
-                                          print(
+                                          log(
                                             'onWebContentProcessDidTerminate',
                                           );
                                         },
@@ -341,8 +256,9 @@ class SliverWebview extends StatelessWidget {
                                             (c, request, response) {},
                                       ),
                                     );
-                                  },
-                                ),*/
+                                 },
+
+                                ),
                               );
                             },
                           ),

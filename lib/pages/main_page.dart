@@ -1,10 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
-
-//import 'package:extended_sliver/extended_sliver.dart';
-import 'package:extended_sliver/extended_sliver.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
@@ -17,10 +11,7 @@ import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
-import 'package:nested_scroll_view_plus/nested_scroll_view_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 
@@ -37,7 +28,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
-  late WebViewController webViewController;
 
   @override
   void initState() {
@@ -47,8 +37,6 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
 
     sl<NestedWebviewController>().init(widget.fToast, context);
 
-    webViewController = WebViewController()
-      ..loadRequest(Uri.parse('https://kdrc.ru/novosti'));
   }
 
   @override
@@ -122,92 +110,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: /*NestedScrollView(
-            headerSliverBuilder: (c, b) {
-              return [
-                SliverPadding(
-                  padding: EdgeInsets.all(0),
-                  sliver: SliverAppBar(
-                    expandedHeight: 210,
-                    collapsedHeight: 56,
-                    pinned: true,
-                  ),
-                ),
-              ];
-            },
-            body: /*CustomScrollView(
-              physics: RangeMaintainingScrollPhysics(),
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: SizedBox(
-                    height: 1491,
-                    child:WebViewWidget(controller: WebViewController()..loadRequest(Uri.parse('https://kdrc.ru/novosti')))
-                    /*InAppWebView(
-                      onWebViewCreated: (c) {
-                        inAppWebViewController = c;
-                      },
-                      initialUrlRequest: URLRequest(
-                        url: WebUri('https://kdrc.ru/novosti'),
-                      ),
-                      initialSettings: InAppWebViewSettings(
-                        //contentInsetAdjustmentBehavior: ScrollViewContentInsetAdjustmentBehavior.ALWAYS
-                        overScrollMode: OverScrollMode.ALWAYS,
-                        scrollsToTop: true,
-                      ),
-                    ),*/
-                  ),*/ CustomScrollView(
-              // cacheExtent: 1000,
-              // physics: ScrollPhysics(),
-              //physics: FixedExtentScrollPhysics(),
-              //physics: CarouselScrollPhysics(),
-              //  physics: NeverScrollableScrollPhysics(),
-              //physics: BouncingScrollPhysics(),
-              //scrollBehavior: ScrollBehavior(),
-              physics: ClampingScrollPhysics(),
-              primary: true,
-              // hitTestBehavior: HitTestBehavior.translucent,
-              slivers: [
-                SliverToNestedScrollBoxAdapter(
-                  childExtent: 1491,
-                  onScrollOffsetChanged: (scrollOffset) {
-                    double y = scrollOffset;
-                    if (Platform.isAndroid) {
-                      y *= View.of(context).devicePixelRatio;
-                      //y*=2.55;
-                    }
-                    if (inAppWebViewController != null) {
-                      inAppWebViewController!.scrollTo(x: 0, y: y.ceil());
-                    }
-
-                    //webViewController.scrollTo(0, y.ceil());
-                  },
-                  child: //WebViewWidget(controller: webViewController),
-                  InAppWebView(
-                    onWebViewCreated: (c) {
-                      inAppWebViewController = c;
-                    },
-                    initialUrlRequest: URLRequest(
-                      url: WebUri('https://kdrc.ru/novosti'),
-                    ),
-                    initialSettings: InAppWebViewSettings(),
-                  ),
-                ),
-              ],
-            ),
-          ),*/
-
-
-
-          NestedScrollView(
+          body: NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
-            //physics: AlwaysScrollableScrollPhysics(),
             headerSliverBuilder: (
               BuildContext context,
               bool innerBoxIsScrolled,
             ) {
               return [
-                 CustomAppBar(
+                CustomAppBar(
                   fToast: widget.fToast,
                 ),
               ];
@@ -276,40 +186,3 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   }
 }
 
-class PlatformViewVerticalGestureRecognizer
-    extends VerticalDragGestureRecognizer {
-  PlatformViewVerticalGestureRecognizer({PointerDeviceKind? kind})
-    : super(supportedDevices: <PointerDeviceKind>{kind!});
-
-  Offset _dragDistance = Offset.zero;
-
-  @override
-  void addPointer(PointerEvent event) {
-    startTrackingPointer(event.pointer);
-  }
-
-  @override
-  void handleEvent(PointerEvent event) {
-    _dragDistance = _dragDistance + event.delta;
-    if (event is PointerMoveEvent) {
-      final double dy = _dragDistance.dy.abs();
-      final double dx = _dragDistance.dx.abs();
-
-      if (dy > dx && dy > kTouchSlop) {
-        // vertical drag - accept
-        resolve(GestureDisposition.accepted);
-        _dragDistance = Offset.zero;
-      } else if (dx > kTouchSlop && dx > dy) {
-        // horizontal drag - stop tracking
-        stopTrackingPointer(event.pointer);
-        _dragDistance = Offset.zero;
-      }
-    }
-  }
-
-  @override
-  String get debugDescription => 'horizontal drag (platform view)';
-
-  @override
-  void didStopTrackingLastPointer(int pointer) {}
-}
