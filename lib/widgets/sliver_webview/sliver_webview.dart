@@ -204,6 +204,7 @@ class SliverWebview extends StatelessWidget {
                                           transparentBackground: true,
                                           useShouldOverrideUrlLoading: true,
                                           useOnRenderProcessGone: true,
+                                          allowsBackForwardNavigationGestures: true,
                                         ),
                                         initialUrlRequest: URLRequest(
                                           url: WebUri(

@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
@@ -12,7 +14,10 @@ import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../cubits/phone_cubit.dart';
+import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
 
 import '../utils/utils.dart';
@@ -132,43 +137,61 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 return BlocBuilder<SettingsCubit, SettingsState>(
                   builder: (context1, state) {
                     if (state.isCalling) {
-                      return FloatingActionButton(
-                        backgroundColor: Colors.grey[50],
-                        shape: const CircleBorder(),
-                        child: Icon(
-                          Icons.call,
-                          color: Color.fromARGB(255, 247, 176, 116),
-                          size: 36,
-                        ),
-                        onPressed: () async {
-                          PermissionStatus status =
-                              await Permission.phone.status;
+                      return PointerInterceptor(
+                        intercepting: true,
+                        child: FloatingActionButton(
+                          backgroundColor: Colors.grey[50],
+                          shape: const CircleBorder(),
+                          child: Icon(
+                            Icons.call,
+                            color: Color.fromARGB(255, 247, 176, 116),
+                            size: 36,
+                          ),
+                          onPressed: () async {
+                            if(Platform.isIOS){
+                              final status = await Permission.contacts.request();
+                              if (status != PermissionStatus.granted) {
+                                return;
+                              }
+                              bool? res = await FlutterPhoneDirectCaller.callNumber('79532602744');
+                              /*final Uri phoneUri = Uri(scheme: 'tel', path: '79210779641');
+                              if (await canLaunchUrl(phoneUri)) {
+                                await launchUrl(phoneUri);
+                              } else {
+                                throw 'Не удалось выполнить звонок на номер 79210779641';
+                              }*/
+                            }else{
+                                 PermissionStatus status =
+                                await Permission.phone.status;
 
-                          if (status.isGranted) {
-                            if (context.mounted) {
-                              Utils.showCallDialog(context);
-                            }
-                          } else if (status.isPermanentlyDenied) {
-                            if (context.mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return PermissionDialog();
-                                },
-                              );
-                            }
-                            //openAppSettings();
-                          } else if (status.isDenied) {
-                            final status1 = await Permission.phone.request();
-                            if (status1.isGranted) {
+                            if (status.isGranted) {
                               if (context.mounted) {
                                 Utils.showCallDialog(context);
                               }
+                            } else if (status.isPermanentlyDenied) {
+                              if (context.mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return PermissionDialog();
+                                  },
+                                );
+                              }
+                              //openAppSettings();
+                            } else if (status.isDenied) {
+                              final status1 = await Permission.phone.request();
+                              if (status1.isGranted) {
+                                if (context.mounted) {
+                                  Utils.showCallDialog(context);
+                                }
+                              }
+                            } else {
+                              log("Permission denied");
                             }
-                          } else {
-                            log("Permission denied");
-                          }
-                        },
+                            }
+
+                          },
+                        ),
                       );
                     } else {
                       return SizedBox();
