@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
@@ -15,18 +14,17 @@ import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../cubits/phone_cubit.dart';
-import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
 
+import '../locator_service.dart' as di;
 import '../utils/utils.dart';
 import '../widgets/permission_dialog.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.fToast});
+  const MainPage({super.key,});
 
-  final FToast fToast;
+
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -40,7 +38,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     sl<InetCubit>().init();
 
-    sl<NestedWebviewController>().init(widget.fToast, context);
+    sl<NestedWebviewController>().init( context);
 
   }
 
@@ -122,13 +120,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
               bool innerBoxIsScrolled,
             ) {
               return [
-                CustomAppBar(
-                  fToast: widget.fToast,
+                 CustomAppBar(
+                  fToast: di.sl<NestedWebviewController>().fToast,
                 ),
               ];
             },
             body: SliverWebview(
-              fToast: widget.fToast,
+              fToast: di.sl<NestedWebviewController>().fToast,
               ),
           ),
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
@@ -142,7 +140,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         child: FloatingActionButton(
                           backgroundColor: Colors.grey[50],
                           shape: const CircleBorder(),
-                          child: Icon(
+                          child: const Icon(
                             Icons.call,
                             color: Color.fromARGB(255, 247, 176, 116),
                             size: 36,
@@ -173,7 +171,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                                 showDialog(
                                   context: context,
                                   builder: (context) {
-                                    return PermissionDialog();
+                                    return const PermissionDialog();
                                   },
                                 );
                               }
@@ -194,12 +192,12 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                         ),
                       );
                     } else {
-                      return SizedBox();
+                      return const SizedBox();
                     }
                   },
                 );
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             },
           ),

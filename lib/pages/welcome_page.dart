@@ -2,13 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/pages/main_page.dart';
 import '../utils/utils.dart';
 
 class WelcomePage extends StatefulWidget {
-   const WelcomePage({super.key,required this.fToast});
-  final FToast fToast;
+   const WelcomePage({super.key});
+
 
 
 
@@ -45,8 +44,7 @@ class _WelcomePageState extends State<WelcomePage> {
       Navigator.pushReplacement(
         context,
         Utils.createRoute(
-          MainPage(
-            fToast: widget.fToast,
+          const MainPage(
           ),
         ),
       );
@@ -68,7 +66,7 @@ log('build WelcomePage');
       backgroundColor: Colors.white,
       body: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(

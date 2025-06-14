@@ -7,18 +7,18 @@ class ExitDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      contentPadding: EdgeInsets.only(left: 24, top: 8, bottom: 30),
+      contentPadding: const EdgeInsets.only(left: 24, top: 8, bottom: 30),
       insetPadding: EdgeInsets.zero,
-      actionsPadding: EdgeInsets.only(bottom: 0),
+      actionsPadding: const EdgeInsets.only(bottom: 0),
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(),
-      title: Text(
+      shape: const RoundedRectangleBorder(),
+      title: const Text(
         'Выход',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
-        child: Text(
+        child: const Text(
           'Выйти из приложения?',
           style: TextStyle(fontSize: 16, color: Colors.black87),
         ),
@@ -27,7 +27,7 @@ class ExitDialog extends StatelessWidget {
         TextButton(
           child: Text(
             'Да'.toUpperCase(),
-            style: TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
+            style: const TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
           ),
           onPressed: () async {
             await FlutterExitApp.exitApp();
@@ -35,7 +35,7 @@ class ExitDialog extends StatelessWidget {
         ),
         TextButton(
           child: Text('Нет'.toUpperCase(),
-              style: TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
+              style: const TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
           onPressed: () {
             Navigator.pop(context);
           },

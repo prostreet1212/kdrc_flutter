@@ -1,5 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
-/*
+
 import 'dart:math' as math;
 import 'dart:math';
 import 'package:flutter/rendering.dart';
@@ -209,4 +209,3 @@ class RenderSliverToNestedScrollBoxAdapter
     return rightWayUp;
   }
 }
-*/

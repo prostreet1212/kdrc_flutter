@@ -12,7 +12,7 @@ class CustomToast extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: 0.0, vertical: 4.0),
-        margin: EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
           color: Colors.white,
@@ -21,7 +21,7 @@ class CustomToast extends StatelessWidget {
               color: Colors.grey.withValues(alpha: 0.5),
               spreadRadius: 2,
               blurRadius: 7,
-              offset: Offset(
+              offset: const Offset(
                   0, 3), // changes position of shadow
             ),
           ],
@@ -29,7 +29,7 @@ class CustomToast extends StatelessWidget {
         child:  Text(
          message,
           textAlign: TextAlign.center,
-          style: TextStyle(height: 1.2,color: Colors.black),
+          style: const TextStyle(height: 1.2,color: Colors.black),
         ),
       ),
     );

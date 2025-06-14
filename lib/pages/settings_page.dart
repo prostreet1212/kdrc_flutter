@@ -48,12 +48,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     return SafeArea(
       child: Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size(200, 56),
+            preferredSize: const Size(200, 56),
             child: AppBar(
               automaticallyImplyLeading: false,
               centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(top: 6),
+              title: const Padding(
+                padding: EdgeInsets.only(top: 6),
                 child: Text(
                   'НАСТРОЙКИ',
                   style: TextStyle(
@@ -73,9 +73,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        contentPadding: EdgeInsets.only(left: 16, right: 6),
+                        contentPadding: const EdgeInsets.only(left: 16, right: 6),
                         //leading: SizedBox(width: 50,),
-                        title: Text('Кнопка "Звонок"'),
+                        title: const Text('Кнопка "Звонок"'),
                         subtitle: Text(
                           'Отображать кнопку звонка на экране',
                           style: TextStyle(color: Colors.grey[500]),
@@ -100,13 +100,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ],
                   );
                 } else {
-                  return SizedBox();
+                  return const SizedBox();
                 }
               }),
               ListTile(
-                  contentPadding: EdgeInsets.only(left: 16, right: 6),
+                  contentPadding: const EdgeInsets.only(left: 16, right: 6),
                   //leading: SizedBox(width: 50,),
-                  title: Text('Push-уведомления'),
+                  title: const Text('Push-уведомления'),
                   subtitle: Text(
                     'Отправлять push-уведомления',
                     style: TextStyle(color: Colors.grey[500]),
@@ -129,10 +129,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             if(context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
+                                content: const Text(
                                   "Не удалось получить разрешение \"Уведомления\", перейдите в настройки приложения и включите его вручную.",
                                 ),
-                                duration: Duration(milliseconds: 3500),
+                                duration: const Duration(milliseconds: 3500),
                                 behavior: SnackBarBehavior.floating,
                                 action: SnackBarAction(
                                   label: 'Открыть настройки',
@@ -146,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                               isPushSettingsOpen=true;
                                             });
                                   },
-                                  textColor: Color.fromARGB(255, 247, 176, 116),),
+                                  textColor: const Color.fromARGB(255, 247, 176, 116),),
                               ),
                             );
                             }
@@ -168,7 +168,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'ОК',
                     style: TextStyle(
                         color: Colors.black,

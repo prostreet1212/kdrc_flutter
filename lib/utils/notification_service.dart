@@ -189,7 +189,7 @@ class NotificationService {
     //}
 
     AndroidNotificationDetails
-    androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'high_importance_channel',
       'High Importance Notifications',
       importance: Importance.high,

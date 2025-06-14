@@ -11,7 +11,7 @@ class BackgroundWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      key: PageStorageKey('aaa'),
+      key: const PageStorageKey('aaa'),
       child: Stack(
         children: [
           Image.asset(
@@ -24,10 +24,10 @@ class BackgroundWidget extends StatelessWidget {
           BlocBuilder<ErrorTextCubit, bool>(
             builder: (context, internetStatetate) {
               if (internetStatetate) {
-                return SizedBox();
+                return const SizedBox();
               } else {
                 return Align(
-                  alignment: Alignment(0, 0.9),
+                  alignment: const Alignment(0, 0.9),
                   child: Padding(
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width / 5,

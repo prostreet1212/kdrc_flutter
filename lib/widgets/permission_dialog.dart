@@ -37,8 +37,8 @@ class _PermissionDialogState extends State<PermissionDialog>  {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Разрешение отклонено"),
-      content: Text(
+      title: const Text("Разрешение отклонено"),
+      content: const Text(
         "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",
       ),
       actions: [
@@ -50,7 +50,7 @@ class _PermissionDialogState extends State<PermissionDialog>  {
                 sl<CallRequestIsOpenedCubit>().changeValue(true);
             //context.read<CallRequestIsOpenedCubit>().changeValue(true);
           },
-          child: Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
+          child: const Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
         ),
       ],
     );

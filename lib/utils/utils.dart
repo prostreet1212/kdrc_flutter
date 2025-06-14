@@ -15,7 +15,7 @@ class Utils {
     showDialog(
         context: context,
         builder: (context) {
-          return CallDialog();
+          return const CallDialog();
         });
   }
 
@@ -26,7 +26,7 @@ class Utils {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево
         var slideAnimation = Tween<Offset>(
-          begin: Offset(1.0, 0.0),
+          begin: const Offset(1.0, 0.0),
           end: Offset.zero,
         ).animate(CurvedAnimation(
           parent: animation,
@@ -38,7 +38,7 @@ class Utils {
           child: child,
         );
       },
-      transitionDuration: Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 500),
     );
   }
 

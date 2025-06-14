@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
    MyApp({super.key});
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-   final FToast fToast = FToast();
+   //final FToast fToast = FToast();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         title: 'Котласский реабилитационный центр',
-        scrollBehavior: ScrollBehavior(),
+        //scrollBehavior: const ScrollBehavior(),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -87,9 +87,9 @@ class MyApp extends StatelessWidget {
           builder: ((context, state) {
             if (state is StartPush) {
               // Если приложение было открыто через уведомление
-              return MainPage(fToast: fToast);
+              return const MainPage();
             } else {
-              return WelcomePage(fToast: fToast );
+              return const WelcomePage( );
             }
           }),
         ),

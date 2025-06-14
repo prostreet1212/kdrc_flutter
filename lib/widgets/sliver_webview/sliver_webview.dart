@@ -1,10 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:extended_sliver/extended_sliver.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
@@ -13,10 +12,11 @@ import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 
 import '../../cubits/scroll_height_cubit.dart';
-import '../../cubits/start_cubit/start_cubit.dart';
 import '../../locator_service.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../../src/widget.dart';
+import 'webview_widget.dart';
 import 'background_widget.dart';
 
 class SliverWebview extends StatelessWidget {
@@ -38,9 +38,9 @@ class SliverWebview extends StatelessWidget {
         sl<NestedWebviewController>().nestedScrollController.enableScroll(
           context,
         );
-        sl<NestedWebviewController>().nestedScrollController.enableCenterScroll(
+       /* sl<NestedWebviewController>().nestedScrollController.enableCenterScroll(
           constraints,
-        );
+        );*/
         return BlocConsumer<InetCubit, bool>(
           listenWhen: (prev, next) {
             return prev != next;
@@ -67,15 +67,15 @@ class SliverWebview extends StatelessWidget {
             }
           },
           builder: (context1, state) {
-            return Stack(
+            return  Stack(
               children: [
                 CustomScrollView(
-                  physics: ClampingScrollPhysics(),
+                  physics: const RangeMaintainingScrollPhysics(),
                   slivers: [
                     SliverStack(
                       insetOnOverlap: true,
                       children: [
-                        MultiBlocProvider(
+                         MultiBlocProvider(
                           providers: [
                             BlocProvider(
                               create: (context) => sl<BackgroundCubit>(),
@@ -87,9 +87,9 @@ class SliverWebview extends StatelessWidget {
                           child: BlocBuilder<BackgroundCubit, bool>(
                             builder: (context, state) {
                               if (state) {
-                                return BackgroundWidget();
+                                return const BackgroundWidget();
                               } else {
-                                return SliverFillRemaining();
+                                return const SliverFillRemaining();
                               }
                             },
                           ),
@@ -172,7 +172,7 @@ class SliverWebview extends StatelessWidget {
                               });
                               return SliverToNestedScrollBoxAdapter(
                                 childExtent: state.height,
-                                onScrollOffsetChanged: (scrollOffset) async {
+                                onScrollOffsetChanged: (scrollOffset)  {
                                   if (sl<NestedWebviewController>().isStep) {
                                     // nestedWebviewController.isStep = false;
                                   } else {
@@ -181,20 +181,21 @@ class SliverWebview extends StatelessWidget {
                                       y *= View.of(context).devicePixelRatio;
                                     }
                                     //if(sl<NestedWebviewController>().webViewController!=null){
-                                    await sl<NestedWebviewController>()
+                                     sl<NestedWebviewController>()
                                         .webViewController
                                         .scrollTo(x: 0, y: y.ceil());
                                     //  }
                                   }
                                 },
                                 child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                 itemCount: 1,
-                                  padding: EdgeInsets.all(0),
+                                  physics:const  NeverScrollableScrollPhysics(),
+                                 itemCount:  1,
+                                  padding: const EdgeInsets.all(0),
                                  itemBuilder: (c,i){
-                                    return SizedBox(
-                                      height: heightWebview,
-                                      child: InAppWebView(
+                                    return  SizedBox(
+                                      height:  heightWebview,
+                                      child: const WebViewVidget()
+                                      /*InAppWebView(
                                         onWebViewCreated: (c) {
                                           sl<NestedWebviewController>()
                                               .onWebViewCreated(c);
@@ -204,7 +205,7 @@ class SliverWebview extends StatelessWidget {
                                           transparentBackground: true,
                                           useShouldOverrideUrlLoading: true,
                                           useOnRenderProcessGone: true,
-                                          allowsBackForwardNavigationGestures: true,
+                                        //  allowsBackForwardNavigationGestures: true,
                                         ),
                                         initialUrlRequest: URLRequest(
                                           url: WebUri(
@@ -255,7 +256,7 @@ class SliverWebview extends StatelessWidget {
                                         },
                                         onReceivedHttpError:
                                             (c, request, response) {},
-                                      ),
+                                      ),*/
                                     );
                                  },
 
@@ -279,7 +280,7 @@ class SliverWebview extends StatelessWidget {
                           backgroundColor: Colors.blueAccent[50],
                         );
                       } else {
-                        return SizedBox();
+                        return const SizedBox();
                       }
                     },
                   ),

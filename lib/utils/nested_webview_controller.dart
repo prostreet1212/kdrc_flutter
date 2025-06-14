@@ -8,7 +8,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
-import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/file_loading_dialog.dart';
 import 'package:nested_scroll_controller/nested_scroll_controller.dart';
@@ -18,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
 import '../cubits/inet_cubit.dart';
+import '../cubits/is_collapsed_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../pages/pdf_page.dart';
@@ -43,6 +43,8 @@ class NestedWebviewController {
   static var httpClient = HttpClient();
   double currentInnerPixel = 0;
   bool isCrashed = false;
+
+  final FToast fToast=FToast();
 
 
 
@@ -70,11 +72,11 @@ class NestedWebviewController {
         Navigator.pop(context);
       }
       fToast.showToast(
-        child: CustomToast(
+        child: const CustomToast(
           message:
               'Не удалось открыть файл. Проверьте подключение к сети интернет',
         ),
-        toastDuration: Duration(seconds: 3),
+        toastDuration: const Duration(seconds: 3),
         gravity: ToastGravity.BOTTOM,
       );
       return null;
@@ -82,7 +84,7 @@ class NestedWebviewController {
     }
   }
 
-  void init(FToast fToast, BuildContext context) async {
+  void init( BuildContext context) async {
     fToast.init(context);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
@@ -195,7 +197,7 @@ class NestedWebviewController {
             barrierDismissible: false,
             context: context,
             builder: (context) {
-              return FileLoadingDialog();
+              return const FileLoadingDialog();
             },
           );
           var typeFile = Utils.getTypeFile(
@@ -224,14 +226,14 @@ class NestedWebviewController {
                   content: Text(
                     'Не удалось открыть документ. Установите приложение, для просмотра документов в формате $typeFile',
                   ),
-                  duration: Duration(milliseconds: 3500),
+                  duration: const Duration(milliseconds: 3500),
                   behavior: SnackBarBehavior.floating,
                   action: SnackBarAction(
                       label: 'ОК',
                       onPressed: () {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       },
-                  textColor: Color.fromARGB(255, 247, 176, 116),),
+                  textColor: const Color.fromARGB(255, 247, 176, 116),),
                 ),
               );
               }
@@ -247,7 +249,7 @@ class NestedWebviewController {
             barrierDismissible: false,
             context: context,
             builder: (context) {
-              return FileLoadingDialog();
+              return const FileLoadingDialog();
             },
           );
           File? pdfFile = await _downloadFile(
@@ -278,8 +280,8 @@ class NestedWebviewController {
       }
     } else {
       fToast.showToast(
-        child: CustomToast(message: 'Проверьте подключение к сети интернет'),
-        toastDuration: Duration(seconds: 2),
+        child: const CustomToast(message: 'Проверьте подключение к сети интернет'),
+        toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
       );
       navigationDecision = NavigationActionPolicy.CANCEL;

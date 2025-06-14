@@ -9,11 +9,11 @@ class FileLoadingDialog extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: AlertDialog(
-        contentPadding: EdgeInsets.only(left: 24, top: 16, bottom: 20),
+        contentPadding: const EdgeInsets.only(left: 24, top: 16, bottom: 20),
         insetPadding: EdgeInsets.zero,
-        actionsPadding: EdgeInsets.only(bottom: 0),
+        actionsPadding: const EdgeInsets.only(bottom: 0),
         backgroundColor: Colors.grey[350],
-        shape: RoundedRectangleBorder(),
+        shape: const RoundedRectangleBorder(),
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -23,10 +23,10 @@ class FileLoadingDialog extends StatelessWidget {
               width: 50,
               frameRate: 23,
             ),
-            SizedBox(
+            const SizedBox(
               width: 12,
             ),
-            Expanded(child: Text('Подождите, документ открывается',style: TextStyle(fontSize: 16),))
+            const Expanded(child: Text('Подождите, документ открывается',style: TextStyle(fontSize: 16),))
           ]),
         ),
       ),

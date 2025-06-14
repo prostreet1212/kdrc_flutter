@@ -29,8 +29,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
       );
     } else {
       widget.fToast.showToast(
-        child: CustomToast(message: 'Проверьте подключение к сети интернет'),
-        toastDuration: Duration(seconds: 2),
+        child: const CustomToast(message: 'Проверьте подключение к сети интернет'),
+        toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
       );
     }
@@ -61,15 +61,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             ),
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                   IconButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        Utils.createRoute(SettingsPage()),
+                        Utils.createRoute(const SettingsPage()),
                       );
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.settings,
                       color: Color.fromARGB(255, 32, 146, 131),
                     ),
@@ -79,20 +79,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (context) => ExitDialog(),
+                              builder: (context) => const ExitDialog(),
                             );
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.exit_to_app,
                             color: Color.fromARGB(255, 32, 146, 131),
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                 ],
                 leading: Padding(
-                  padding: EdgeInsets.only(bottom: 10, right: 16),
+                  padding: const EdgeInsets.only(bottom: 10, right: 16),
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       //Icons.keyboard_backspace,
                       Icons.arrow_back,
                       //Icons.arrow_back_ios,
@@ -109,19 +109,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             .goBack();
                       } else {
                         widget.fToast.showToast(
-                          child: CustomToast(
+                          child: const CustomToast(
                             message:
                                 // 'Это начальная странцица',
                                 'Это начальная страница. Дальнейший переход не требуется',
                           ),
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                           gravity: ToastGravity.BOTTOM,
                         );
                       }
                     },
                   ),
                 ),
-                backgroundColor: Color.fromARGB(255, 247, 172, 119),
+                backgroundColor: const Color.fromARGB(255, 247, 172, 119),
                 foregroundColor: Colors.red,
                 surfaceTintColor: Colors.yellow,
                 expandedHeight:
@@ -132,7 +132,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 flexibleSpace: Stack(
                   children: [
                     FlexibleSpaceBar(
-                      titlePadding: EdgeInsets.only(right: 0),
+                      titlePadding: const EdgeInsets.only(right: 0),
                       collapseMode: CollapseMode.pin,
                       background: Container(
                         color: Colors.white,
@@ -140,7 +140,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                     ),
                     state
-                        ? SizedBox()
+                        ? const SizedBox()
                         : Positioned(
                             right: 16,
                             bottom: 16,
@@ -151,8 +151,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     loadFeedback();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: Size(56, 56),
-                                    shape: CircleBorder(
+                                    minimumSize: const Size(56, 56),
+                                    shape: const CircleBorder(
                                       side: BorderSide(
                                         color: Color.fromARGB(
                                           255,
@@ -163,7 +163,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       ),
                                     ),
                                     shadowColor: Colors.grey[400],
-                                    padding: EdgeInsets.all(5),
+                                    padding: const EdgeInsets.all(5),
                                     backgroundColor: Colors.transparent,
                                     foregroundColor:
                                         Colors.transparent, // <-- Splash color
@@ -172,17 +172,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     'assets/images/ic_feedback1.png',
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 ElevatedButton(
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (context) => ExitDialog(),
+                                      builder: (context) => const ExitDialog(),
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: Size(56, 56),
-                                    shape: CircleBorder(
+                                    minimumSize: const Size(56, 56),
+                                    shape: const CircleBorder(
                                       side: BorderSide(
                                         color: Color.fromARGB(
                                           255,
@@ -193,13 +193,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       ),
                                     ),
                                     shadowColor: Colors.grey[400],
-                                    padding: EdgeInsets.all(5),
+                                    padding: const EdgeInsets.all(5),
                                     backgroundColor: Colors.transparent,
                                     // <-- Button color
                                     foregroundColor:
                                         Colors.transparent, // <-- Splash color
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.exit_to_app,
                                     color: Color.fromARGB(255, 249, 176, 116),
                                     size: 36,
