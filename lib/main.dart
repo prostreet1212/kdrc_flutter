@@ -1,5 +1,6 @@
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,7 +79,9 @@ class MyApp extends StatelessWidget {
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         title: 'Котласский реабилитационный центр',
-        //scrollBehavior: const ScrollBehavior(),
+        scrollBehavior: const ScrollBehavior().copyWith(
+          multitouchDragStrategy: MultitouchDragStrategy.latestPointer
+        ),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,

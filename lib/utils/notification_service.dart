@@ -116,13 +116,13 @@ class NotificationService {
         log('firebase :: Notification payload: ${message.data['url']}');
 
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController.loadUrl(
+        sl<NestedWebviewController>().webViewController!.loadUrl(
           urlRequest: URLRequest(url: WebUri(message.data['url'])),
         );
         //?.loadRequest(Uri.parse(message.data['url']));
       } else {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController.loadUrl(
+        sl<NestedWebviewController>().webViewController!.loadUrl(
           urlRequest: URLRequest(url: WebUri(message.data['url'])),
         );
         //?.loadRequest(Uri.parse(message.data['url']));
@@ -232,14 +232,14 @@ class NotificationService {
       if (payload != null) {
         log('firebase :: Notification payload: $payload');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController.loadUrl(
+        sl<NestedWebviewController>().webViewController!.loadUrl(
           urlRequest: URLRequest(url: WebUri(payload)),
         );
         //?.loadRequest(Uri.parse(payload));
       }
     } else {
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-      sl<NestedWebviewController>().webViewController.loadUrl(
+      sl<NestedWebviewController>().webViewController!.loadUrl(
         urlRequest: URLRequest(url: WebUri(payload!)),
       );
       //?.loadRequest(Uri.parse(payload!));

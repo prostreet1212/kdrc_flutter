@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
 import 'package:kdrc_flutter/cubits/bool_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
@@ -20,9 +19,9 @@ import 'webview_widget.dart';
 import 'background_widget.dart';
 
 class SliverWebview extends StatelessWidget {
-  final FToast fToast;
 
-  const SliverWebview({super.key, required this.fToast});
+
+  const SliverWebview({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +37,9 @@ class SliverWebview extends StatelessWidget {
         sl<NestedWebviewController>().nestedScrollController.enableScroll(
           context,
         );
-       /* sl<NestedWebviewController>().nestedScrollController.enableCenterScroll(
+        sl<NestedWebviewController>().nestedScrollController.enableCenterScroll(
           constraints,
-        );*/
+        );
         return BlocConsumer<InetCubit, bool>(
           listenWhen: (prev, next) {
             return prev != next;
@@ -53,7 +52,7 @@ class SliverWebview extends StatelessWidget {
                 sl<ErrorTextCubit>().changeValue(true);
                 sl<NestedWebviewController>().scrollStatus =
                     ScrollStatus.reload;
-                sl<NestedWebviewController>().webViewController.reload();
+                sl<NestedWebviewController>().webViewController!.reload();
                 sl<NestedWebviewController>().isFirstRun = false;
               } else {
                 sl<NestedWebviewController>().isFirstRun = false;
@@ -70,10 +69,11 @@ class SliverWebview extends StatelessWidget {
             return  Stack(
               children: [
                 CustomScrollView(
-                  physics: const RangeMaintainingScrollPhysics(),
+                  //physics: const RangeMaintainingScrollPhysics(),
+                  //physics: const BouncingScrollPhysics(),
                   slivers: [
                     SliverStack(
-                      insetOnOverlap: true,
+                     // insetOnOverlap: true,
                       children: [
                          MultiBlocProvider(
                           providers: [
@@ -182,7 +182,7 @@ class SliverWebview extends StatelessWidget {
                                     }
                                     //if(sl<NestedWebviewController>().webViewController!=null){
                                      sl<NestedWebviewController>()
-                                        .webViewController
+                                        .webViewController!
                                         .scrollTo(x: 0, y: y.ceil());
                                     //  }
                                   }

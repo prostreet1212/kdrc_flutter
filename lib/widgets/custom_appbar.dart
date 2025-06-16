@@ -7,14 +7,15 @@ import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
 import '../locator_service.dart';
+import '../locator_service.dart' as di;
 import '../utils/nested_webview_controller.dart';
 import '../utils/utils.dart';
 import 'custom_toast.dart';
 
 class CustomAppBar extends StatefulWidget {
-  const CustomAppBar({super.key, required this.fToast});
+  const CustomAppBar({super.key});
 
-  final FToast fToast;
+
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -24,11 +25,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void loadFeedback() {
     if (sl<InetCubit>().state) {
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-      sl<NestedWebviewController>().webViewController.loadUrl(
+      sl<NestedWebviewController>().webViewController!.loadUrl(
         urlRequest: URLRequest(url: WebUri('https://kdrc.ru/obratnaya-svyaz')),
       );
     } else {
-      widget.fToast.showToast(
+      di.sl<NestedWebviewController>().fToast.showToast(
         child: const CustomToast(message: 'Проверьте подключение к сети интернет'),
         toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
@@ -43,8 +44,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
       child: BlocBuilder<IsCollapsedCubit, bool>(
         builder: (context, state) {
           return SliverOverlapAbsorber(
-            // handle: SliverOverlapAbsorberHandle(),
-            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+             handle: SliverOverlapAbsorberHandle(),
+            //handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             sliver: SliverSafeArea(
               sliver: SliverAppBar(
                 actions: [
@@ -100,15 +101,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       size: 25,
                     ),
                     onPressed: () async {
-                      if (await sl<NestedWebviewController>().webViewController
+                      if (await sl<NestedWebviewController>().webViewController!
                           .canGoBack()) {
                         sl<NestedWebviewController>().scrollStatus =
                             ScrollStatus.prev;
                         sl<NestedWebviewController>().isStep = true;
-                        sl<NestedWebviewController>().webViewController
+                        sl<NestedWebviewController>().webViewController!
                             .goBack();
                       } else {
-                        widget.fToast.showToast(
+                        di.sl<NestedWebviewController>().fToast.showToast(
                           child: const CustomToast(
                             message:
                                 // 'Это начальная странцица',

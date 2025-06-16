@@ -32,7 +32,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  #extended_sliver: ^2.1.0
+  extended_sliver: ^2.1.0
   url_launcher: ^6.3.1
   flutter_bloc: ^9.0.0
   flutter_direct_call_plus: ^0.0.3

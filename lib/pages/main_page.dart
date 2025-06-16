@@ -17,29 +17,26 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 
-import '../locator_service.dart' as di;
+
+
 import '../utils/utils.dart';
 import '../widgets/permission_dialog.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key,});
-
-
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     sl<InetCubit>().init();
 
-    sl<NestedWebviewController>().init( context);
-
+    sl<NestedWebviewController>().init(context);
   }
 
   @override
@@ -58,7 +55,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       if (sl<NestedWebviewController>().isCrashed == true) {
         log('релоад');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
-        await sl<NestedWebviewController>().webViewController.reload();
+        await sl<NestedWebviewController>().webViewController!.reload();
         sl<NestedWebviewController>().isStep = true;
         sl<NestedWebviewController>().isCrashed = false;
       }
@@ -92,19 +89,18 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context3) {
     log('build mainpage');
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           return;
         }
-        bool canGoBack = await sl<NestedWebviewController>().webViewController
+        bool canGoBack = await sl<NestedWebviewController>().webViewController!
             .canGoBack();
         if (canGoBack) {
           sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
           sl<NestedWebviewController>().isStep = true;
-          sl<NestedWebviewController>().webViewController.goBack();
+          sl<NestedWebviewController>().webViewController!.goBack();
         } else {
           //await SystemNavigator.pop();
           await FlutterExitApp.exitApp();
@@ -115,18 +111,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
           backgroundColor: Colors.white,
           body: NestedScrollView(
             controller: sl<NestedWebviewController>().nestedScrollController,
-            headerSliverBuilder: (
-              BuildContext context,
-              bool innerBoxIsScrolled,
-            ) {
-              return [
-                 CustomAppBar(
-                  fToast: di.sl<NestedWebviewController>().fToast,
-                ),
-              ];
-            },
-            body: SliverWebview(
-              fToast: di.sl<NestedWebviewController>().fToast,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+                  return [
+                    const CustomAppBar(),
+                  ];
+                },
+            body: const SliverWebview(
               ),
           ),
           floatingActionButton: BlocBuilder<PhoneCubit, bool>(
@@ -146,48 +137,52 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                             size: 36,
                           ),
                           onPressed: () async {
-                            if(Platform.isIOS){
-                              final status = await Permission.contacts.request();
+                            if (Platform.isIOS) {
+                              final status = await Permission.contacts
+                                  .request();
                               if (status != PermissionStatus.granted) {
                                 return;
                               }
-                              bool? res = await FlutterPhoneDirectCaller.callNumber('79532602744');
+                              bool? res =
+                                  await FlutterPhoneDirectCaller.callNumber(
+                                    '79532602744',
+                                  );
                               /*final Uri phoneUri = Uri(scheme: 'tel', path: '79210779641');
                               if (await canLaunchUrl(phoneUri)) {
                                 await launchUrl(phoneUri);
                               } else {
                                 throw 'Не удалось выполнить звонок на номер 79210779641';
                               }*/
-                            }else{
-                                 PermissionStatus status =
-                                await Permission.phone.status;
+                            } else {
+                              PermissionStatus status =
+                                  await Permission.phone.status;
 
-                            if (status.isGranted) {
-                              if (context.mounted) {
-                                Utils.showCallDialog(context);
-                              }
-                            } else if (status.isPermanentlyDenied) {
-                              if (context.mounted) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return const PermissionDialog();
-                                  },
-                                );
-                              }
-                              //openAppSettings();
-                            } else if (status.isDenied) {
-                              final status1 = await Permission.phone.request();
-                              if (status1.isGranted) {
+                              if (status.isGranted) {
                                 if (context.mounted) {
                                   Utils.showCallDialog(context);
                                 }
+                              } else if (status.isPermanentlyDenied) {
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return const PermissionDialog();
+                                    },
+                                  );
+                                }
+                                //openAppSettings();
+                              } else if (status.isDenied) {
+                                final status1 = await Permission.phone
+                                    .request();
+                                if (status1.isGranted) {
+                                  if (context.mounted) {
+                                    Utils.showCallDialog(context);
+                                  }
+                                }
+                              } else {
+                                log("Permission denied");
                               }
-                            } else {
-                              log("Permission denied");
                             }
-                            }
-
                           },
                         ),
                       );
@@ -206,4 +201,3 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     );
   }
 }
-

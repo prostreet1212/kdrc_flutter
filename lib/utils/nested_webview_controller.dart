@@ -28,7 +28,7 @@ enum ScrollStatus { prev, forward, reload }
 class NestedWebviewController {
   NestedWebviewController();
 
-  late InAppWebViewController webViewController;
+   InAppWebViewController? webViewController;
 
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
@@ -110,7 +110,7 @@ class NestedWebviewController {
 
   onWebViewCreated(InAppWebViewController c) {
     webViewController = c;
-    webViewController.addJavaScriptHandler(
+    webViewController!.addJavaScriptHandler(
       handlerName: 'onContentHeightChanged',
       callback: (args) {
         final double? height = double.tryParse(args[0]);
@@ -163,7 +163,7 @@ class NestedWebviewController {
 
   onLoadStop(InAppWebViewController c, WebUri? uri) async {
     log('onPageFinished + $isFirstRun');
-    await webViewController.evaluateJavascript(source: Utils.scrollHeightJs);
+    await webViewController!.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
     ///
     if (Platform.isIOS) {
