@@ -72,15 +72,26 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   }
 
   void checkCallStatus() async {
-    if (context.read<CallRequestIsOpenedCubit>().state) {
-      final status1 = await Permission.phone.status;
-      if (status1.isGranted) {
-        if (mounted) {
-          Utils.showCallDialog(context);
+    if (sl<CallRequestIsOpenedCubit>().state) {
+      if(Platform.isIOS){
+        final status1 = await Permission.contacts.status;
+        if (status1.isGranted) {
+          await FlutterPhoneDirectCaller.callNumber(
+            '79532602744',
+          );
         }
-        if (!mounted) return;
-        context.read<CallRequestIsOpenedCubit>().changeValue(false);
+      }else{
+        final status1 = await Permission.phone.status;
+        if (status1.isGranted) {
+          if (mounted) {
+            Utils.showCallDialog(context);
+          }
+          //if (!mounted) return;
+          //context.read<CallRequestIsOpenedCubit>().changeValue(false);
+        }
       }
+      sl<CallRequestIsOpenedCubit>().changeValue(false);
+
     }
   }
 
@@ -139,14 +150,37 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                           onPressed: () async {
                             if (Platform.isIOS) {
                               final status = await Permission.contacts
-                                  .request();
-                              if (status != PermissionStatus.granted) {
+                                  .status;
+                              if (status == PermissionStatus.granted) {
+                                bool? res =
+                                await FlutterPhoneDirectCaller.callNumber(
+                                  '79532602744',
+                                );
                                 return;
                               }
-                              bool? res =
-                                  await FlutterPhoneDirectCaller.callNumber(
-                                    '79532602744',
-                                  );
+                              else if(status==PermissionStatus.permanentlyDenied){
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const PermissionDialog(message: "Включите разрешение \"Контакты\" в настройках приложения.",);
+                                  },
+                                );
+                                return;
+                              }else if (status.isDenied) {
+                                final status1 = await Permission.contacts
+                                    .request();
+                                if (status1.isGranted) {
+                                    bool? res =
+                                    await FlutterPhoneDirectCaller.callNumber(
+                                      '79532602744',
+                                    );
+
+                                }
+                              } else {
+                                log("Permission denied");
+                              }
+
+
                               /*final Uri phoneUri = Uri(scheme: 'tel', path: '79210779641');
                               if (await canLaunchUrl(phoneUri)) {
                                 await launchUrl(phoneUri);
@@ -166,11 +200,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
-                                      return const PermissionDialog();
+                                      return const PermissionDialog(message: "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",);
                                     },
                                   );
                                 }
-                                //openAppSettings();
                               } else if (status.isDenied) {
                                 final status1 = await Permission.phone
                                     .request();

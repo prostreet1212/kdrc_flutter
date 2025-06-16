@@ -30,7 +30,7 @@ class ExitDialog extends StatelessWidget {
             style: const TextStyle(color: Color.fromARGB(255, 42, 150, 131)),
           ),
           onPressed: () async {
-            await FlutterExitApp.exitApp();
+            await FlutterExitApp.exitApp(iosForceExit: true);
           },
         ),
         TextButton(

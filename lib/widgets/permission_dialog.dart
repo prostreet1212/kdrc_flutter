@@ -6,40 +6,17 @@ import '../locator_service.dart';
 
 
 
-class PermissionDialog extends StatefulWidget {
-   const PermissionDialog({super.key});
-
-
-  @override
-  State<PermissionDialog> createState() => _PermissionDialogState();
-}
-
-class _PermissionDialogState extends State<PermissionDialog>  {
-
-
-
-  @override
-  void initState() {
-    super.initState();
-
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-  }
-
-
-
+class PermissionDialog extends StatelessWidget {
+   const PermissionDialog({super.key,required this.message});
+   final String message;
 
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Разрешение отклонено"),
-      content: const Text(
-        "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",
+      content:  Text(
+        message
       ),
       actions: [
         TextButton(
