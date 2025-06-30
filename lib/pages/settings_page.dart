@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kdrc_flutter/cubits/phone_cubit.dart';
@@ -103,7 +105,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   return const SizedBox();
                 }
               }),
-              ListTile(
+              Platform.isAndroid?
+               ListTile(
                   contentPadding: const EdgeInsets.only(left: 16, right: 6),
                   //leading: SizedBox(width: 50,),
                   title: const Text('Push-уведомления'),
@@ -157,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         }
 
                         });
-                  })),
+                  })):const SizedBox(),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: double.infinity,

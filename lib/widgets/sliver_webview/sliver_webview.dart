@@ -69,6 +69,7 @@ class SliverWebview extends StatelessWidget {
             return  Stack(
               children: [
                 CustomScrollView(
+                  physics: NeverScrollableScrollPhysics(),
                   //physics: const RangeMaintainingScrollPhysics(),
                   //physics: const BouncingScrollPhysics(),
                   slivers: [
@@ -195,68 +196,6 @@ class SliverWebview extends StatelessWidget {
                                     return  SizedBox(
                                       height:  heightWebview,
                                       child: const WebViewVidget()
-                                      /*InAppWebView(
-                                        onWebViewCreated: (c) {
-                                          sl<NestedWebviewController>()
-                                              .onWebViewCreated(c);
-                                        },
-                                        initialSettings: InAppWebViewSettings(
-                                          javaScriptEnabled: true,
-                                          transparentBackground: true,
-                                          useShouldOverrideUrlLoading: true,
-                                          useOnRenderProcessGone: true,
-                                        //  allowsBackForwardNavigationGestures: true,
-                                        ),
-                                        initialUrlRequest: URLRequest(
-                                          url: WebUri(
-                                            sl<StartCubit>().state.url,
-                                          ),
-                                        ),
-                                        onLoadStart: (c, uri) {
-                                          sl<NestedWebviewController>()
-                                              .onLoadStart(c, uri);
-                                        },
-                                        onLoadStop: (c, uri) {
-                                          sl<NestedWebviewController>()
-                                              .onLoadStop(c, uri);
-                                        },
-                                        onProgressChanged: (c, progress) {
-                                          sl<NestedWebviewController>()
-                                              .onProgressChanged(c, progress);
-                                        },
-                                        shouldOverrideUrlLoading:
-                                            (c, navigationAction) async {
-                                          return sl<
-                                              NestedWebviewController
-                                          >()
-                                              .shouldOverrideUrlLoading(
-                                            c,
-                                            navigationAction,
-                                            fToast,
-                                            context,
-                                          );
-                                        },
-                                        onReceivedError: (c, request, error) {
-                                          sl<NestedWebviewController>()
-                                              .onReceivedError(error);
-                                        },
-                                        onRenderProcessGone:
-                                            (c, details) async {
-                                          log(
-                                            'onRenderProcessGone: $details',
-                                          );
-                                          sl<NestedWebviewController>()
-                                              .isCrashed =
-                                          true;
-                                        },
-                                        onWebContentProcessDidTerminate: (c) {
-                                          log(
-                                            'onWebContentProcessDidTerminate',
-                                          );
-                                        },
-                                        onReceivedHttpError:
-                                            (c, request, response) {},
-                                      ),*/
                                     );
                                  },
 
