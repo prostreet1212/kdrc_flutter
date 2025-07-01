@@ -25,6 +25,8 @@ class WebViewVidget extends StatelessWidget {
         useShouldOverrideUrlLoading: true,
         useOnRenderProcessGone: true,
         //  allowsBackForwardNavigationGestures: true,
+        supportMultipleWindows: true,
+        mediaPlaybackRequiresUserGesture: false,
       ),
       initialUrlRequest: URLRequest(
         url: WebUri(

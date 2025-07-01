@@ -1,7 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:extended_sliver/extended_sliver.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -121,21 +124,34 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         }
       },
       child: SafeArea(
-        child: Scaffold(
+        child: CupertinoPageScaffold(
           backgroundColor: Colors.white,
-          body:
-          NestedScrollView(
-            //physics: ClampingScrollPhysics(),
+          child: NestedScrollView(
+            physics: BouncingScrollPhysics(),
             controller: sl<NestedWebviewController>().nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
                   return [
+CupertinoSliverNavigationBar()
                     //const CustomAppBar(),
+                   /* SliverOverlapAbsorber(
+                      sliver:
+                      SliverAppBar(
+                        primary: false,
+                        automaticallyImplyLeading: false,
+                        pinned: true,
+                        collapsedHeight: 56,
+                        expandedHeight: 57,
+                      ),
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    ),*/
+
                   ];
                 },
-            body:const SliverWebview(),
+            body:   const SliverWebview(),
+
           ),
-          floatingActionButton: const CallButton(),
+         // floatingActionButton: const CallButton(),
         ),
       ),
     );
@@ -143,4 +159,40 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
 }
 
 
+class MySliverPinnedPersistentHeaderDelegate
+    extends SliverPinnedPersistentHeaderDelegate {
+  MySliverPinnedPersistentHeaderDelegate({
+    required Widget minExtentProtoType,
+    required Widget maxExtentProtoType,
+  }) : super(
+    minExtentProtoType: minExtentProtoType,
+    maxExtentProtoType: maxExtentProtoType,
+  );
+  @override
+  Widget build(BuildContext context, double shrinkOffset, double? minExtent,
+      double maxExtent, bool overlapsContent) {
+    print(shrinkOffset);
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          child: maxExtentProtoType,
+          top: -shrinkOffset,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        ),
+        Positioned(
+          child: minExtentProtoType,
+          top: 0,
+          left: 0,
+          right: 0,
+        ),
+      ],
+    );
+  }
 
+  @override
+  bool shouldRebuild(SliverPinnedPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+}

@@ -51,7 +51,7 @@ class NestedWebviewController {
   //доступ к внутреннему контроллеру-альтернатива
   //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
   final NestedScrollController nestedScrollController =
-      NestedScrollController();
+      NestedScrollController(keepScrollOffset: false);
 
   Future<File?> _downloadFile(
     String url,
