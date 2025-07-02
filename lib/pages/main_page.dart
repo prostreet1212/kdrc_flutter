@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:extended_sliver/extended_sliver.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,9 +28,6 @@ import '../locator_service.dart';
 import '../utils/utils.dart';
 import '../widgets/permission_dialog.dart';
 import '../widgets/sliver_webview/webview_widget.dart';
-
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
-as extended;
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -106,7 +104,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context3) {
     log('build mainpage');
-      return PopScope(
+    return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
@@ -124,40 +122,24 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         }
       },
       child: SafeArea(
-        child: CupertinoPageScaffold(
+        child: Scaffold(
           backgroundColor: Colors.white,
-          child: NestedScrollView(
-            physics: BouncingScrollPhysics(),
+          body: NestedScrollView(
+            physics: ClampingScrollPhysics(),
+            //floatHeaderSlivers: true, //
             controller: sl<NestedWebviewController>().nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
-                  return [
-CupertinoSliverNavigationBar()
-                    //const CustomAppBar(),
-                   /* SliverOverlapAbsorber(
-                      sliver:
-                      SliverAppBar(
-                        primary: false,
-                        automaticallyImplyLeading: false,
-                        pinned: true,
-                        collapsedHeight: 56,
-                        expandedHeight: 57,
-                      ),
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                    ),*/
-
-                  ];
+                  return [const CustomAppBar()];
                 },
-            body:   const SliverWebview(),
-
+            body: const SliverWebview(),
           ),
-         // floatingActionButton: const CallButton(),
+          floatingActionButton: const CallButton(),
         ),
       ),
     );
   }
 }
-
 
 class MySliverPinnedPersistentHeaderDelegate
     extends SliverPinnedPersistentHeaderDelegate {
@@ -165,12 +147,18 @@ class MySliverPinnedPersistentHeaderDelegate
     required Widget minExtentProtoType,
     required Widget maxExtentProtoType,
   }) : super(
-    minExtentProtoType: minExtentProtoType,
-    maxExtentProtoType: maxExtentProtoType,
-  );
+         minExtentProtoType: minExtentProtoType,
+         maxExtentProtoType: maxExtentProtoType,
+       );
+
   @override
-  Widget build(BuildContext context, double shrinkOffset, double? minExtent,
-      double maxExtent, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    double? minExtent,
+    double maxExtent,
+    bool overlapsContent,
+  ) {
     print(shrinkOffset);
     return Stack(
       children: <Widget>[
@@ -181,12 +169,7 @@ class MySliverPinnedPersistentHeaderDelegate
           left: 0,
           right: 0,
         ),
-        Positioned(
-          child: minExtentProtoType,
-          top: 0,
-          left: 0,
-          right: 0,
-        ),
+        Positioned(child: minExtentProtoType, top: 0, left: 0, right: 0),
       ],
     );
   }

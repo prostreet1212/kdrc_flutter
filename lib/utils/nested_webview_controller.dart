@@ -165,10 +165,10 @@ class NestedWebviewController {
     log('onPageFinished + $isFirstRun');
     await webViewController!.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
-    ///
-    if (Platform.isIOS) {
+    ///???
+   /* if (Platform.isIOS) {
       scrollStatus = ScrollStatus.forward;
-    }
+    }*/
     sl<BoolCubit>().changeValue(false);
   }
 
@@ -272,8 +272,11 @@ class NestedWebviewController {
           sl<BoolCubit>().changeValue(true);
           if (Platform.isAndroid) {
             scrollStatus = ScrollStatus.forward;
-            isStep = true;
+            //isStep = true;
           }
+
+          isStep = true;
+
           navigationDecision = NavigationActionPolicy.ALLOW;
           return NavigationActionPolicy.ALLOW;
         }
