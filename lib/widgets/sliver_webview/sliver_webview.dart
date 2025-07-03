@@ -170,6 +170,12 @@ class SliverWebview extends StatelessWidget {
                                         );
                                   }
                                   sl<NestedWebviewController>().isStep = false;
+                                  //для ios выставить значение forward чтобы переключиться с prev
+                                  if(Platform.isIOS){
+                                    sl<NestedWebviewController>()
+                                        .scrollStatus =
+                                        ScrollStatus.forward;
+                                  }
                                 }
                               });
                               return SliverToNestedScrollBoxAdapter(
