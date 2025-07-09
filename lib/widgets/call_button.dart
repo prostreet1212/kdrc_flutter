@@ -29,6 +29,7 @@ class CallButton extends StatelessWidget {
                 return PointerInterceptor(
                   intercepting: true,
                   child: FloatingActionButton(
+                    heroTag: 'fab call',
                     backgroundColor: Colors.grey[50],
                     shape: const CircleBorder(),
                     child: const Icon(

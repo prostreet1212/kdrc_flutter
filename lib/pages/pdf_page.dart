@@ -14,6 +14,9 @@ class PdfPage extends StatelessWidget {
       child: Scaffold(
         body: PDFView(
           filePath:path),
+        floatingActionButton: FloatingActionButton(
+            onPressed: (){}),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
   }

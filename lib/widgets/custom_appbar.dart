@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -6,6 +8,7 @@ import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
+import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 import '../locator_service.dart' as di;
 import '../utils/nested_webview_controller.dart';
@@ -14,8 +17,6 @@ import 'custom_toast.dart';
 
 class CustomAppBar extends StatefulWidget {
   const CustomAppBar({super.key});
-
-
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -30,7 +31,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
       );
     } else {
       di.sl<NestedWebviewController>().fToast.showToast(
-        child: const CustomToast(message: 'Проверьте подключение к сети интернет'),
+        child: const CustomToast(
+          message: 'Проверьте подключение к сети интернет',
+        ),
         toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
       );
@@ -44,7 +47,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       child: BlocBuilder<IsCollapsedCubit, bool>(
         builder: (context, state) {
           return SliverOverlapAbsorber(
-             handle: SliverOverlapAbsorberHandle(),
+            handle: SliverOverlapAbsorberHandle(),
             //handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
             sliver: SliverSafeArea(
               sliver: SliverAppBar(
@@ -63,18 +66,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
                           ),
                         )
                       : const SizedBox(),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        Utils.createRoute(const SettingsPage()),
+                  BlocBuilder<PhoneCubit, bool>(
+                    builder: (context, phoneState) {
+                      if(!phoneState&&Platform.isIOS){
+                        return const SizedBox();
+                      }
+                      return IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            Utils.createRoute(const SettingsPage()),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.settings,
+                          color: Color.fromARGB(255, 32, 146, 131),
+                        ),
                       );
                     },
-                    icon: const Icon(
-                      Icons.settings,
-                      color: Color.fromARGB(255, 32, 146, 131),
-                    ),
                   ),
+
                   state
                       ? IconButton(
                           onPressed: () {
@@ -152,7 +163,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     loadFeedback();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(56, 56),
+                                    minimumSize: const Size(50, 50),
                                     shape: const CircleBorder(
                                       side: BorderSide(
                                         color: Color.fromARGB(
@@ -174,38 +185,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => const ExitDialog(),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(56, 56),
-                                    shape: const CircleBorder(
-                                      side: BorderSide(
-                                        color: Color.fromARGB(
-                                          255,
-                                          32,
-                                          146,
-                                          131,
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => const ExitDialog(),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(50, 50),
+                                      shape: const CircleBorder(
+                                        side: BorderSide(
+                                          color: Color.fromARGB(
+                                            255,
+                                            32,
+                                            146,
+                                            131,
+                                          ),
                                         ),
                                       ),
+                                      shadowColor: Colors.grey[400],
+                                      padding: const EdgeInsets.all(5),
+                                      backgroundColor: Colors.transparent,
+                                      // <-- Button color
+                                      foregroundColor:
+                                          Colors.transparent, // <-- Splash color
                                     ),
-                                    shadowColor: Colors.grey[400],
-                                    padding: const EdgeInsets.all(5),
-                                    backgroundColor: Colors.transparent,
-                                    // <-- Button color
-                                    foregroundColor:
-                                        Colors.transparent, // <-- Splash color
+                                    child: const Icon(
+                                      Icons.exit_to_app,
+                                      color: Color.fromARGB(255, 249, 176, 116),
+                                      size: 36,
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.exit_to_app,
-                                    color: Color.fromARGB(255, 249, 176, 116),
-                                    size: 36,
-                                  ),
-                                ),
                               ],
                             ),
                           ),

@@ -28,7 +28,7 @@ enum ScrollStatus { prev, forward, reload }
 class NestedWebviewController {
   NestedWebviewController();
 
-   InAppWebViewController? webViewController;
+  InAppWebViewController? webViewController;
 
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
@@ -44,14 +44,13 @@ class NestedWebviewController {
   double currentInnerPixel = 0;
   bool isCrashed = false;
 
-  final FToast fToast=FToast();
-
-
+  final FToast fToast = FToast();
 
   //доступ к внутреннему контроллеру-альтернатива
   //final GlobalKey<NestedScrollViewStatePlus> sliverKey1 = GlobalKey();
-  final NestedScrollController nestedScrollController =
-      NestedScrollController(keepScrollOffset: false);
+  final NestedScrollController nestedScrollController = NestedScrollController(
+    keepScrollOffset: false,
+  );
 
   Future<File?> _downloadFile(
     String url,
@@ -84,14 +83,13 @@ class NestedWebviewController {
     }
   }
 
-  void init( BuildContext context) async {
+  void init(BuildContext context) async {
     fToast.init(context);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       nestedScrollController.addListener(() {
         currentInnerPixel =
             nestedScrollController.innerScrollController!.position.pixels;
-        double outerPixel =
-            nestedScrollController.position.pixels;
+        double outerPixel = nestedScrollController.position.pixels;
 
         log('inner pixels: $currentInnerPixel');
         log('outer pixels: $outerPixel');
@@ -166,7 +164,7 @@ class NestedWebviewController {
     await webViewController!.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
     ///???
-   /* if (Platform.isIOS) {
+    /* if (Platform.isIOS) {
       scrollStatus = ScrollStatus.forward;
     }*/
     sl<BoolCubit>().changeValue(false);
@@ -182,14 +180,21 @@ class NestedWebviewController {
     FToast fToast,
     BuildContext context,
   ) async {
-
     log('onPageSRequest');
+    //return NavigationActionPolicy.ALLOW;
     if (sl<InetCubit>().state == true) {
       log('url1 ${navigationAction.request.url.toString()}');
       if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
           navigationAction.request.url.toString().contains('mailto:')) {
-        launchUrl(Uri.parse(navigationAction.request.url.toString()));
-        return NavigationActionPolicy.CANCEL;
+        if (navigationAction.request.url.toString().contains('vkvideo.ru') ||
+            navigationAction.request.url.toString().contains('vk.com/video_ext')||
+            navigationAction.request.url.toString().contains('yandex.ru')||
+            navigationAction.request.url.toString().contains('youtube.com')) {
+          return NavigationActionPolicy.ALLOW;
+        } else {
+          launchUrl(Uri.parse(navigationAction.request.url.toString()));
+          return NavigationActionPolicy.CANCEL;
+        }
       } else {
         if (navigationAction.request.url.toString().contains('.doc') ||
             navigationAction.request.url.toString().contains('.xls')) {
@@ -220,22 +225,23 @@ class NestedWebviewController {
                 toastDuration: Duration(seconds: 3),
                 gravity: ToastGravity.BOTTOM,
               );*/
-              if(context.mounted) {
+              if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Не удалось открыть документ. Установите приложение, для просмотра документов в формате $typeFile',
-                  ),
-                  duration: const Duration(milliseconds: 3500),
-                  behavior: SnackBarBehavior.floating,
-                  action: SnackBarAction(
+                  SnackBar(
+                    content: Text(
+                      'Не удалось открыть документ. Установите приложение, для просмотра документов в формате $typeFile',
+                    ),
+                    duration: const Duration(milliseconds: 3500),
+                    behavior: SnackBarBehavior.floating,
+                    action: SnackBarAction(
                       label: 'ОК',
                       onPressed: () {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       },
-                  textColor: const Color.fromARGB(255, 247, 176, 116),),
-                ),
-              );
+                      textColor: const Color.fromARGB(255, 247, 176, 116),
+                    ),
+                  ),
+                );
               }
             }
             log('openx ${openResult.message}');
@@ -283,7 +289,9 @@ class NestedWebviewController {
       }
     } else {
       fToast.showToast(
-        child: const CustomToast(message: 'Проверьте подключение к сети интернет'),
+        child: const CustomToast(
+          message: 'Проверьте подключение к сети интернет',
+        ),
         toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
       );
