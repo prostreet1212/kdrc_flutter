@@ -42,10 +42,9 @@ class CallButton extends StatelessWidget {
                         final status = await Permission.contacts
                             .status;
                         if (status == PermissionStatus.granted) {
-                          bool? res =
-                          await FlutterPhoneDirectCaller.callNumber(
-                            '79532602744',
-                          );
+                          if (context.mounted) {
+                            Utils.showCallDialog(context);
+                          }
                           return;
                         }
                         else if(status==PermissionStatus.permanentlyDenied){

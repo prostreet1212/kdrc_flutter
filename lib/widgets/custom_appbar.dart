@@ -101,7 +101,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         )
                       : const SizedBox(),
                 ],
-                leading: Padding(
+                /*leading: Padding(
                   padding: const EdgeInsets.only(bottom: 10, right: 16),
                   child: IconButton(
                     icon: const Icon(
@@ -132,7 +132,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       }
                     },
                   ),
-                ),
+                ),*/
                 backgroundColor: const Color.fromARGB(255, 247, 172, 119),
                 foregroundColor: Colors.red,
                 surfaceTintColor: Colors.yellow,

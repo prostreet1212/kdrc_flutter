@@ -28,6 +28,7 @@ import '../locator_service.dart';
 
 import '../locator_service.dart' as di;
 import '../utils/utils.dart';
+import '../widgets/go_back_button.dart';
 import '../widgets/custom_toast.dart';
 import '../widgets/permission_dialog.dart';
 import '../widgets/sliver_webview/webview_widget.dart';
@@ -137,58 +138,16 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 },
             body: const SliverWebview(),
           ),
-          //floatingActionButton: const CallButton(),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(left: 10,top: 20,bottom: 0),
-            child: Row(
-              //mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-               /* FloatingActionButton(
-                  heroTag: 'fab back',
-                  mini: true,
-                  highlightElevation: 0,
-                  elevation: 0,
-                  child: const Icon(
-            
-                    Icons.keyboard_backspace,
-                    color: Color.fromARGB(255, 247, 176, 116),
-                    //color: Color.fromARGB(255, 32, 146, 131),
-                    size: 32,
-                  ),
-            
-                  backgroundColor: Color.fromARGB(40, 0, 0, 0),
-                  shape: const CircleBorder(),
-                  onPressed: () async {
-                    if (await sl<NestedWebviewController>().webViewController!
-                        .canGoBack()) {
-                      sl<NestedWebviewController>().scrollStatus =
-                          ScrollStatus.prev;
-                      sl<NestedWebviewController>().isStep = true;
-                      sl<NestedWebviewController>().webViewController!
-                          .goBack();
-                    } else {
-                      di.sl<NestedWebviewController>().fToast.showToast(
-                        child: const CustomToast(
-                          message:
-                          // 'Это начальная странцица',
-                          'Это начальная страница. Дальнейший переход не требуется',
-                        ),
-                        toastDuration: const Duration(seconds: 2),
-                        gravity: ToastGravity.BOTTOM,
-                      );
-                    }
-                  },),*/
-                 FloatingActionButton(
-                   shape: CircleBorder(),
-                     mini: true,
-                     onPressed: (){}),
-                const CallButton(),
-              ],
-            ),
-          ),
-          //floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+         floatingActionButton: const Row(
+           //mainAxisSize: MainAxisSize.min,
+           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+           crossAxisAlignment: CrossAxisAlignment.end,
+           children: [
+             GoBackButton(),
+             CallButton(),
+           ],
+         ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
         ),
       ),
     );

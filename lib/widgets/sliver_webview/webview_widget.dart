@@ -26,7 +26,7 @@ class WebViewVidget extends StatelessWidget {
         transparentBackground: true,
         useShouldOverrideUrlLoading: true,
         useOnRenderProcessGone: true,
-          //allowsBackForwardNavigationGestures: false,
+          allowsBackForwardNavigationGestures: false,
         //supportMultipleWindows: true,
         //mediaPlaybackRequiresUserGesture: false,
          disableVerticalScroll: true,
@@ -36,7 +36,7 @@ class WebViewVidget extends StatelessWidget {
       ),
       initialUrlRequest: URLRequest(url: WebUri(sl<StartCubit>().state.url)),
 
-      gestureRecognizers: Platform.isIOS?{
+     /* gestureRecognizers: Platform.isIOS?{
        /* Factory<HorizontalDragGestureRecognizer>(
           () => HorizontalDragGestureRecognizer(),)*/
         /*Factory<ConditionalHorizontalDragRecognizer>(
@@ -44,7 +44,7 @@ class WebViewVidget extends StatelessWidget {
         Factory<AllowMultipleHorizontalDragRecognizer>(
               () => AllowMultipleHorizontalDragRecognizer(),
         ),
-      }:{},
+      }:{},*/
       onLoadStart: (c, uri) {
         sl<NestedWebviewController>().onLoadStart(c, uri);
       },
