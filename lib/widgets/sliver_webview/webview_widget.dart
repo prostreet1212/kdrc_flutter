@@ -22,21 +22,23 @@ class WebViewVidget extends StatelessWidget {
         sl<NestedWebviewController>().onWebViewCreated(c);
       },
       initialSettings: InAppWebViewSettings(
+        isElementFullscreenEnabled: false,
         javaScriptEnabled: true,
         transparentBackground: true,
         useShouldOverrideUrlLoading: true,
         useOnRenderProcessGone: true,
-          allowsBackForwardNavigationGestures: false,
+        allowsBackForwardNavigationGestures: false,
         //supportMultipleWindows: true,
         //mediaPlaybackRequiresUserGesture: false,
-         disableVerticalScroll: true,
+        allowsInlineMediaPlayback: true,
+        disableVerticalScroll: true,
         disableHorizontalScroll: true,
         disallowOverScroll: true,
         //iframeAllow: "kdrc.ru",
       ),
       initialUrlRequest: URLRequest(url: WebUri(sl<StartCubit>().state.url)),
 
-     /* gestureRecognizers: Platform.isIOS?{
+      /* gestureRecognizers: Platform.isIOS?{
        /* Factory<HorizontalDragGestureRecognizer>(
           () => HorizontalDragGestureRecognizer(),)*/
         /*Factory<ConditionalHorizontalDragRecognizer>(
@@ -78,8 +80,8 @@ class WebViewVidget extends StatelessWidget {
   }
 }
 
-
-class ConditionalHorizontalDragRecognizer extends HorizontalDragGestureRecognizer {
+class ConditionalHorizontalDragRecognizer
+    extends HorizontalDragGestureRecognizer {
   @override
   void handleEvent(PointerEvent event) {
     // Проверяем угол движения (45 градусов)
@@ -96,7 +98,8 @@ class ConditionalHorizontalDragRecognizer extends HorizontalDragGestureRecognize
   }
 }
 
-class AllowMultipleHorizontalDragRecognizer extends HorizontalDragGestureRecognizer {
+class AllowMultipleHorizontalDragRecognizer
+    extends HorizontalDragGestureRecognizer {
   @override
   void rejectGesture(int pointer) {
     // Не блокирует другие распознаватели при отклонении жеста

@@ -134,9 +134,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             controller: sl<NestedWebviewController>().nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
-                  return [const CustomAppBar()];
-                },
-            body: const SliverWebview(),
+              return [const CustomAppBar()];
+            },
+            body:
+            const SliverWebview(),
           ),
          floatingActionButton: const Row(
            //mainAxisSize: MainAxisSize.min,
