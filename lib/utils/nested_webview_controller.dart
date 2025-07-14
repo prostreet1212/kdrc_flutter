@@ -189,10 +189,26 @@ class NestedWebviewController {
         if (navigationAction.request.url.toString().contains('vkvideo.ru') ||
             navigationAction.request.url.toString().contains('vk.com/video_ext')||
             navigationAction.request.url.toString().contains('yandex.ru')||
-            navigationAction.request.url.toString().contains('youtube.com')) {
+            navigationAction.request.url.toString().contains('youtube.com')||
+            navigationAction.request.url.toString().contains('about:blank')) {
           return NavigationActionPolicy.ALLOW;
         } else {
-          launchUrl(Uri.parse(navigationAction.request.url.toString()));
+          //для вк приложения
+          if(navigationAction.request.url.toString().contains('vk.com/club')){
+            final uri = navigationAction.request.url;
+            final vkAppUrl = Uri.parse(
+              'vk://vk.com${uri!.path}?event=openExternal',
+            );
+            if (await canLaunchUrl(vkAppUrl)) {
+              await launchUrl(vkAppUrl, mode: LaunchMode.externalApplication);
+            }else{
+              launchUrl(Uri.parse(navigationAction.request.url.toString()));
+            }
+
+          }else{
+            launchUrl(Uri.parse(navigationAction.request.url.toString()));
+          }
+
           return NavigationActionPolicy.CANCEL;
         }
       } else {
@@ -283,7 +299,7 @@ class NestedWebviewController {
 
           isStep = true;
 
-          navigationDecision = NavigationActionPolicy.ALLOW;
+          //navigationDecision = NavigationActionPolicy.ALLOW;
           return NavigationActionPolicy.ALLOW;
         }
       }

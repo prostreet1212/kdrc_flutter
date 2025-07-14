@@ -136,8 +136,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return [const CustomAppBar()];
             },
-            body:
-            const SliverWebview(),
+            body: const SliverWebview(),
           ),
          floatingActionButton: const Row(
            //mainAxisSize: MainAxisSize.min,

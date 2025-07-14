@@ -22,19 +22,16 @@ class WebViewVidget extends StatelessWidget {
         sl<NestedWebviewController>().onWebViewCreated(c);
       },
       initialSettings: InAppWebViewSettings(
-        isElementFullscreenEnabled: false,
         javaScriptEnabled: true,
         transparentBackground: true,
         useShouldOverrideUrlLoading: true,
         useOnRenderProcessGone: true,
         allowsBackForwardNavigationGestures: false,
-        //supportMultipleWindows: true,
         //mediaPlaybackRequiresUserGesture: false,
         allowsInlineMediaPlayback: true,
-        disableVerticalScroll: true,
+        /*disableVerticalScroll: true,
         disableHorizontalScroll: true,
-        disallowOverScroll: true,
-        //iframeAllow: "kdrc.ru",
+        disallowOverScroll: true,*/
       ),
       initialUrlRequest: URLRequest(url: WebUri(sl<StartCubit>().state.url)),
 
@@ -104,5 +101,6 @@ class AllowMultipleHorizontalDragRecognizer
   void rejectGesture(int pointer) {
     // Не блокирует другие распознаватели при отклонении жеста
     acceptGesture(pointer);
+
   }
 }
