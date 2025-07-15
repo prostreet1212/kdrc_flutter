@@ -49,6 +49,7 @@ class CallButton extends StatelessWidget {
                         }
                         else if(status==PermissionStatus.permanentlyDenied){
                           showDialog(
+                            barrierDismissible: true,
                             context: context,
                             builder: (context) {
                               return const PermissionDialog(message: "Включите разрешение \"Контакты\" в настройках приложения.",);
@@ -59,10 +60,11 @@ class CallButton extends StatelessWidget {
                           final status1 = await Permission.contacts
                               .request();
                           if (status1.isGranted) {
-                            bool? res =
+                            Utils.showCallDialog(context);
+                         /*   bool? res =
                             await FlutterPhoneDirectCaller.callNumber(
                               '79532602744',
-                            );
+                            );*/
 
                           }
                         } else {

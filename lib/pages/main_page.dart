@@ -63,6 +63,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       log('app resumed');
+      //если webview крашнулось перезагружаем страницу
       if (sl<NestedWebviewController>().isCrashed == true) {
         log('релоад');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
@@ -70,6 +71,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         sl<NestedWebviewController>().isStep = true;
         sl<NestedWebviewController>().isCrashed = false;
       }
+      //проверка нужно ли звонить
       checkCallStatus();
     } else if (state == AppLifecycleState.detached) {
       log('app detached');
@@ -87,7 +89,10 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       if (Platform.isIOS) {
         final status1 = await Permission.contacts.status;
         if (status1.isGranted) {
-          await FlutterPhoneDirectCaller.callNumber('79532602744');
+          if (mounted) {
+            Utils.showCallDialog(context);
+          }
+          //await FlutterPhoneDirectCaller.callNumber('79532602744');
         }
       } else {
         final status1 = await Permission.phone.status;
@@ -134,20 +139,18 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
             controller: sl<NestedWebviewController>().nestedScrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
-              return [const CustomAppBar()];
-            },
+                  return [const CustomAppBar()];
+                },
             body: const SliverWebview(),
           ),
-         floatingActionButton: const Row(
-           //mainAxisSize: MainAxisSize.min,
-           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-           crossAxisAlignment: CrossAxisAlignment.end,
-           children: [
-             GoBackButton(),
-             CallButton(),
-           ],
-         ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+          floatingActionButton: const Row(
+            //mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [GoBackButton(), CallButton()],
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniEndFloat,
         ),
       ),
     );

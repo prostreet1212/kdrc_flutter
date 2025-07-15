@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
         ),
         home: BlocBuilder<StartCubit, StartState>(
           builder: ((context, state) {
-            if (state is StartPush) {
+            if (state is StartPush||di.sl<CallRequestIsOpenedCubit>().state) {
               // Если приложение было открыто через уведомление
               return const MainPage();
             } else {

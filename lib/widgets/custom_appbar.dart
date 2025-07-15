@@ -188,7 +188,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                   ElevatedButton(
                                     onPressed: () {
                                       showDialog(
-                                        barrierDismissible: true,
+                                        //barrierDismissible: true,
                                         context: context,
                                         builder: (context) => const ExitDialog(),
                                       );

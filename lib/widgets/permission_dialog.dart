@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -14,25 +16,52 @@ class PermissionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PointerInterceptor(
-      child: AlertDialog(
+    return Platform.isIOS?
+      Stack(
+        children: [
+          PointerInterceptor(
+            child: Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (_) => Navigator.pop(context),
+            ),
+          ),
+           AlertDialog(
+            title: const Text("Разрешение отклонено"),
+            content:  Text(
+              message
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async{
+                  Navigator.pop(context);
+                      await openAppSettings().then((data){
+                      }).whenComplete((){});
+                      sl<CallRequestIsOpenedCubit>().changeValue(true);
+                  //context.read<CallRequestIsOpenedCubit>().changeValue(true);
+                },
+                child: const Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
+              ),
+            ],
+              ),
+        ],
+      ):
+     AlertDialog(
         title: const Text("Разрешение отклонено"),
         content:  Text(
-          message
+            message
         ),
         actions: [
           TextButton(
             onPressed: () async{
               Navigator.pop(context);
-                  await openAppSettings().then((data){
-                  }).whenComplete((){});
-                  sl<CallRequestIsOpenedCubit>().changeValue(true);
+              await openAppSettings().then((data){
+              }).whenComplete((){});
+              sl<CallRequestIsOpenedCubit>().changeValue(true);
               //context.read<CallRequestIsOpenedCubit>().changeValue(true);
             },
             child: const Text("Открыть настройки",style:TextStyle(color: Color.fromARGB(255, 42, 150, 131))),
           ),
         ],
-      ),
     );
 
   }
