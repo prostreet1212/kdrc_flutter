@@ -30,9 +30,9 @@ class WebViewVidget extends StatelessWidget {
         //mediaPlaybackRequiresUserGesture: false,
         allowsInlineMediaPlayback: true,
         //userAgent: 'Mozilla/5.0 (Linux; Android 10; Mobile)',
-        /*cacheEnabled: false,
+        cacheEnabled: false,
         cacheMode: CacheMode.LOAD_NO_CACHE,
-        clearCache: true*/
+        clearCache: true
         /*disableVerticalScroll: true,
         disableHorizontalScroll: true,
         disallowOverScroll: true,*/

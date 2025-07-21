@@ -143,11 +143,14 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 },
             body: const SliverWebview(),
           ),
-          floatingActionButton: const Row(
+          floatingActionButton: Row(
             //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [GoBackButton(), CallButton()],
+            children: [const GoBackButton(), const CallButton(),
+              /*FloatingActionButton(onPressed: (){
+                sl<NestedWebviewController>().webViewController!.loadUrl( urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')));
+              })*/],
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.miniEndFloat,
