@@ -106,7 +106,7 @@ class NestedWebviewController {
     });
   }
 
-  onWebViewCreated(InAppWebViewController c) {
+  void onWebViewCreated(InAppWebViewController c) {
     webViewController = c;
     webViewController!.addJavaScriptHandler(
       handlerName: 'onContentHeightChanged',
@@ -143,7 +143,7 @@ class NestedWebviewController {
     );
   }
 
-  onLoadStart(InAppWebViewController c, WebUri? uri) {
+  void onLoadStart(InAppWebViewController c, WebUri? uri) {
     log('onPageStarted');
     //sl<BoolCubit>().changeValue(true);
     if (scrollStatus == ScrollStatus.forward) {
@@ -159,7 +159,7 @@ class NestedWebviewController {
     } else {}
   }
 
-  onLoadStop(InAppWebViewController c, WebUri? uri) async {
+  Future<void> onLoadStop(InAppWebViewController c, WebUri? uri) async {
     log('onPageFinished + $isFirstRun');
     await webViewController!.evaluateJavascript(source: Utils.scrollHeightJs);
     //здесь были смещения
@@ -170,7 +170,7 @@ class NestedWebviewController {
     sl<BoolCubit>().changeValue(false);
   }
 
-  onProgressChanged(InAppWebViewController c, int progress) {
+  void onProgressChanged(InAppWebViewController c, int progress) {
     log('$progress');
   }
 
@@ -316,7 +316,7 @@ class NestedWebviewController {
     }
   }
 
-  onReceivedError(WebResourceError error) {
+  void onReceivedError(WebResourceError error) {
     if (error.type == WebResourceErrorType.HOST_LOOKUP) {
       log('ошибка интернета нетю: ${error.description}');
       if (navigationDecision == NavigationActionPolicy.ALLOW) {

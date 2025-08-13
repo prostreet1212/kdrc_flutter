@@ -44,16 +44,16 @@ class CallDialog extends StatelessWidget {
                 Navigator.pop(context);
               }
               if(Platform.isAndroid){
-                await FlutterDirectCall.makeDirectCall("+79210779641");
+                await FlutterDirectCall.makeDirectCall("+78183730050");
                 /* final Uri _url = Uri.parse('tel:+7-81837-300-50');
                         await launchUrl(
                           _url,
                           mode: LaunchMode.platformDefault,
                         );*/
             }else{
-                 bool? res =
+
                             await FlutterPhoneDirectCaller.callNumber(
-                              '79532602744',
+                              '78183730050',
                             );
               }
       

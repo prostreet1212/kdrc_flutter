@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:kdrc_flutter/widgets/permission_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -48,35 +47,32 @@ class CallButton extends StatelessWidget {
                           return;
                         }
                         else if(status==PermissionStatus.permanentlyDenied){
-                          showDialog(
+                          if (context.mounted) {
+                            showDialog(
                             barrierDismissible: true,
                             context: context,
                             builder: (context) {
                               return const PermissionDialog(message: "Включите разрешение \"Контакты\" в настройках приложения.",);
                             },
                           );
+                          }
                           return;
                         }else if (status.isDenied) {
                           final status1 = await Permission.contacts
                               .request();
                           if (status1.isGranted) {
-                            Utils.showCallDialog(context);
-                         /*   bool? res =
-                            await FlutterPhoneDirectCaller.callNumber(
-                              '79532602744',
-                            );*/
-
+                            if (context.mounted) {
+                              Utils.showCallDialog(context);
+                            }
                           }
                         } else {
                           log("Permission denied");
                         }
-
-
-                        /*final Uri phoneUri = Uri(scheme: 'tel', path: '79210779641');
+                        /*final Uri phoneUri = Uri(scheme: 'tel', path: '78183730050');
                               if (await canLaunchUrl(phoneUri)) {
                                 await launchUrl(phoneUri);
                               } else {
-                                throw 'Не удалось выполнить звонок на номер 79210779641';
+                                throw 'Не удалось выполнить звонок на номер 78183730050';
                               }*/
                       } else {
                         PermissionStatus status =

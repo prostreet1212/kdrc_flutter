@@ -38,7 +38,7 @@ class _WelcomePageState extends State<WelcomePage> {
       transitionDuration: Duration(milliseconds: 500),
     );
   }*/
-  runRoutePage() async {
+  Future<void> runRoutePage() async {
     await Future.delayed(const Duration(milliseconds: 700)).then((_) {
       if (!mounted) return;
       Navigator.pushReplacement(

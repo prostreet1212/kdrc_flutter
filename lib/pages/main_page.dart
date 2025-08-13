@@ -1,37 +1,20 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:extended_sliver/extended_sliver.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
-import 'package:kdrc_flutter/cubits/settings_cubit/settings_cubit.dart';
-import 'package:kdrc_flutter/cubits/settings_cubit/settings_state.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
 import 'package:kdrc_flutter/widgets/call_button.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-import '../cubits/phone_cubit.dart';
-import '../cubits/start_cubit/start_cubit.dart';
 import '../locator_service.dart';
 
-import '../locator_service.dart' as di;
 import '../utils/utils.dart';
 import '../widgets/go_back_button.dart';
-import '../widgets/custom_toast.dart';
-import '../widgets/permission_dialog.dart';
-import '../widgets/sliver_webview/webview_widget.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -134,7 +117,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         child: Scaffold(
           backgroundColor: Colors.white,
           body: NestedScrollView(
-            physics: ClampingScrollPhysics(),
+            //physics: const BouncingScrollPhysics(),
             //floatHeaderSlivers: true, //
             controller: sl<NestedWebviewController>().nestedScrollController,
             headerSliverBuilder:
@@ -143,11 +126,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 },
             body: const SliverWebview(),
           ),
-          floatingActionButton: Row(
+          floatingActionButton: const Row(
             //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [const GoBackButton(), const CallButton(),
+            children: [GoBackButton(), CallButton(),
               /*FloatingActionButton(onPressed: (){
                 sl<NestedWebviewController>().webViewController!.loadUrl( urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')));
               })*/],
@@ -160,7 +143,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   }
 }
 
-class MySliverPinnedPersistentHeaderDelegate
+/*class MySliverPinnedPersistentHeaderDelegate
     extends SliverPinnedPersistentHeaderDelegate {
   MySliverPinnedPersistentHeaderDelegate({
     required Widget minExtentProtoType,
@@ -198,3 +181,4 @@ class MySliverPinnedPersistentHeaderDelegate
     return true;
   }
 }
+*/

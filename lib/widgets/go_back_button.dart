@@ -1,13 +1,10 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../locator_service.dart';
-import '../locator_service.dart' as di;
 import '../utils/nested_webview_controller.dart';
-import 'custom_toast.dart';
 import 'exit_dialog.dart';
 
 class GoBackButton extends StatelessWidget {
@@ -25,13 +22,7 @@ class GoBackButton extends StatelessWidget {
             heroTag: 'fab back',
             highlightElevation: 0,
             elevation: 0,
-            child: const Icon(
-              Icons.keyboard_backspace,
-              color: Color.fromARGB(255, 247, 176, 116),
-              //color: Color.fromARGB(255, 32, 146, 131),
-              size: 32,
-            ),
-            backgroundColor: Color.fromARGB(40, 0, 0, 0),
+            backgroundColor: const Color.fromARGB(40, 0, 0, 0),
             shape: const CircleBorder(),
             onPressed: () async {
               if (await sl<NestedWebviewController>().webViewController!
@@ -42,10 +33,12 @@ class GoBackButton extends StatelessWidget {
                 sl<NestedWebviewController>().webViewController!
                     .goBack();
               } else {
-                showDialog(
+                if (context.mounted) {
+                  showDialog(
                   context: context,
                   builder: (context) => const ExitDialog(),
                 );
+                }
                /* di.sl<NestedWebviewController>().fToast.showToast(
                   child: const CustomToast(
                     message:
@@ -56,7 +49,13 @@ class GoBackButton extends StatelessWidget {
                   gravity: ToastGravity.BOTTOM,
                 );*/
               }
-            },),
+            },
+            child: const Icon(
+              Icons.keyboard_backspace,
+              color: Color.fromARGB(255, 247, 176, 116),
+              //color: Color.fromARGB(255, 32, 146, 131),
+              size: 32,
+            ),),
         ),
       ),
     );
