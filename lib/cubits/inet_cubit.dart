@@ -1,9 +1,17 @@
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
+
+import '../locator_service.dart';
+import '../utils/nested_webview_controller.dart';
+import 'background_cubit.dart';
+import 'bool_cubit.dart';
+import 'error_text_cubit.dart';
 
 
 class InetCubit extends Cubit<bool> {
@@ -23,9 +31,20 @@ class InetCubit extends Cubit<bool> {
     // Подписываемся на изменения состояния интернета
 
     internetListener=internetChecker.onStatusChange.listen((status) {
-      if (kDebugMode) {
+    //  if (kDebugMode) {
         print('интернет ${status == InternetStatus.connected}');
-      }
+        //попытка убрать шкалу загрузки и вывести ошибку
+       /* if(Platform.isIOS){
+          if(sl<BoolCubit>().state==true){
+          //if(status == InternetStatus.disconnected){
+            sl<BoolCubit>().changeValue(false);
+            sl<ScrollHeightCubit>().updateScrollHeight(0);
+            sl<BackgroundCubit>().changeValue(true);
+            sl<ErrorTextCubit>().changeValue(false);
+            //sl<NestedWebviewController>().webViewController!.stopLoading();
+          }
+        }*/
+    //  }
       emit(status == InternetStatus.connected);
     });
   }

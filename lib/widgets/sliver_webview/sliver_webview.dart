@@ -45,7 +45,7 @@ class SliverWebview extends StatelessWidget {
             if (state) {
               if (sl<NestedWebviewController>().isFirstRun &&
                   sl<InetCubit>().state == true /*false*/ ) {
-                log('перезагрузка');
+                print('перезагрузка');
                 sl<ErrorTextCubit>().changeValue(true);
                 sl<NestedWebviewController>().scrollStatus =
                     ScrollStatus.reload;
