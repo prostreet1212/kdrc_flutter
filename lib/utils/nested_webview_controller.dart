@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:kdrc_flutter/cubits/bool_cubit.dart';
+import 'package:kdrc_flutter/cubits/loading_cubit.dart';
 import 'package:kdrc_flutter/utils/utils.dart';
 import 'package:kdrc_flutter/widgets/file_loading_dialog.dart';
 import 'package:nested_scroll_controller/nested_scroll_controller.dart';
@@ -157,9 +157,6 @@ class NestedWebviewController {
       oldScroll = prevPixels.last;
       prevPixels.removeLast();
     } else {}
-
-
-
   }
 
   Future<void> onLoadStop(InAppWebViewController c, WebUri? uri) async {
@@ -170,7 +167,7 @@ class NestedWebviewController {
     /* if (Platform.isIOS) {
       scrollStatus = ScrollStatus.forward;
     }*/
-    sl<BoolCubit>().changeValue(false);
+    sl<LoadingCubit>().changeValue(false);
   }
 
   void onProgressChanged(InAppWebViewController c, int progress) {
@@ -190,25 +187,26 @@ class NestedWebviewController {
       if (!navigationAction.request.url.toString().contains('kdrc.ru') ||
           navigationAction.request.url.toString().contains('mailto:')) {
         if (navigationAction.request.url.toString().contains('vkvideo.ru') ||
-            navigationAction.request.url.toString().contains('vk.com/video_ext')||
-            navigationAction.request.url.toString().contains('yandex.ru')||
-            navigationAction.request.url.toString().contains('youtube.com')||
+            navigationAction.request.url.toString().contains(
+              'vk.com/video_ext',
+            ) ||
+            navigationAction.request.url.toString().contains('yandex.ru') ||
+            navigationAction.request.url.toString().contains('youtube.com') ||
             navigationAction.request.url.toString().contains('about:blank')) {
           return NavigationActionPolicy.ALLOW;
         } else {
           //для вк приложения
-          if(navigationAction.request.url.toString().contains('vk.com/club')){
+          if (navigationAction.request.url.toString().contains('vk.com/club')) {
             final uri = navigationAction.request.url;
             final vkAppUrl = Uri.parse(
               'vk://vk.com${uri!.path}?event=openExternal',
             );
             if (await canLaunchUrl(vkAppUrl)) {
               await launchUrl(vkAppUrl, mode: LaunchMode.externalApplication);
-            }else{
+            } else {
               launchUrl(Uri.parse(navigationAction.request.url.toString()));
             }
-
-          }else{
+          } else {
             launchUrl(Uri.parse(navigationAction.request.url.toString()));
           }
 
@@ -294,7 +292,7 @@ class NestedWebviewController {
           }
           return NavigationActionPolicy.CANCEL;
         } else {
-          sl<BoolCubit>().changeValue(true);
+          sl<LoadingCubit>().changeValue(true);
           if (Platform.isAndroid) {
             scrollStatus = ScrollStatus.forward;
             //isStep = true;
@@ -302,11 +300,64 @@ class NestedWebviewController {
 
           isStep = true;
 
-          //navigationDecision = NavigationActionPolicy.ALLOW;
-          return NavigationActionPolicy.ALLOW;
+          navigationDecision = NavigationActionPolicy.ALLOW;
+          return navigationDecision;
         }
       }
     } else {
+      //вывод сообщения при непервом запуске и навигации вперед
+      //исправить
+      if (isFirstRun == false&&
+          scrollStatus== ScrollStatus.forward) {
+        fToast.showToast(
+          child: const CustomToast(
+            message: 'Проверьте подключение к сети интернет',
+          ),
+          toastDuration: const Duration(seconds: 2),
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+      //разрешить навигацию назад в ios когда нет интернета
+      if (Platform.isIOS &&
+          scrollStatus == ScrollStatus.prev) {
+        navigationDecision = NavigationActionPolicy.ALLOW;
+      } else {
+        navigationDecision = NavigationActionPolicy.CANCEL;
+      }
+      return navigationDecision;
+    }
+  }
+
+  Future<void> onReceivedError(WebResourceError error) async {
+    print('onReceivedError');
+    if (error.type == WebResourceErrorType.HOST_LOOKUP) {
+      log('ошибка интернета нетю: ${error.description}');
+      if (navigationDecision == NavigationActionPolicy.ALLOW) {
+        //await webViewController!.pause();
+
+        // sl<ScrollHeightCubit>().updateScrollHeight(50);
+        //await webViewController!.stopLoading();
+        isFirstRun = true;
+        loadError = true;
+
+        log('onPageErrorNavigate');
+      } else {
+        log('onPageErrorPrev');
+      }
+    }
+  /*  if(Platform.isAndroid){
+      isFirstRun = true;
+      loadError = true;
+     // await webViewController!.stopLoading();
+      webViewController!.pause();
+      sl<ScrollHeightCubit>().updateScrollHeight(150);
+      sl<BackgroundCubit>().changeValue(true);
+    }*/
+
+//ios не смог загрузить страницу и выдал сообщение
+    if(Platform.isIOS&&error.type==WebResourceErrorType.NOT_CONNECTED_TO_INTERNET&&sl<NestedWebviewController>().isFirstRun == false){
+      webViewController!.stopLoading();
+      sl<LoadingCubit>().changeValue(false);
       fToast.showToast(
         child: const CustomToast(
           message: 'Проверьте подключение к сети интернет',
@@ -314,21 +365,6 @@ class NestedWebviewController {
         toastDuration: const Duration(seconds: 2),
         gravity: ToastGravity.BOTTOM,
       );
-      navigationDecision = NavigationActionPolicy.CANCEL;
-      return NavigationActionPolicy.CANCEL;
-    }
-  }
-
-  void onReceivedError(WebResourceError error) {
-    if (error.type == WebResourceErrorType.HOST_LOOKUP) {
-      log('ошибка интернета нетю: ${error.description}');
-      if (navigationDecision == NavigationActionPolicy.ALLOW) {
-        isFirstRun = true;
-        loadError = true;
-        log('onPageErrorNaigate');
-      } else {
-        log('onPageErrorPrev');
-      }
     }
   }
 }

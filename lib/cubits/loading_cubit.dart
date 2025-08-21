@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BoolCubit extends Cubit<bool> {
-  BoolCubit() : super(true);
+class LoadingCubit extends Cubit<bool> {
+  LoadingCubit() : super(true);
 
   void changeValue(bool value) {
     emit(value);

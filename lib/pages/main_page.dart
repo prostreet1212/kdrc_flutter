@@ -10,6 +10,8 @@ import 'package:kdrc_flutter/widgets/call_button.dart';
 import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../cubits/loading_cubit.dart';
+import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 
 import '../utils/utils.dart';
@@ -105,6 +107,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         bool canGoBack = await sl<NestedWebviewController>().webViewController!
             .canGoBack();
         if (canGoBack) {
+          sl<LoadingCubit>().changeValue(true);
           sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
           sl<NestedWebviewController>().isStep = true;
           sl<NestedWebviewController>().webViewController!.goBack();
@@ -126,11 +129,12 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 },
             body: const SliverWebview(),
           ),
-          floatingActionButton: const Row(
+          floatingActionButton:  const Row(
             //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [GoBackButton(), CallButton(),
+            children: [GoBackButton(),
+              CallButton(),
               /*FloatingActionButton(onPressed: (){
                 sl<NestedWebviewController>().webViewController!.loadUrl( urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')));
               })*/],

@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:io';
 
@@ -10,13 +9,12 @@ import 'package:kdrc_flutter/cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 import '../utils/nested_webview_controller.dart';
 import 'background_cubit.dart';
-import 'bool_cubit.dart';
+import 'loading_cubit.dart';
 import 'error_text_cubit.dart';
-
 
 class InetCubit extends Cubit<bool> {
   //late final StreamSubscription<InternetStatus> internetListener;
-  InternetConnection internetChecker=InternetConnection.createInstance(
+  InternetConnection internetChecker = InternetConnection.createInstance(
     customCheckOptions: [
       InternetCheckOption(uri: Uri.parse('https://google.com')),
     ],
@@ -30,21 +28,11 @@ class InetCubit extends Cubit<bool> {
   void init() {
     // Подписываемся на изменения состояния интернета
 
-    internetListener=internetChecker.onStatusChange.listen((status) {
-    //  if (kDebugMode) {
-        print('интернет ${status == InternetStatus.connected}');
-        //попытка убрать шкалу загрузки и вывести ошибку
-       /* if(Platform.isIOS){
-          if(sl<BoolCubit>().state==true){
-          //if(status == InternetStatus.disconnected){
-            sl<BoolCubit>().changeValue(false);
-            sl<ScrollHeightCubit>().updateScrollHeight(0);
-            sl<BackgroundCubit>().changeValue(true);
-            sl<ErrorTextCubit>().changeValue(false);
-            //sl<NestedWebviewController>().webViewController!.stopLoading();
-          }
-        }*/
-    //  }
+    internetListener = internetChecker.onStatusChange.listen((status) async {
+      //  if (kDebugMode) {
+      //await Future.delayed(const Duration(seconds: 2));
+      print('интернет ${status == InternetStatus.connected}');
+      //  }
       emit(status == InternetStatus.connected);
     });
   }

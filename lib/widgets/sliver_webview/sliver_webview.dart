@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
-import 'package:kdrc_flutter/cubits/bool_cubit.dart';
+import 'package:kdrc_flutter/cubits/loading_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
 import 'package:kdrc_flutter/utils/nested_webview_controller.dart';
@@ -43,21 +44,38 @@ class SliverWebview extends StatelessWidget {
           },
           listener: (context, state) {
             if (state) {
-              if (sl<NestedWebviewController>().isFirstRun &&
+              if(Platform.isIOS&&sl<NestedWebviewController>().isFirstRun){
+                sl<ErrorTextCubit>().changeValue(true);
+                sl<NestedWebviewController>().webViewController!.loadUrl(
+                  urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')),
+                );
+                sl<NestedWebviewController>().isFirstRun = false;
+              }
+              if (Platform.isAndroid&&sl<NestedWebviewController>().isFirstRun &&
                   sl<InetCubit>().state == true /*false*/ ) {
                 print('перезагрузка');
+                sl<LoadingCubit>().changeValue(true);
                 sl<ErrorTextCubit>().changeValue(true);
                 sl<NestedWebviewController>().scrollStatus =
                     ScrollStatus.reload;
                 sl<NestedWebviewController>().webViewController!.reload();
+                //sl<NestedWebviewController>().webViewController!.resume();
                 sl<NestedWebviewController>().isFirstRun = false;
+
               } else {
                 sl<NestedWebviewController>().isFirstRun = false;
               }
             } else {
+              //отдельно отключаем индикатор загрузки в ios
+              if(Platform.isIOS){
+                sl<LoadingCubit>().changeValue(false);
+              }
+
               if (sl<NestedWebviewController>().isFirstRun &&
                   sl<InetCubit>().state == false) {
                 sl<ScrollHeightCubit>().updateScrollHeight(0);
+                //
+                sl<BackgroundCubit>().changeValue(true);
                 sl<ErrorTextCubit>().changeValue(false);
               }
             }
@@ -209,8 +227,8 @@ class SliverWebview extends StatelessWidget {
                 ),
                 //шкала загрузки веб-страницы
                 BlocProvider(
-                  create: (c) => sl<BoolCubit>(),
-                  child: BlocBuilder<BoolCubit, bool>(
+                  create: (c) => sl<LoadingCubit>(),
+                  child: BlocBuilder<LoadingCubit, bool>(
                     builder: (c, loadingState) {
                       if (loadingState) {
                         return const LinearProgressIndicator(

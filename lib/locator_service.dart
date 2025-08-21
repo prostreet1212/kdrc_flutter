@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:kdrc_flutter/cubits/background_cubit.dart';
-import 'package:kdrc_flutter/cubits/bool_cubit.dart';
+import 'package:kdrc_flutter/cubits/loading_cubit.dart';
 import 'package:kdrc_flutter/cubits/call_request_is_opened_cubit.dart';
 import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/error_text_cubit.dart';
@@ -20,7 +20,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ScrollHeightCubit());
   sl.registerLazySingleton(() => IsCollapsedCubit());
   sl.registerLazySingleton(() => SettingsCubit());
-  sl.registerLazySingleton(() => BoolCubit());
+  sl.registerLazySingleton(() => LoadingCubit());
   sl.registerLazySingleton(() => ErrorTextCubit());
   sl.registerLazySingleton(() => BackgroundCubit());
   sl.registerLazySingleton(() => PhoneCubit());

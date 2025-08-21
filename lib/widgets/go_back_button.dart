@@ -1,8 +1,11 @@
 
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
+import '../cubits/loading_cubit.dart';
 import '../locator_service.dart';
 import '../utils/nested_webview_controller.dart';
 import 'exit_dialog.dart';
@@ -27,6 +30,9 @@ class GoBackButton extends StatelessWidget {
             onPressed: () async {
               if (await sl<NestedWebviewController>().webViewController!
                   .canGoBack()) {
+                if(Platform.isAndroid){
+                  sl<LoadingCubit>().changeValue(true);
+                }
                 sl<NestedWebviewController>().scrollStatus =
                     ScrollStatus.prev;
                 sl<NestedWebviewController>().isStep = true;
