@@ -307,6 +307,9 @@ class NestedWebviewController {
     } else {
       //вывод сообщения при непервом запуске и навигации вперед
       //исправить
+      if (Platform.isAndroid) {
+        scrollStatus = ScrollStatus.forward;
+      }
       if (isFirstRun == false&&
           scrollStatus== ScrollStatus.forward) {
         fToast.showToast(
@@ -333,26 +336,14 @@ class NestedWebviewController {
     if (error.type == WebResourceErrorType.HOST_LOOKUP) {
       log('ошибка интернета нетю: ${error.description}');
       if (navigationDecision == NavigationActionPolicy.ALLOW) {
-        //await webViewController!.pause();
-
-        // sl<ScrollHeightCubit>().updateScrollHeight(50);
-        //await webViewController!.stopLoading();
         isFirstRun = true;
         loadError = true;
-
         log('onPageErrorNavigate');
       } else {
         log('onPageErrorPrev');
       }
     }
-  /*  if(Platform.isAndroid){
-      isFirstRun = true;
-      loadError = true;
-     // await webViewController!.stopLoading();
-      webViewController!.pause();
-      sl<ScrollHeightCubit>().updateScrollHeight(150);
-      sl<BackgroundCubit>().changeValue(true);
-    }*/
+
 
 //ios не смог загрузить страницу и выдал сообщение
     if(Platform.isIOS&&error.type==WebResourceErrorType.NOT_CONNECTED_TO_INTERNET&&sl<NestedWebviewController>().isFirstRun == false){

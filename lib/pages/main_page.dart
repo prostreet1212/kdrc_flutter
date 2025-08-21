@@ -51,7 +51,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       //если webview крашнулось перезагружаем страницу
       if (sl<NestedWebviewController>().isCrashed == true) {
         log('релоад');
-        sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
+        //sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
         await sl<NestedWebviewController>().webViewController!.reload();
         sl<NestedWebviewController>().isStep = true;
         sl<NestedWebviewController>().isCrashed = false;
