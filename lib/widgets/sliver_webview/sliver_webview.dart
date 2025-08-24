@@ -42,7 +42,7 @@ class SliverWebview extends StatelessWidget {
           listenWhen: (prev, next) {
             return prev != next;
           },
-          listener: (context, state) {
+          listener: (context, state)  async {
             if (state) {
               if(Platform.isIOS&&sl<NestedWebviewController>().isFirstRun){
                 sl<ErrorTextCubit>().changeValue(true);
@@ -69,6 +69,9 @@ class SliverWebview extends StatelessWidget {
               //отдельно отключаем индикатор загрузки в ios
               if(Platform.isIOS){
                 sl<LoadingCubit>().changeValue(false);
+                if(await sl<NestedWebviewController>().webViewController!.isLoading()){
+                  sl<NestedWebviewController>().webViewController!.stopLoading();
+                }
               }
 
               if (sl<NestedWebviewController>().isFirstRun &&

@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../cubits/loading_cubit.dart';
@@ -28,6 +29,10 @@ class GoBackButton extends StatelessWidget {
             backgroundColor: const Color.fromARGB(40, 0, 0, 0),
             shape: const CircleBorder(),
             onPressed: () async {
+              if(Platform.isAndroid){
+                sl<NestedWebviewController>().
+                navigationDecision = NavigationActionPolicy.CANCEL;
+              }
               if (await sl<NestedWebviewController>().webViewController!
                   .canGoBack()) {
                 if(Platform.isAndroid){

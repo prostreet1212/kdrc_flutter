@@ -30,7 +30,8 @@ class InetCubit extends Cubit<bool> {
 
     internetListener = internetChecker.onStatusChange.listen((status) async {
       //  if (kDebugMode) {
-      //await Future.delayed(const Duration(seconds: 2));
+      //для тестов
+      await Future.delayed(const Duration(seconds: 2));
       print('интернет ${status == InternetStatus.connected}');
       //  }
       emit(status == InternetStatus.connected);

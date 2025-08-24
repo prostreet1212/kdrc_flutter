@@ -346,8 +346,8 @@ class NestedWebviewController {
 
 
 //ios не смог загрузить страницу и выдал сообщение
-    if(Platform.isIOS&&error.type==WebResourceErrorType.NOT_CONNECTED_TO_INTERNET&&sl<NestedWebviewController>().isFirstRun == false){
-      webViewController!.stopLoading();
+    if(Platform.isIOS&&(error.type==WebResourceErrorType.NOT_CONNECTED_TO_INTERNET||error.type==WebResourceErrorType.CANCELLED)&&isFirstRun == false){
+      //webViewController!.stopLoading();
       sl<LoadingCubit>().changeValue(false);
       fToast.showToast(
         child: const CustomToast(
