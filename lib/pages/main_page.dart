@@ -111,6 +111,11 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
           sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
           sl<NestedWebviewController>().isStep = true;
           sl<NestedWebviewController>().webViewController!.goBack();
+          //устанавливаем значение cancel при переоде назад на случай если был совершен переод назад без интернета а затем переодя вперед
+          if(Platform.isAndroid){
+            sl<NestedWebviewController>().
+            navigationDecision = NavigationActionPolicy.CANCEL;
+          }
         } else {
           //await SystemNavigator.pop();
           await FlutterExitApp.exitApp();
