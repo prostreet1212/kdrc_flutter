@@ -105,20 +105,30 @@ class NotificationService {
 
     // Handle when the app is opened from a notification
     //Когда приложение свернуто
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log(
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)  {
+      print(
         'firebase :: Notification clicked! Message: ${message.notification?.title}',
       );
       //_handleNotificationClick(message);
       /*  nestedWebviewController.webViewController
           ?.loadRequest(Uri.parse(message.data['url']));*/
       if (sl<InetCubit>().state) {
-        log('firebase :: Notification payload: ${message.data['url']}');
+        print('firebase :: Notification payload: ${message.data['url']}');
 
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
-        sl<NestedWebviewController>().webViewController!.loadUrl(
-          urlRequest: URLRequest(url: WebUri(message.data['url'])),
-        );
+        //sl<NestedWebviewController>().webViewController=await sl<NestedWebviewController>().controllerCompleter.future;
+
+
+          //await Future.delayed(const Duration(milliseconds: 500));
+        /*while (sl<NestedWebviewController>().webViewController == null) {
+          await Future.delayed(const Duration(milliseconds: 50));
+          print('WebViewController is still null, waiting...');
+        }*/
+          sl<NestedWebviewController>().webViewController!.loadUrl(
+            urlRequest: URLRequest(url: WebUri(message.data['url'])),
+          );
+
+
         //?.loadRequest(Uri.parse(message.data['url']));
       } else {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
@@ -135,8 +145,8 @@ class NotificationService {
     });
 
     //Когда приложение закрыто
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      log(
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
+      print(
         'firebase :: Notification2 clicked! Message: ${message?.notification?.title}',
       );
       if (message != null) {
@@ -230,7 +240,7 @@ class NotificationService {
     final String? payload = notificationResponse.payload;
     if (sl<InetCubit>().state) {
       if (payload != null) {
-        log('firebase :: Notification payload: $payload');
+        print('firebase :: Notification payload: $payload');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         sl<NestedWebviewController>().webViewController!.loadUrl(
           urlRequest: URLRequest(url: WebUri(payload)),
