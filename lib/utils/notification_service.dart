@@ -122,7 +122,7 @@ class NotificationService {
           //await Future.delayed(const Duration(milliseconds: 500));
         /*while (sl<NestedWebviewController>().webViewController == null) {
           await Future.delayed(const Duration(milliseconds: 50));
-          print('WebViewController is still null, waiting...');
+          print('WebViewController is still null, waiting...');1
         }*/
           sl<NestedWebviewController>().webViewController!.loadUrl(
             urlRequest: URLRequest(url: WebUri(message.data['url'])),
