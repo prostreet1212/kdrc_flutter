@@ -12,6 +12,7 @@ import 'package:kdrc_flutter/cubits/start_cubit/start_cubit.dart';
 import '../cubits/background_cubit.dart';
 import '../cubits/error_text_cubit.dart';
 import '../cubits/inet_cubit.dart';
+import '../cubits/loading_cubit.dart';
 import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 
@@ -114,7 +115,7 @@ class NotificationService {
           ?.loadRequest(Uri.parse(message.data['url']));*/
       if (sl<InetCubit>().state) {
         print('firebase :: Notification payload: ${message.data['url']}');
-
+        sl<LoadingCubit>().changeValue(true);
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         //sl<NestedWebviewController>().webViewController=await sl<NestedWebviewController>().controllerCompleter.future;
 
@@ -239,6 +240,7 @@ class NotificationService {
   ) async {
     final String? payload = notificationResponse.payload;
     if (sl<InetCubit>().state) {
+      sl<LoadingCubit>().changeValue(true);
       if (payload != null) {
         print('firebase :: Notification payload: $payload');
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;

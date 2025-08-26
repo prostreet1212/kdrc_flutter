@@ -8,6 +8,7 @@ import 'package:kdrc_flutter/cubits/inet_cubit.dart';
 import 'package:kdrc_flutter/cubits/is_collapsed_cubit.dart';
 import 'package:kdrc_flutter/pages/settings_page.dart';
 import 'package:kdrc_flutter/widgets/exit_dialog.dart';
+import '../cubits/loading_cubit.dart';
 import '../cubits/phone_cubit.dart';
 import '../locator_service.dart';
 import '../locator_service.dart' as di;
@@ -24,7 +25,11 @@ class CustomAppBar extends StatefulWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   void loadFeedback() {
+
     if (sl<InetCubit>().state) {
+      if(Platform.isAndroid){
+        sl<LoadingCubit>().changeValue(true);
+      }
       sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
       sl<NestedWebviewController>().webViewController!.loadUrl(
         urlRequest: URLRequest(url: WebUri('https://kdrc.ru/obratnaya-svyaz')),
