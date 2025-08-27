@@ -39,16 +39,16 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }*/
   Future<void> runRoutePage() async {
-    await Future.delayed(const Duration(milliseconds: 700)).then((_) {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        Utils.createRoute(
-          const MainPage(
-          ),
-        ),
-      );
-    });
+    await  Future.delayed(const Duration(milliseconds: 700),(){
+       if (!mounted) return;
+       Navigator.pushReplacement(
+         context,
+         Utils.createRoute(
+           const MainPage(
+           ),
+         ),
+       );
+     });
   }
 
 

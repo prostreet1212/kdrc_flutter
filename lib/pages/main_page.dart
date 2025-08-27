@@ -11,7 +11,6 @@ import 'package:kdrc_flutter/widgets/custom_appbar.dart';
 import 'package:kdrc_flutter/widgets/sliver_webview/sliver_webview.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../cubits/loading_cubit.dart';
-import '../cubits/scroll_height_cubit.dart';
 import '../locator_service.dart';
 
 import '../utils/utils.dart';
@@ -50,7 +49,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       log('app resumed');
       //если webview крашнулось перезагружаем страницу
       if (sl<NestedWebviewController>().isCrashed == true) {
-        log('релоад');
+        print('релоад');
         //sl<NestedWebviewController>().scrollStatus = ScrollStatus.reload;
         await sl<NestedWebviewController>().webViewController!.reload();
         sl<NestedWebviewController>().isStep = true;

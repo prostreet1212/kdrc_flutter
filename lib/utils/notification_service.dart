@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'dart:developer';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -106,7 +104,7 @@ class NotificationService {
 
     // Handle when the app is opened from a notification
     //Когда приложение свернуто
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)  {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)  async {
       print(
         'firebase :: Notification clicked! Message: ${message.notification?.title}',
       );
@@ -119,15 +117,28 @@ class NotificationService {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         //sl<NestedWebviewController>().webViewController=await sl<NestedWebviewController>().controllerCompleter.future;
 
-
-          //await Future.delayed(const Duration(milliseconds: 500));
-        /*while (sl<NestedWebviewController>().webViewController == null) {
-          await Future.delayed(const Duration(milliseconds: 50));
-          print('WebViewController is still null, waiting...');1
+       /* while (sl<NestedWebviewController>().webViewController == null) {
+           await Future.delayed(const Duration(milliseconds: 50));
+          print('WebViewController is still null, waiting...');
         }*/
+        sl<NestedWebviewController>().webViewController = await  sl<NestedWebviewController>().controllerCompleter.future;
+        print('is crashed: ${sl<NestedWebviewController>().isCrashed}');
+        if(sl<NestedWebviewController>().isCrashed==true){
+          sl<NestedWebviewController>().isCrashed=false;
+          await sl<NestedWebviewController>().webViewController!.reload();
+          await sl<NestedWebviewController>().webViewController!.loadUrl(
+            urlRequest: URLRequest(url: WebUri(message.data['url'])),
+          );
+        }else{
           sl<NestedWebviewController>().webViewController!.loadUrl(
             urlRequest: URLRequest(url: WebUri(message.data['url'])),
           );
+        }
+
+
+
+
+
 
 
         //?.loadRequest(Uri.parse(message.data['url']));

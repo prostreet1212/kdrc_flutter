@@ -29,6 +29,8 @@ class NestedWebviewController {
   NestedWebviewController();
 
   InAppWebViewController? webViewController;
+  final Completer<InAppWebViewController> controllerCompleter = Completer();
+
 
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
@@ -108,6 +110,7 @@ class NestedWebviewController {
 
   void onWebViewCreated(InAppWebViewController c) {
     webViewController = c;
+    controllerCompleter.complete(c);
     webViewController!.addJavaScriptHandler(
       handlerName: 'onContentHeightChanged',
       callback: (args) {
