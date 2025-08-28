@@ -42,16 +42,19 @@ class SliverWebview extends StatelessWidget {
           listenWhen: (prev, next) {
             return prev != next;
           },
-          listener: (context, state)  async {
+          listener: (context, state) async {
             if (state) {
-              if(Platform.isIOS&&sl<NestedWebviewController>().isFirstRun){
+              if (Platform.isIOS && sl<NestedWebviewController>().isFirstRun) {
                 sl<ErrorTextCubit>().changeValue(true);
                 sl<NestedWebviewController>().webViewController!.loadUrl(
-                  urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')),
+                  urlRequest: URLRequest(
+                    url: WebUri('https://kdrc.ru/novosti'),
+                  ),
                 );
                 sl<NestedWebviewController>().isFirstRun = false;
               }
-              if (Platform.isAndroid&&sl<NestedWebviewController>().isFirstRun &&
+              if (Platform.isAndroid &&
+                  sl<NestedWebviewController>().isFirstRun &&
                   sl<InetCubit>().state == true /*false*/ ) {
                 print('перезагрузка');
                 sl<LoadingCubit>().changeValue(true);
@@ -61,16 +64,17 @@ class SliverWebview extends StatelessWidget {
                 sl<NestedWebviewController>().webViewController!.reload();
                 //sl<NestedWebviewController>().webViewController!.resume();
                 sl<NestedWebviewController>().isFirstRun = false;
-
               } else {
                 sl<NestedWebviewController>().isFirstRun = false;
               }
             } else {
               //отдельно отключаем индикатор загрузки в ios
-              if(Platform.isIOS){
+              if (Platform.isIOS) {
                 sl<LoadingCubit>().changeValue(false);
-                if(await sl<NestedWebviewController>().webViewController!.isLoading()){
-                  sl<NestedWebviewController>().webViewController!.stopLoading();
+                if (await sl<NestedWebviewController>().webViewController!
+                    .isLoading()) {
+                  sl<NestedWebviewController>().webViewController!
+                      .stopLoading();
                 }
               }
 
@@ -83,7 +87,7 @@ class SliverWebview extends StatelessWidget {
               }
             }
           },
-          builder: (context/*1*/, state) {
+          builder: (context /*1*/, state) {
             return Stack(
               children: [
                 CustomScrollView(

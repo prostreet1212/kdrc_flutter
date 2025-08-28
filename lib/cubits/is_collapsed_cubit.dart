@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class IsCollapsedCubit extends Cubit<bool> {

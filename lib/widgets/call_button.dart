@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 import 'dart:io';
 
@@ -19,7 +17,7 @@ class CallButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<PhoneCubit, bool>(
+    return BlocBuilder<PhoneCubit, bool>(
       builder: (context, phoneState) {
         if (phoneState) {
           return BlocBuilder<SettingsCubit, SettingsState>(
@@ -38,28 +36,29 @@ class CallButton extends StatelessWidget {
                     ),
                     onPressed: () async {
                       if (Platform.isIOS) {
-                        final status = await Permission.contacts
-                            .status;
+                        final status = await Permission.contacts.status;
                         if (status == PermissionStatus.granted) {
                           if (context.mounted) {
                             Utils.showCallDialog(context);
                           }
                           return;
-                        }
-                        else if(status==PermissionStatus.permanentlyDenied){
+                        } else if (status ==
+                            PermissionStatus.permanentlyDenied) {
                           if (context.mounted) {
                             showDialog(
-                            barrierDismissible: true,
-                            context: context,
-                            builder: (context) {
-                              return const PermissionDialog(message: "Включите разрешение \"Контакты\" в настройках приложения.",);
-                            },
-                          );
+                              barrierDismissible: true,
+                              context: context,
+                              builder: (context) {
+                                return const PermissionDialog(
+                                  message:
+                                      "Включите разрешение \"Контакты\" в настройках приложения.",
+                                );
+                              },
+                            );
                           }
                           return;
-                        }else if (status.isDenied) {
-                          final status1 = await Permission.contacts
-                              .request();
+                        } else if (status.isDenied) {
+                          final status1 = await Permission.contacts.request();
                           if (status1.isGranted) {
                             if (context.mounted) {
                               Utils.showCallDialog(context);
@@ -75,8 +74,7 @@ class CallButton extends StatelessWidget {
                                 throw 'Не удалось выполнить звонок на номер 78183730050';
                               }*/
                       } else {
-                        PermissionStatus status =
-                        await Permission.phone.status;
+                        PermissionStatus status = await Permission.phone.status;
 
                         if (status.isGranted) {
                           if (context.mounted) {
@@ -87,13 +85,15 @@ class CallButton extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return const PermissionDialog(message: "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",);
+                                return const PermissionDialog(
+                                  message:
+                                      "Чтобы включить разрешение на совершение звонков с телефона, перейдите в настройки приложения и включите его вручную.",
+                                );
                               },
                             );
                           }
                         } else if (status.isDenied) {
-                          final status1 = await Permission.phone
-                              .request();
+                          final status1 = await Permission.phone.request();
                           if (status1.isGranted) {
                             if (context.mounted) {
                               Utils.showCallDialog(context);

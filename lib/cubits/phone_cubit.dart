@@ -4,10 +4,10 @@ import 'package:url_launcher/url_launcher.dart';
 class PhoneCubit extends Cubit<bool> {
   PhoneCubit() : super(true);
 
-  Future<void> checkPhone() async{
+  Future<void> checkPhone() async {
     if (await canLaunchUrl(Uri.parse('tel:+78183730050'))) {
-    emit(true);
-  }else{
+      emit(true);
+    } else {
       emit(false);
     }
   }

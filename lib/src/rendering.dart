@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-
 typedef ScrollOffsetChanged = void Function(double offset);
 
 class RenderSliverToNestedScrollBoxAdapter
@@ -15,10 +14,11 @@ class RenderSliverToNestedScrollBoxAdapter
     super.child,
     required double childExtent,
     required this.onScrollOffsetChanged,
-  })  : _childExtent = childExtent;
+  }) : _childExtent = childExtent;
 
   double get childExtent => _childExtent;
   double _childExtent;
+
   set childExtent(double value) {
     assert(value != null);
     if (_childExtent == value) {
@@ -36,8 +36,10 @@ class RenderSliverToNestedScrollBoxAdapter
       geometry = SliverGeometry.zero;
       return;
     }
-    final double childLayoutExtent =
-        min(childExtent, constraints.viewportMainAxisExtent);
+    final double childLayoutExtent = min(
+      childExtent,
+      constraints.viewportMainAxisExtent,
+    );
 
     final double scrollOffset =
         constraints.scrollOffset + constraints.cacheOrigin;
@@ -89,16 +91,23 @@ class RenderSliverToNestedScrollBoxAdapter
   void paint(PaintingContext context, Offset offset) {
     if (childExtent > constraints.viewportMainAxisExtent) {
       // maybe overscroll in ios
-      onScrollOffsetChanged(math.min(constraints.scrollOffset,
-          childExtent - constraints.viewportMainAxisExtent));
+      onScrollOffsetChanged(
+        math.min(
+          constraints.scrollOffset,
+          childExtent - constraints.viewportMainAxisExtent,
+        ),
+      );
     }
     super.paint(context, offset);
   }
 
   @override
   @protected
-  void setChildParentData(RenderObject child, SliverConstraints constraints,
-      SliverGeometry geometry) {
+  void setChildParentData(
+    RenderObject child,
+    SliverConstraints constraints,
+    SliverGeometry geometry,
+  ) {
     final SliverPhysicalParentData childParentData =
         child.parentData! as SliverPhysicalParentData;
     final double targetEndScrollOffsetForPaint =
@@ -106,7 +115,9 @@ class RenderSliverToNestedScrollBoxAdapter
     assert(constraints.axisDirection != null);
     assert(constraints.growthDirection != null);
     switch (applyGrowthDirectionToAxisDirection(
-        constraints.axisDirection, constraints.growthDirection)) {
+      constraints.axisDirection,
+      constraints.growthDirection,
+    )) {
       case AxisDirection.up:
         assert(false, 'not support for RenderSliverToScrollableBoxAdapter');
         // childParentData.paintOffset = Offset(
@@ -123,10 +134,11 @@ class RenderSliverToNestedScrollBoxAdapter
         // zmtzawqlp
 
         childParentData.paintOffset = Offset(
-            0.0,
-            childExtent <= constraints.viewportMainAxisExtent
-                ? -constraints.scrollOffset
-                : min(childExtent - targetEndScrollOffsetForPaint, 0));
+          0.0,
+          childExtent <= constraints.viewportMainAxisExtent
+              ? -constraints.scrollOffset
+              : min(childExtent - targetEndScrollOffsetForPaint, 0),
+        );
         break;
       case AxisDirection.left:
         assert(false, 'not support for RenderSliverToScrollableBoxAdapter');
@@ -140,8 +152,12 @@ class RenderSliverToNestedScrollBoxAdapter
   }
 
   @override
-  bool hitTestBoxChild(BoxHitTestResult result, RenderBox child,
-      {required double mainAxisPosition, required double crossAxisPosition}) {
+  bool hitTestBoxChild(
+    BoxHitTestResult result,
+    RenderBox child, {
+    required double mainAxisPosition,
+    required double crossAxisPosition,
+  }) {
     final bool rightWayUp = _getRightWayUp(constraints);
     double delta = childMainAxisPosition(child);
     final double crossAxisDelta = childCrossAxisPosition(child);
@@ -157,8 +173,10 @@ class RenderSliverToNestedScrollBoxAdapter
           delta = geometry!.paintExtent - child.size.width - delta;
         }
         paintOffset = Offset(delta, crossAxisDelta);
-        transformedPosition =
-            Offset(absolutePosition, absoluteCrossAxisPosition);
+        transformedPosition = Offset(
+          absolutePosition,
+          absoluteCrossAxisPosition,
+        );
         break;
       case Axis.vertical:
         if (!rightWayUp) {
@@ -166,8 +184,10 @@ class RenderSliverToNestedScrollBoxAdapter
           delta = geometry!.paintExtent - child.size.height - delta;
         }
         paintOffset = Offset(crossAxisDelta, delta);
-        transformedPosition =
-            Offset(absoluteCrossAxisPosition, absolutePosition);
+        transformedPosition = Offset(
+          absoluteCrossAxisPosition,
+          absolutePosition,
+        );
         break;
     }
     assert(paintOffset != null);
@@ -176,9 +196,13 @@ class RenderSliverToNestedScrollBoxAdapter
       paintOffset: paintOffset,
       hitTest: (BoxHitTestResult result) {
         // zmtzawqlp
-        return child.hitTest(result,
-            position: Offset(transformedPosition.dx,
-                transformedPosition.dy - constraints.scrollOffset));
+        return child.hitTest(
+          result,
+          position: Offset(
+            transformedPosition.dx,
+            transformedPosition.dy - constraints.scrollOffset,
+          ),
+        );
       },
     );
   }

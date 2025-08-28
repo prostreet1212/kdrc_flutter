@@ -1,11 +1,7 @@
+import 'package:equatable/equatable.dart';
 
-
-
- import 'package:equatable/equatable.dart';
-
-abstract class StartState extends Equatable{
+abstract class StartState extends Equatable {
   final String url;
-
 
   const StartState(this.url);
 
@@ -13,18 +9,16 @@ abstract class StartState extends Equatable{
   List<Object?> get props => [];
 }
 
-class StartPush extends StartState{
+class StartPush extends StartState {
   const StartPush(super.url);
 
   @override
   List<Object?> get props => [url];
 }
 
- class StartEmpty extends StartState{
-
+class StartEmpty extends StartState {
   const StartEmpty(super.url);
 
-
-   @override
-   List<Object?> get props => [url];
- }
+  @override
+  List<Object?> get props => [url];
+}

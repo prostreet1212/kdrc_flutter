@@ -31,7 +31,6 @@ class NestedWebviewController {
   InAppWebViewController? webViewController;
   final Completer<InAppWebViewController> controllerCompleter = Completer();
 
-
   ScrollStatus scrollStatus = ScrollStatus.forward;
   double oldScroll = 0.0;
 
@@ -313,8 +312,7 @@ class NestedWebviewController {
       if (Platform.isAndroid) {
         scrollStatus = ScrollStatus.forward;
       }
-      if (isFirstRun == false&&
-          scrollStatus== ScrollStatus.forward) {
+      if (isFirstRun == false && scrollStatus == ScrollStatus.forward) {
         fToast.showToast(
           child: const CustomToast(
             message: 'Проверьте подключение к сети интернет',
@@ -324,8 +322,7 @@ class NestedWebviewController {
         );
       }
       //разрешить навигацию назад в ios когда нет интернета
-      if (Platform.isIOS &&
-          scrollStatus == ScrollStatus.prev) {
+      if (Platform.isIOS && scrollStatus == ScrollStatus.prev) {
         navigationDecision = NavigationActionPolicy.ALLOW;
       } else {
         navigationDecision = NavigationActionPolicy.CANCEL;
@@ -347,9 +344,11 @@ class NestedWebviewController {
       }
     }
 
-
-//ios не смог загрузить страницу и выдал сообщение
-    if(Platform.isIOS&&(error.type==WebResourceErrorType.NOT_CONNECTED_TO_INTERNET||error.type==WebResourceErrorType.CANCELLED)&&isFirstRun == false){
+    //ios не смог загрузить страницу и выдал сообщение
+    if (Platform.isIOS &&
+        (error.type == WebResourceErrorType.NOT_CONNECTED_TO_INTERNET ||
+            error.type == WebResourceErrorType.CANCELLED) &&
+        isFirstRun == false) {
       //webViewController!.stopLoading();
       sl<LoadingCubit>().changeValue(false);
       fToast.showToast(

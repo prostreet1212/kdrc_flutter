@@ -16,7 +16,6 @@ import '../locator_service.dart';
 import '../utils/utils.dart';
 import '../widgets/go_back_button.dart';
 
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -106,9 +105,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         bool canGoBack = await sl<NestedWebviewController>().webViewController!
             .canGoBack();
         //устанавливаем значение cancel при переоде назад на случай если был совершен переод назад без интернета а затем переодя вперед
-        if(Platform.isAndroid){
-          sl<NestedWebviewController>().
-          navigationDecision = NavigationActionPolicy.CANCEL;
+        if (Platform.isAndroid) {
+          sl<NestedWebviewController>().navigationDecision =
+              NavigationActionPolicy.CANCEL;
         }
         if (canGoBack) {
           sl<LoadingCubit>().changeValue(true);
@@ -133,15 +132,17 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 },
             body: const SliverWebview(),
           ),
-          floatingActionButton:  const Row(
+          floatingActionButton: const Row(
             //mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [GoBackButton(),
+            children: [
+              GoBackButton(),
               CallButton(),
               /*FloatingActionButton(onPressed: (){
                 sl<NestedWebviewController>().webViewController!.loadUrl( urlRequest: URLRequest(url: WebUri('https://kdrc.ru/novosti')));
-              })*/],
+              })*/
+            ],
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.miniEndFloat,

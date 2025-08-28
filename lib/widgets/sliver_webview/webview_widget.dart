@@ -103,6 +103,5 @@ class AllowMultipleHorizontalDragRecognizer
   void rejectGesture(int pointer) {
     // Не блокирует другие распознаватели при отклонении жеста
     acceptGesture(pointer);
-
   }
 }

@@ -3,46 +3,38 @@ import 'package:kdrc_flutter/widgets/call_dialog.dart';
 import 'package:flutter/services.dart';
 
 class Utils {
-
   // Загрузка изображения из assets
- static Future<Uint8List> loadImageFromAssets(String path) async {
+  static Future<Uint8List> loadImageFromAssets(String path) async {
     ByteData data = await rootBundle.load(path);
     return data.buffer.asUint8List();
   }
 
-
   static void showCallDialog(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (context) {
-          return const CallDialog();
-        });
+      context: context,
+      builder: (context) {
+        return const CallDialog();
+      },
+    );
   }
 
   static Route createRoute(Widget widget) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-      widget,
+      pageBuilder: (context, animation, secondaryAnimation) => widget,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Анимация перехода SecondScreen справа налево
         var slideAnimation = Tween<Offset>(
           begin: const Offset(1.0, 0.0),
           end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOut,
-        ));
+        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
 
-        return SlideTransition(
-          position: slideAnimation,
-          child: child,
-        );
+        return SlideTransition(position: slideAnimation, child: child);
       },
       transitionDuration: const Duration(milliseconds: 500),
     );
   }
 
-  static String getTypeFile(String url){
+  static String getTypeFile(String url) {
     List<String> parts = url.split('/');
     String fileNameWithExtension = parts.last;
     List<String> fileNameParts = fileNameWithExtension.split('.');
@@ -58,7 +50,7 @@ class Utils {
     return emailRegex.hasMatch(email);
   }
 
- static const String scrollHeightJs ='''     (function() {
+  static const String scrollHeightJs = '''     (function() {
           var height = 0;
           function checkAndNotify() {
             var curr = document.body.scrollHeight;
@@ -74,7 +66,7 @@ class Utils {
           }
         })(); ''';
 
- /* static const String scrollHeightJs = '''(function() {
+  /* static const String scrollHeightJs = '''(function() {
   var height = 0;
   var notifier = window.ScrollHeightNotifier || window.webkit.messageHandlers.ScrollHeightNotifier;
   if (!notifier) return;

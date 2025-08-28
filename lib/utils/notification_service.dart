@@ -104,7 +104,7 @@ class NotificationService {
 
     // Handle when the app is opened from a notification
     //Когда приложение свернуто
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)  async {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print(
         'firebase :: Notification clicked! Message: ${message.notification?.title}',
       );
@@ -117,29 +117,24 @@ class NotificationService {
         sl<NestedWebviewController>().scrollStatus = ScrollStatus.forward;
         //sl<NestedWebviewController>().webViewController=await sl<NestedWebviewController>().controllerCompleter.future;
 
-       /* while (sl<NestedWebviewController>().webViewController == null) {
+        /* while (sl<NestedWebviewController>().webViewController == null) {
            await Future.delayed(const Duration(milliseconds: 50));
           print('WebViewController is still null, waiting...');
         }*/
-        sl<NestedWebviewController>().webViewController = await  sl<NestedWebviewController>().controllerCompleter.future;
+        sl<NestedWebviewController>().webViewController =
+            await sl<NestedWebviewController>().controllerCompleter.future;
         print('is crashed: ${sl<NestedWebviewController>().isCrashed}');
-        if(sl<NestedWebviewController>().isCrashed==true){
-          sl<NestedWebviewController>().isCrashed=false;
+        if (sl<NestedWebviewController>().isCrashed == true) {
+          sl<NestedWebviewController>().isCrashed = false;
           await sl<NestedWebviewController>().webViewController!.reload();
           await sl<NestedWebviewController>().webViewController!.loadUrl(
             urlRequest: URLRequest(url: WebUri(message.data['url'])),
           );
-        }else{
+        } else {
           sl<NestedWebviewController>().webViewController!.loadUrl(
             urlRequest: URLRequest(url: WebUri(message.data['url'])),
           );
         }
-
-
-
-
-
-
 
         //?.loadRequest(Uri.parse(message.data['url']));
       } else {
@@ -175,8 +170,8 @@ class NotificationService {
 
     subscribeToTopic(sl<SettingsCubit>().state.isPush);
 
-    RemoteMessage? initialMessage =
-        await _firebaseMessaging.getInitialMessage();
+    RemoteMessage? initialMessage = await _firebaseMessaging
+        .getInitialMessage();
     if (initialMessage != null) {
       sl<StartCubit>().changeValue(initialMessage.data['url']);
     }

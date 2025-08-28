@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CustomToast extends StatelessWidget {
-   const CustomToast({super.key,required this.message});
+  const CustomToast({super.key, required this.message});
+
   final String message;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          bottom: 68.0, left: 40, right: 40),
+      padding: const EdgeInsets.only(bottom: 68.0, left: 40, right: 40),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 0.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 4.0),
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
@@ -21,15 +20,14 @@ class CustomToast extends StatelessWidget {
               color: Colors.grey.withValues(alpha: 0.5),
               spreadRadius: 2,
               blurRadius: 7,
-              offset: const Offset(
-                  0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
         ),
-        child:  Text(
-         message,
+        child: Text(
+          message,
           textAlign: TextAlign.center,
-          style: const TextStyle(height: 1.2,color: Colors.black),
+          style: const TextStyle(height: 1.2, color: Colors.black),
         ),
       ),
     );

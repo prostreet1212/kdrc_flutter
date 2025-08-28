@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,21 +28,20 @@ class BackgroundWidget extends StatelessWidget {
                   alignment: const Alignment(0, 0.9),
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width / 5,
-                        //9.5,
-                        right: MediaQuery.of(context).size.width / 5,
-                        //9.5,
-                        top: MediaQuery.of(context)
-                            .size
-                            .height /
-                            2.15),
+                      left: MediaQuery.of(context).size.width / 5,
+                      //9.5,
+                      right: MediaQuery.of(context).size.width / 5,
+                      //9.5,
+                      top: MediaQuery.of(context).size.height / 2.15,
+                    ),
                     child: Text(
                       'Ошибка загрузки. Проверьте подключение к сети и дождитесь загрузки страницы',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 16,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey[700]),
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey[700],
+                      ),
                     ),
                   ),
                 );

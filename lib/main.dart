@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -25,38 +24,29 @@ import 'cubits/settings_cubit/settings_cubit.dart';
 import 'cubits/start_cubit/start_state.dart';
 import 'firebase_options.dart';
 
-
-
-
-
 @pragma('vm:entry-point')
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
-
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await di.init();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   {
-    if (Platform.isAndroid){
+    if (Platform.isAndroid) {
       await di.sl<NotificationService>().initialize();
     }
   }
 
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+  MyApp({super.key});
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-   //final FToast fToast = FToast();
+
+  //final FToast fToast = FToast();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -67,15 +57,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ScrollHeightCubit>(
           create: (context) => di.sl<ScrollHeightCubit>(),
         ),
-        BlocProvider<StartCubit>(
-          create: (context) => di.sl<StartCubit>(),
-        ),
-        BlocProvider<InetCubit>(
-          create: (context) => di.sl<InetCubit>(),
-        ),
-        BlocProvider<SettingsCubit>(
-          create: (c) => di.sl<SettingsCubit>(),
-        ),
+        BlocProvider<StartCubit>(create: (context) => di.sl<StartCubit>()),
+        BlocProvider<InetCubit>(create: (context) => di.sl<InetCubit>()),
+        BlocProvider<SettingsCubit>(create: (c) => di.sl<SettingsCubit>()),
         BlocProvider<CallRequestIsOpenedCubit>(
           create: (c) => di.sl<CallRequestIsOpenedCubit>(),
         ),
@@ -86,7 +70,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Котласский реабилитационный центр',
         scrollBehavior: const ScrollBehavior().copyWith(
-          multitouchDragStrategy: MultitouchDragStrategy.latestPointer
+          multitouchDragStrategy: MultitouchDragStrategy.latestPointer,
         ),
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -94,11 +78,11 @@ class MyApp extends StatelessWidget {
         ),
         home: BlocBuilder<StartCubit, StartState>(
           builder: ((context, state) {
-            if (state is StartPush||di.sl<CallRequestIsOpenedCubit>().state) {
+            if (state is StartPush || di.sl<CallRequestIsOpenedCubit>().state) {
               // Если приложение было открыто через уведомление или после разрешения к контакам в ios
               return const MainPage();
             } else {
-              return const WelcomePage( );
+              return const WelcomePage();
             }
           }),
         ),

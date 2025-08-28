@@ -6,13 +6,13 @@ class SettingsState {
   SettingsState({
     required this.isCalling,
     required this.isPush,
-    required this.isFirstPushRequest
+    required this.isFirstPushRequest,
   });
 
   SettingsState copyWith({
     bool? isCalling,
     bool? isPush,
-    bool? isFirstPushRequest
+    bool? isFirstPushRequest,
   }) {
     return SettingsState(
       isCalling: isCalling ?? this.isCalling,

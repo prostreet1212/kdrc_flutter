@@ -35,7 +35,4 @@ Future<void> init() async {
   //firebase-notification
   sl.registerLazySingleton(() => NestedWebviewController());
   sl.registerLazySingleton(() => NotificationService.instance);
-
-
-
 }

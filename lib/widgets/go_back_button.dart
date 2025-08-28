@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,7 +14,7 @@ class GoBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.only(left: 24),
       child: SizedBox(
         width: 40,
@@ -29,28 +27,26 @@ class GoBackButton extends StatelessWidget {
             backgroundColor: const Color.fromARGB(40, 0, 0, 0),
             shape: const CircleBorder(),
             onPressed: () async {
-              if(Platform.isAndroid){
-                sl<NestedWebviewController>().
-                navigationDecision = NavigationActionPolicy.CANCEL;
+              if (Platform.isAndroid) {
+                sl<NestedWebviewController>().navigationDecision =
+                    NavigationActionPolicy.CANCEL;
               }
               if (await sl<NestedWebviewController>().webViewController!
                   .canGoBack()) {
-                if(Platform.isAndroid){
+                if (Platform.isAndroid) {
                   sl<LoadingCubit>().changeValue(true);
                 }
-                sl<NestedWebviewController>().scrollStatus =
-                    ScrollStatus.prev;
+                sl<NestedWebviewController>().scrollStatus = ScrollStatus.prev;
                 sl<NestedWebviewController>().isStep = true;
-                sl<NestedWebviewController>().webViewController!
-                    .goBack();
+                sl<NestedWebviewController>().webViewController!.goBack();
               } else {
                 if (context.mounted) {
                   showDialog(
-                  context: context,
-                  builder: (context) => const ExitDialog(),
-                );
+                    context: context,
+                    builder: (context) => const ExitDialog(),
+                  );
                 }
-               /* di.sl<NestedWebviewController>().fToast.showToast(
+                /* di.sl<NestedWebviewController>().fToast.showToast(
                   child: const CustomToast(
                     message:
                     // 'Это начальная странцица',
@@ -66,7 +62,8 @@ class GoBackButton extends StatelessWidget {
               color: Color.fromARGB(255, 247, 176, 116),
               //color: Color.fromARGB(255, 32, 146, 131),
               size: 32,
-            ),),
+            ),
+          ),
         ),
       ),
     );

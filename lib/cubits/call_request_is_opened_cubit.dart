@@ -6,12 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../locator_service.dart';
 
 class CallRequestIsOpenedCubit extends Cubit<bool> {
-  CallRequestIsOpenedCubit() : super(
-    Platform.isAndroid?
-      false:sl<SharedPreferences>().getBool('iosCallRequest')??false);
+  CallRequestIsOpenedCubit()
+    : super(
+        Platform.isAndroid
+            ? false
+            : sl<SharedPreferences>().getBool('iosCallRequest') ?? false,
+      );
 
-  void changeValue(bool value)async {
-    if(Platform.isIOS){
+  void changeValue(bool value) async {
+    if (Platform.isIOS) {
       await sl<SharedPreferences>().setBool('iosCallRequest', value);
     }
     emit(value);

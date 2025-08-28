@@ -1,19 +1,16 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 
-
 class PdfPage extends StatelessWidget {
-   const PdfPage({super.key,required this.path});
-   final String path;
+  const PdfPage({super.key, required this.path});
+
+  final String path;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: PDFView(
-          filePath:path),
+        body: PDFView(filePath: path),
         floatingActionButton: SizedBox(
           width: 40,
           height: 40,
@@ -23,7 +20,7 @@ class PdfPage extends StatelessWidget {
             elevation: 0,
             backgroundColor: const Color.fromARGB(40, 0, 0, 0),
             shape: const CircleBorder(),
-            onPressed: ()  {
+            onPressed: () {
               Navigator.pop(context);
             },
             child: const Icon(
@@ -31,9 +28,11 @@ class PdfPage extends StatelessWidget {
               color: Color.fromARGB(255, 247, 176, 116),
               //color: Color.fromARGB(255, 32, 146, 131),
               size: 32,
-            ),),
+            ),
+          ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniStartFloat,
       ),
     );
   }

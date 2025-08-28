@@ -18,18 +18,24 @@ class FileLoadingDialog extends StatelessWidget {
           shape: const RoundedRectangleBorder(),
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              GifView.asset(
-                'assets/images/loading_windows.gif',
-                height: 50,
-                width: 50,
-                frameRate: 23,
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              const Expanded(child: Text('Подождите, документ открывается',style: TextStyle(fontSize: 16),))
-            ]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GifView.asset(
+                  'assets/images/loading_windows.gif',
+                  height: 50,
+                  width: 50,
+                  frameRate: 23,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Подождите, документ открывается',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
