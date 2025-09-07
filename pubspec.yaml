@@ -41,7 +41,8 @@ dependencies:
   flutter_exit_app: ^1.1.4
   shared_preferences: ^2.5.3
   get_it: ^8.2.0
-  flutter_pdfview: ^1.4.1+1
+  #flutter_pdfview: ^1.4.1+1
+  flutter_pdfview: ^1.4.2-beta.1
   path_provider: ^2.1.5
   gif_view: ^1.0.3
   open_filex: ^4.7.0
