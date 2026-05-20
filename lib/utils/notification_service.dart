@@ -81,8 +81,9 @@ class NotificationService {
           iOS: initializationSettingsDarwin,
         );
 
+
     await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: _onDidReceiveNotificationResponse,
     );
 
@@ -222,10 +223,10 @@ class NotificationService {
     );
 
     await _flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message.notification?.title ?? 'No Title',
-      message.notification?.body ?? 'No Body',
-      platformChannelSpecifics,
+      id:message.hashCode,
+      title:message.notification?.title ?? 'No Title',
+      body:message.notification?.body ?? 'No Body',
+      notificationDetails: platformChannelSpecifics,
       payload: message.data['url'],
     );
 

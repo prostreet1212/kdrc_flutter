@@ -16,11 +16,12 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.1.1+7
+гзвфеу version: 1.1.2+8
 #
 environment:
   sdk: ^3.9.0
-  flutter: ^3.35.1
+  flutter: ^3.41.6
+  #flutter: ^3.35.1
   #flutter: ^3.32.8
 
 # Dependencies specify other packages that your package needs in order to work.
@@ -38,23 +39,23 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_direct_call_plus: ^0.0.3
   permission_handler: ^12.0.1
-  flutter_exit_app: ^1.1.4
-  shared_preferences: ^2.5.3
-  get_it: ^8.2.0
+  flutter_exit_app: ^2.1.1
+  shared_preferences: ^2.5.5
+  get_it: ^9.2.1
   #flutter_pdfview: ^1.4.1+1
-  flutter_pdfview: ^1.4.2-beta.1
+  flutter_pdfview: ^1.4.4
   path_provider: ^2.1.5
   gif_view: ^1.0.3
   open_filex: ^4.7.0
-  internet_connection_checker_plus: ^2.7.2
+  internet_connection_checker_plus: ^2.9.1+2
   sliver_tools: ^0.2.12
-  firebase_core: ^4.0.0
-  fluttertoast: ^8.2.12
-  equatable: ^2.0.7
-  firebase_messaging: ^16.0.0
-  flutter_local_notifications: ^19.4.0
+  firebase_core: ^4.7.0
+  fluttertoast: ^9.0.0
+  equatable: ^2.0.8
+  firebase_messaging: ^16.2.0
+  flutter_local_notifications: ^21.0.0
   nested_scroll_controller: ^1.0.0
-  flutter_inappwebview: ^6.1.5
+  flutter_inappwebview: ^6.2.0-beta.3
   #flutter_inappwebview : ^6.2.0-beta.2
   pointer_interceptor: ^0.10.1+2
   flutter_phone_direct_caller: ^2.2.1
